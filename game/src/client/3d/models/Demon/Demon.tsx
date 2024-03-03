@@ -46,7 +46,7 @@ type GLTFActions = Record<ActionName, AnimationAction>;
 
 const lightOrangeIndividualMaterial = new MeshToonMaterial({
   color: hexStringToCode("#630721"),
-  skinning: true,
+  // skinning: true,
 });
 lightOrangeIndividualMaterial.color.convertSRGBToLinear();
 
@@ -60,7 +60,7 @@ export default function Demon({
   lastHit: number;
   lastAttacked: number;
 }) {
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const { nodes, materials, animations, scene } = useGLTF("/Demon.glb");
   const [geometry]: any = useState(() => {
     const clonedScene = SkeletonUtils.clone(scene);
@@ -145,7 +145,7 @@ export default function Demon({
           playAnimation(animation, quickDuration, quickDuration, key);
         }
 
-        const onFinished = (event: Event) => {
+        const onFinished = (event: any) => {
           mixer.removeEventListener("finished", onFinished);
           if (actions.current && event.action === animation) {
             currentAnimation.finished = true;

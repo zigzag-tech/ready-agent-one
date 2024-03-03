@@ -7,9 +7,9 @@ import { Group } from "three";
 
 export default function Wall(props: JSX.IntrinsicElements["group"]) {
   const group = useRef<Group>(null);
-  const { nodes, materials, scene } = useGLTF("/wall.gltf.glb");
-  const node0 = useMemo(() => nodes.Cube4530.clone(true), [nodes]);
-  const node1 = useMemo(() => nodes["Cube4530"].clone(true), [nodes]);
+  const { nodes, materials } = useGLTF("/wall.gltf.glb");
+  const node0 = useMemo(() => nodes.Cube4530.clone(), [nodes]);
+  const node1 = useMemo(() => nodes["Cube4530"].clone(), [nodes]);
   return (
     <group ref={group} {...props} dispose={null}>
       <group userData={{ name: "wall" }}>

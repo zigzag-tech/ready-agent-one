@@ -133,10 +133,10 @@ const Camera: React.FC = () => {
       light.target.updateMatrixWorld();
       cameraPosition.previousX = x;
       cameraPosition.previousY = y;
+      camera.updateProjectionMatrix();
     }
 
     // not at rest if camera moving, or camera was moving and player is still moving
-
     if (
       xDiff > 0.05 ||
       yDiff > 0.05 ||
@@ -154,6 +154,7 @@ const Camera: React.FC = () => {
         }
       }
     }
+    camera.updateProjectionMatrix();
   });
 
   // const s = useMemo(() => {
@@ -166,24 +167,22 @@ const Camera: React.FC = () => {
   // }, [shadowLeft, shadowRight, shadowTop, shadowBottom]);
 
   return (
-    <perspectiveCamera
-      ref={ref}
-      fov={10}
-      position={[-cameraXOffset, cameraYOffset, -cameraZOffset]}
-      near={100}
-      far={250}
-    >
-      <directionalLight
-        ref={lightRef}
-        intensity={40}
-        position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        // shadow={s}
-        castShadow
-      />
-      {/*{light.current && <directionalLightHelper args={[light.current, 5]}/>}*/}
-    </perspectiveCamera>
+    <>
+      <perspectiveCamera
+        ref={ref}
+        fov={11}
+        position={[-cameraXOffset, cameraYOffset, -cameraZOffset]}
+        near={100}
+        far={250}
+      >
+        <directionalLight
+          ref={lightRef}
+          intensity={20}
+          position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
+          castShadow
+        />
+      </perspectiveCamera>
+    </>
   );
 };
 

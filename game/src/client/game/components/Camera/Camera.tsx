@@ -135,7 +135,7 @@ const Camera: React.FC = () => {
       far={250}
     >
       <directionalLight
-        intensity={0.4}
+        intensity={100}
         position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}

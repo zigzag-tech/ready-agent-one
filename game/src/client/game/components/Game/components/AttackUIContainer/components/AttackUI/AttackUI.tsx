@@ -1,12 +1,6 @@
-import React, {
-  TouchEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react";
-import styled, { css } from "styled-components";
-import nipplejs, { JoystickManager } from "nipplejs";
-import { proxy, useProxy } from "valtio";
+import React, { useCallback, useRef } from "react";
+import styled from "styled-components";
+import { proxy } from "valtio";
 
 export enum AttackContainerSize {
   LARGE = "LARGE",

@@ -90,12 +90,12 @@ export default function Knight({
   lastAttack: number;
 }) {
   const group = useRef<Group>();
-  const { animations, scene } = useGLTF("/Knight_Golden_Male.glb");
-  const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const { nodes } = useGraph(clone);
+  const { animations, nodes } = useGLTF("/Knight_Golden_Male.glb");
+  // const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  // const { nodes } = useGraph(clone);
 
   const actions = useRef<GLTFActions>();
-  const [mixer] = useState(() => new AnimationMixer(nodes["Cube.004_4"]));
+  const [mixer] = useState(() => new AnimationMixer(nodes["Cube004_4"]));
 
   const currentAnimationRef = useRef<{
     key: string | null;
@@ -216,7 +216,6 @@ export default function Knight({
       unsubscribe();
     };
   }, [moving, recharging, running, lastAttack, lastDamaged]);
-  console.log(nodes);
   return (
     <group ref={group} {...props} dispose={null}>
       <primitive object={nodes.Bone} />

@@ -1,5 +1,6 @@
 /* eslint-disable import/no-webpack-loader-syntax */
 import { WorkerMessageType } from "../../../workers/physics/types";
+import Worker from "../../../workers/physics/physicsWorker?worker";
 import {
   AddBodyProps,
   RemoveBodyProps,
@@ -7,9 +8,7 @@ import {
   UpdateBodyProps,
 } from "../../bodies";
 
-export const gamePhysicsWorker = new Worker(
-  new URL("../../../workers/physics/physicsWorker", import.meta.url)
-);
+export const gamePhysicsWorker = new Worker();
 
 export const workerAddBody = (props: AddBodyProps) => {
   gamePhysicsWorker.postMessage({

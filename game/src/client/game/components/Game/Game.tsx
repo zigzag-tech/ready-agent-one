@@ -16,6 +16,7 @@ import Room from "../Room/Room";
 import GameAI from "./components/GameAI/GameAI";
 import MobsManager from "../MobsManager/MobsManager";
 import AttackUIContainer from "./components/AttackUIContainer/AttackUIContainer";
+import PhysWall from "../PhysWall/PhysWall";
 
 export const STATS_CSS_CLASS = "stats";
 
@@ -47,7 +48,7 @@ const Game: React.FC = () => {
               <AttackColliders />
               <Stats className={STATS_CSS_CLASS} />
               <Room />
-              {/*<PhysWall/>*/}
+              {/* <PhysWall /> */}
               {/*<TestBox/>*/}
             </Physics>
           </Canvas>

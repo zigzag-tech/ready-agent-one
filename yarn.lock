@@ -3281,6 +3281,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:^18":
+  version: 18.2.19
+  resolution: "@types/react-dom@npm:18.2.19"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/88d7c6daa4659f661d0c97985d9fca492f24b421a34bb614dcd94c343aed7bea121463149e97fb01ecaa693be17b7d1542cf71ddb1705f3889a81eb2639a88aa
+  languageName: node
+  linkType: hard
+
 "@types/react-reconciler@npm:^0.26.7":
   version: 0.26.7
   resolution: "@types/react-reconciler@npm:0.26.7"
@@ -4798,6 +4807,7 @@ __metadata:
     "@react-three/fiber": "npm:^8.15.16"
     "@types/express": "npm:^4.17.21"
     "@types/node": "npm:^20"
+    "@types/react-dom": "npm:^18"
     "@types/three": "npm:^0.162.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     body-parser: "npm:^1.20.2"
@@ -4808,6 +4818,7 @@ __metadata:
     ollama: "npm:^0.4.9"
     planck-js: "npm:^0.3.31"
     react: "npm:^18"
+    react-dom: "npm:^18.2.0"
     react-full-screen: "npm:^1.1.1"
     react-icons: "npm:^3.11.0"
     socket.io-client: "npm:^4"
@@ -8395,6 +8406,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react-dom@npm:18.2.0"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.0"
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 10c0/66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
+  languageName: node
+  linkType: hard
+
 "react-full-screen@npm:^1.1.1":
   version: 1.1.1
   resolution: "react-full-screen@npm:1.1.1"
@@ -8844,6 +8867,15 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/083a9a0c83f4923f7f5bb28d8bcf13cff42c90f4303bc187166520fcfc576c97e946d426c707d5a9c0aa0a655819605dd0c741467c626824bbf191251c126f1b
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.0":
+  version: 0.23.0
+  resolution: "scheduler@npm:0.23.0"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/b777f7ca0115e6d93e126ac490dbd82642d14983b3079f58f35519d992fa46260be7d6e6cede433a92db70306310c6f5f06e144f0e40c484199e09c1f7be53dd
   languageName: node
   linkType: hard
 

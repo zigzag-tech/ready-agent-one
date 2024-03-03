@@ -6,7 +6,6 @@
     "src/*.tsx",
     "src/client/custom.d.ts"
   ],
-
   "compilerOptions": {
     "outDir": "dist",
     "target": "ES5",

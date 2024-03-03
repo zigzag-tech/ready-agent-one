@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 import { useProxy } from "valtio";
 import { playerHealth } from "../../../../../../../../state/player";
-import { GiHearts } from "react-icons";
+import { GiHearts } from "react-icons/gi";
 import { COLORS } from "../../../../../../../../ui/colors";
 
 const StyledContainer = styled.div``;

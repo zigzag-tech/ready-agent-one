@@ -1,7 +1,9 @@
-<<<<<<< Updated upstream
+import React from "react";
 import { useInput, useJobBinding, useOutput } from "@livestack/client";
-import "./App.css";
 import { EventResponseZ, GAME_SPEC_NAME, GameEventZ } from "../common/game";
+import Game from "./game/components/Game/Game";
+import { GlobalStyle } from "./ui/global";
+import "./App.css";
 
 function App() {
   const job = useJobBinding({
@@ -28,19 +30,9 @@ function App() {
         Player Attack
       </button>
       <div>{playerResponse?.data.response}</div>
+      <GlobalStyle />
+      <Game />
     </div>
-=======
-import React from 'react';
-import Game from "./game/components/Game/Game";
-import {GlobalStyle} from "./ui/global";
-
-function App() {
-  return (
-      <>
-        <GlobalStyle/>
-        <Game/>
-    </>
->>>>>>> Stashed changes
   );
 }
 

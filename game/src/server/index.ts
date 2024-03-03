@@ -1,10 +1,11 @@
-import { ZZEnv, JobSpec } from "@livestack/core";
+import pkg from "@livestack/core";
 import express from "express";
 import ViteExpress from "vite-express";
-import { initJobBinding } from "@livestack/gateway";
+import gatewayPkg from "@livestack/gateway";
 import { EventResponseZ, GAME_SPEC_NAME, GameEventZ } from "../common/game";
-import ollama from 'ollama';
-
+import ollama from "ollama";
+const { ZZEnv, JobSpec } = pkg;
+const { initJobBinding } = gatewayPkg;
 const app = express();
 
 const zzEnv = new ZZEnv({
@@ -62,11 +63,15 @@ const gameWorker = gameSpec.defineWorker({
           });
           break;
         case "player-attack":
-
           const response = await ollama.chat({
-            model: 'mistral',
-            messages: [{ role: 'user', content: getRandomPhraseByEventType(data.eventType) }],
-          })
+            model: "mistral",
+            messages: [
+              {
+                role: "user",
+                content: getRandomPhraseByEventType(data.eventType),
+              },
+            ],
+          });
 
           output.emit({
             response: response.message.content,
@@ -104,3 +109,5 @@ initJobBinding({
   httpServer: server,
   allowedSpecsForBinding: [gameSpec],
 });
+
+var exports = {};

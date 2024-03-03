@@ -6,11 +6,12 @@
     "src/*.tsx",
     "src/client/custom.d.ts"
   ],
+
   "compilerOptions": {
     "outDir": "dist",
     "target": "ES5",
     "pretty": true,
-    "moduleResolution": "node",
+    "module": "NodeNext",
     "noEmit": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -25,6 +26,11 @@
     "downlevelIteration": true,
     "jsx": "react",
     "noImplicitAny": true
+  },
+  "ts-node": {
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true,
+    "esm": true
   },
   "exclude": ["node_modules", "dist"]
 }

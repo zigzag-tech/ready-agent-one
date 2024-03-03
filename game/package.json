@@ -4,10 +4,11 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "NODE_OPTIONS='-r dotenv/config' ts-node src/server/index.ts"
+    "dev": "NODE_OPTIONS='-r dotenv/config' node --loader ts-node/esm src/server/index.ts"
   },
   "author": "",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
     "@react-hook/window-size": "^3.1.1",
     "@react-three/drei": "^9.99.5",

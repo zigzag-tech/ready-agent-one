@@ -1,0 +1,3 @@
+[submodule "livestack"]
+	path = livestack
+	url = https://github.com/zigzag-tech/livestack.git

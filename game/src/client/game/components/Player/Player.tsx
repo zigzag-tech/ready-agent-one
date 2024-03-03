@@ -140,8 +140,8 @@ const ROLLING_SPEED = RUNNING_SPEED;
 const tempVec2 = Vec2(0, 0);
 
 const Player: React.FC = () => {
-  const [ref, api, largeColliderRef, largeColliderApi] = usePlayerPhysics();
   const nippleManager = useNippleManager();
+  const [ref, api, largeColliderRef, largeColliderApi] = usePlayerPhysics();
 
   usePlayerCollisionsHandler(api);
   usePlayerControls();

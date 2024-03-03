@@ -1,6 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import React, { useEffect, useRef, createContext, useContext } from "react";
-import nipplejs, { JoystickManager } from "nipplejs";
+import React, {
+  useEffect,
+  useRef,
+  createContext,
+  useContext,
+  useState,
+} from "react";
+import nipplejs from "nipplejs";
+import { JoystickManager } from "nipplejs";
 import styled from "styled-components";
 
 export const NippleContext = createContext<JoystickManager | null>(null);
@@ -30,9 +36,17 @@ const Joystick = ({ children }) => {
       zone: ref.current,
     });
     setNippleManager(manager);
+
+    return () => {
+      manager.destroy();
+    };
   }, []);
 
-  const [nippleManager, setNippleManager] = useState<JoystickManager | null>(null);
+  const [nippleManager, setNippleManager] = useState<JoystickManager | null>(
+    null
+  );
+
+  // Provide the nippleManager context to the children
 
   return (
     <NippleContext.Provider value={nippleManager}>
@@ -48,19 +62,5 @@ const Joystick = ({ children }) => {
 };
 
 export const useNippleManager = () => useContext(NippleContext);
-
-export default Joystick;
-  }, []);
-
-  return (
-    <StyledContainer
-      ref={ref}
-      onTouchStart={() => (inputData.lastTouchStart = Date.now())}
-      onTouchEnd={() => (inputData.lastTouchEnd = Date.now())}
-    >
-      {children}
-    </StyledContainer>
-  );
-};
 
 export default Joystick;

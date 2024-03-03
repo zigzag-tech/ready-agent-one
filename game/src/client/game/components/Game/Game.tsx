@@ -1,5 +1,5 @@
 import React from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
 import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
@@ -34,7 +34,7 @@ const Game: React.FC = () => {
   const { active, enter } = handle;
 
   return (
-    <FullScreen handle={handle}>
+    <FullScreen handle={handle} className="fullscreen-container">
       <StyledContainer>
         <Joystick>
           <Canvas shadows>

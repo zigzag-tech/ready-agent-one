@@ -89,7 +89,7 @@ export default function Knight({
   lastDamaged: number;
   lastAttack: number;
 }) {
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const { animations, nodes } = useGLTF("/Knight_Golden_Male.glb");
   // const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   // const { nodes } = useGraph(clone);
@@ -109,24 +109,26 @@ export default function Knight({
 
   useFrame((state, delta) => mixer.update(delta));
   useEffect(() => {
-    actions.current = {
-      Idle: mixer.clipAction(animations[0], group.current),
-      PickUp: mixer.clipAction(animations[1], group.current),
-      Punch: mixer.clipAction(animations[2], group.current),
-      RecieveHit: mixer.clipAction(animations[3], group.current),
-      Run: mixer.clipAction(animations[4], group.current),
-      SitDown: mixer.clipAction(animations[5], group.current),
-      Walk: mixer.clipAction(animations[6], group.current),
-    };
-    actions.current.Punch.loop = LoopOnce;
-    actions.current.Punch.clampWhenFinished = true;
-    actions.current.Punch.timeScale = 1.2;
-    actions.current.RecieveHit.loop = LoopOnce;
-    actions.current.RecieveHit.clampWhenFinished = true;
-    actions.current.RecieveHit.timeScale = 1.2;
-    actions.current.SitDown.loop = LoopOnce;
-    actions.current.SitDown.clampWhenFinished = true;
-    return () => animations.forEach((clip) => mixer.uncacheClip(clip));
+    if (group.current) {
+      actions.current = {
+        Idle: mixer.clipAction(animations[0], group.current),
+        PickUp: mixer.clipAction(animations[1], group.current),
+        Punch: mixer.clipAction(animations[2], group.current),
+        RecieveHit: mixer.clipAction(animations[3], group.current),
+        Run: mixer.clipAction(animations[4], group.current),
+        SitDown: mixer.clipAction(animations[5], group.current),
+        Walk: mixer.clipAction(animations[6], group.current),
+      };
+      actions.current.Punch.loop = LoopOnce;
+      actions.current.Punch.clampWhenFinished = true;
+      actions.current.Punch.timeScale = 1.2;
+      actions.current.RecieveHit.loop = LoopOnce;
+      actions.current.RecieveHit.clampWhenFinished = true;
+      actions.current.RecieveHit.timeScale = 1.2;
+      actions.current.SitDown.loop = LoopOnce;
+      actions.current.SitDown.clampWhenFinished = true;
+      return () => animations.forEach((clip) => mixer.uncacheClip(clip));
+    }
   }, []);
 
   useEffect(() => {
@@ -223,8 +225,6 @@ export default function Knight({
         receiveShadow
         castShadow
         material={armorMaterial}
-        // geometry={nodes.Cube004.geometry}
-        // skeleton={nodes.Cube004.skeleton}
         object={nodes.Cube004}
       />
       <primitive

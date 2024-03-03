@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { proxy, useProxy } from "valtio";
+import { proxy, useSnapshot } from "valtio";
 import { InputKeys, inputsState } from "../../../../state/inputs";
 import { playerPosition } from "../../../../state/positions";
 import { playerVisualState } from "../components/PlayerVisuals/PlayerVisuals";

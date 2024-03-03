@@ -1,11 +1,11 @@
 import React from "react";
-import {useProxy} from "valtio";
+import { useSnapshot } from "valtio";
 import {attackColliders} from "../../../Player/hooks/attack";
 import AttackCollider from "./components/AttackCollider/AttackCollider";
 
 const AttackColliders: React.FC = () => {
 
-    const colliders = useProxy(attackColliders).colliders
+    const colliders = useSnapshot(attackColliders).colliders;
 
     return <>
         {

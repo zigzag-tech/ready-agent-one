@@ -1,6 +1,6 @@
 import React, {Suspense, useEffect, useState} from "react";
 import Knight from "../../../../../3d/models/Knight/Knight";
-import {proxy, useProxy} from "valtio";
+import { proxy, useSnapshot } from "valtio";
 import {attackState} from "../../hooks/attack";
 import {playerHealth, playerState} from "../../../../../state/player";
 
@@ -13,10 +13,10 @@ export const playerVisualState = proxy({
 
 const PlayerVisuals: React.FC = () => {
 
-    const {recharging, preRecharging} = useProxy(playerState)
-    const localPlayerState = useProxy(playerVisualState)
-    const {lastAttack} = useProxy(attackState)
-    const {lastDamaged} = useProxy(playerHealth)
+    const { recharging, preRecharging } = useSnapshot(playerState);
+    const localPlayerState = useSnapshot(playerVisualState);
+    const { lastAttack } = useSnapshot(attackState);
+    const { lastDamaged } = useSnapshot(playerHealth);
 
     return (
         <Suspense fallback={null}>

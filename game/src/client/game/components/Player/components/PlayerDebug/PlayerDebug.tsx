@@ -1,7 +1,7 @@
 import React, {MutableRefObject} from "react";
 import {Object3D} from "three";
 import {Box, Cylinder} from "@react-three/drei";
-import {useProxy} from "valtio";
+import { useSnapshot } from "valtio";
 import {devState} from "../../../../../state/dev";
 import {boxSize, largeColliderRadius, smallColliderRadius} from "../../hooks/physics";
 import {radians} from "../../../../../utils/angles";

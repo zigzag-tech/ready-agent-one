@@ -3,7 +3,7 @@ import MobPhysics from "./components/MobPhysics/MobPhysics";
 import MobVisuals from "./components/MobVisuals/MobVisuals";
 import {Object3D} from "three";
 import MobTargetTracking from "./components/MobTargetTracking/MobTargetTracking";
-import {useProxy} from "valtio";
+import { useSnapshot } from "valtio";
 import {playerTargets, usePlayerTarget} from "../../../state/player";
 import {deleteMobHealthManager, getMobHealthManager, initMobHealthManager} from "../../../state/mobs";
 import {addMob, removeMob, updateMob} from "../../../temp/ai";
@@ -16,13 +16,13 @@ const useIsTargeted = (id: number): boolean => {
 }
 
 const useIsInAttackRange = (id: number): boolean => {
-    const {attackRange} = useProxy(playerTargets)
+    const { attackRange } = useSnapshot(playerTargets);
     return attackRange.includes(id)
 }
 
 const useIsDead = (id: number): boolean => {
 
-    const managerProxy = useProxy(getMobHealthManager(id))
+    const managerProxy = useSnapshot(getMobHealthManager(id));
     return managerProxy.health <= 0
 
 }
@@ -38,7 +38,7 @@ const MobInner: React.FC<{
     const isTargeted = useIsTargeted(id)
     const inAttackRange = useIsInAttackRange(id)
     const isDead = useIsDead(id)
-    const managerProxy = useProxy(getMobHealthManager(id))
+    const managerProxy = useSnapshot(getMobHealthManager(id));
 
     useEffect(() => {
 

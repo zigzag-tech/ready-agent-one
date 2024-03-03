@@ -4,7 +4,7 @@ import { getMob, MobAIGoal } from "../../../../temp/ai";
 import { BodyApi } from "../../../../physics/components/Physics/hooks";
 import { playerPosition } from "../../../../state/positions";
 import { Vec2 } from "planck";
-import { useProxy } from "valtio";
+import { useSnapshot } from "valtio";
 import { getMobHealthManager } from "../../../../state/mobs";
 import {
   dealPlayerDamage,
@@ -65,7 +65,7 @@ export const useMobBrain = (
     [id: number]: boolean;
   }>(() => ({}));
   const [manager] = useState(() => getMobHealthManager(id));
-  const managerProxy = useProxy(manager);
+  const managerProxy = useSnapshot(manager);
 
   const { lastHit } = managerProxy;
 

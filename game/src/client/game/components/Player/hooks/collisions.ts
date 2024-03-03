@@ -1,29 +1,25 @@
-import {useProxy} from "valtio";
-import {playerVisualState} from "../components/PlayerVisuals/PlayerVisuals";
-import {useEffect} from "react";
-import {BodyApi} from "../../../../physics/components/Physics/hooks";
-import {COLLISION_FILTER_GROUPS} from "../../../../physics/collisions/filters";
+import { useSnapshot } from "valtio";
+import { playerVisualState } from "../components/PlayerVisuals/PlayerVisuals";
+import { useEffect } from "react";
+import { BodyApi } from "../../../../physics/components/Physics/hooks";
+import { COLLISION_FILTER_GROUPS } from "../../../../physics/collisions/filters";
 
 export const usePlayerCollisionsHandler = (api: BodyApi) => {
+  const rolling = useSnapshot(playerVisualState).rolling;
 
-    const rolling = useProxy(playerVisualState).rolling
-
-    useEffect(() => {
-
-       // if (rolling) {
-       //      api.updateBody({
-       //          fixtureUpdate: {
-       //              maskBits: 0
-       //          }
-       //      })
-       // } else {
-       //     api.updateBody({
-       //         fixtureUpdate: {
-       //             maskBits: COLLISION_FILTER_GROUPS.mob,
-       //         }
-       //     })
-       // }
-
-    }, [rolling])
-
-}
+  useEffect(() => {
+    // if (rolling) {
+    //      api.updateBody({
+    //          fixtureUpdate: {
+    //              maskBits: 0
+    //          }
+    //      })
+    // } else {
+    //     api.updateBody({
+    //         fixtureUpdate: {
+    //             maskBits: COLLISION_FILTER_GROUPS.mob,
+    //         }
+    //     })
+    // }
+  }, [rolling]);
+};

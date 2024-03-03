@@ -7,35 +7,24 @@ import { useGLTF } from "@react-three/drei";
 import { Group, Mesh, MeshStandardMaterial } from "three";
 import { GLTF } from "three/examples/jsm/Addons.js";
 
-type GLTFResult = GLTF & {
-  nodes: {
-    Cube4531: Mesh;
-    ["Cube.4531_1"]: Mesh;
-  };
-  materials: {
-    Stone: MeshStandardMaterial;
-    StoneDark: MeshStandardMaterial;
-  };
-};
+
 
 export default function WallCorner(props: JSX.IntrinsicElements["group"]) {
-  const group = useRef<Group>();
+  const group = useRef<Group>(null);
   const { nodes, materials } = useGLTF("/wallCorner.gltf.glb");
   return (
     <group ref={group} {...props} dispose={null}>
-      <group userData={{ name: "wallCorner" }}>
-        <mesh
-          material={materials.Stone}
-          geometry={nodes.Cube4531.geometry}
-          receiveShadow
-          position={[0.0001, 0.0001, 0.0001]}
-        />
-        <mesh
-          material={materials.StoneDark}
-          geometry={nodes["Cube.4531_1"].geometry}
-          receiveShadow
-        />
-      </group>
+      <primitive
+        material={materials.Stone}
+        object={nodes.Cube4531}
+        receiveShadow
+        position={[0.0001, 0.0001, 0.0001]}
+      />
+      <primitive
+        material={materials.StoneDark}
+        object={nodes["Cube4531_1"]}
+        receiveShadow
+      />
     </group>
   );
 }

@@ -1,4 +1,4 @@
-import { proxy, useProxy } from "valtio";
+import { proxy, useSnapshot } from "valtio";
 
 export const playerJuice = proxy<{
   juice: number;
@@ -57,8 +57,8 @@ export const playerCanRecharge = (checkHealth: boolean = true): boolean => {
 };
 
 export const usePlayerCanRecharge = (): boolean => {
-  const { juice } = useProxy(playerJuice);
-  const { health, maxHealth } = useProxy(playerHealth);
+  const { juice } = useSnapshot(playerJuice);
+  const { health, maxHealth } = useSnapshot(playerHealth);
   return juice >= JUICE_RECHARGE_COST && health < maxHealth;
 };
 
@@ -123,18 +123,18 @@ export const getPlayerTargetedEnemy = (): number | null => {
 };
 
 export const useEnemiesInRange = (): boolean => {
-  const { inRange: targets } = useProxy(playerTargets);
+  const { inRange: targets } = useSnapshot(playerTargets);
   return targets.length > 0;
 };
 
 export const useEnemiesInCloseRange = (): boolean => {
-  const { closeRange } = useProxy(playerTargets);
+  const { closeRange } = useSnapshot(playerTargets);
   return closeRange.length > 0;
 };
 
 export const usePlayerTarget = (): number | null => {
   const { inRange, lastAttacked, attackRange, lastHitBy, focusedInRange } =
-    useProxy(playerTargets);
+    useSnapshot(playerTargets);
 
   if (lastAttacked !== null && inRange.includes(lastAttacked)) {
     return lastAttacked;
@@ -162,7 +162,7 @@ export const usePlayerHasTarget = (): boolean => {
 
 export const usePlayerInCombat = (): boolean => {
   const target = usePlayerTarget();
-  const { closeRange } = useProxy(playerTargets);
+  const { closeRange } = useSnapshot(playerTargets);
   return target !== null || closeRange.length > 0;
 };
 

@@ -8,9 +8,10 @@
   ],
   "compilerOptions": {
     "outDir": "dist",
-    "target": "ES5",
     "pretty": true,
-    "module": "NodeNext",
+    "module": "esnext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "noEmit": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,

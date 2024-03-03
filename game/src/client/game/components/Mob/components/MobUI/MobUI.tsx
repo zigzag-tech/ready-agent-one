@@ -1,7 +1,7 @@
 import React from "react";
 import { Html } from "@react-three/drei";
 import styled, { css } from "styled-components";
-import { useProxy } from "valtio";
+import { useSnapshot } from "valtio";
 import { getMobHealthManager } from "../../../../../state/mobs";
 import { MOB_VARIANT } from "../../data";
 
@@ -47,7 +47,7 @@ const MobUI: React.FC<{
   id: number;
   variant: MOB_VARIANT;
 }> = ({ id, variant }) => {
-  const managerProxy = useProxy(getMobHealthManager(id));
+  const managerProxy = useSnapshot(getMobHealthManager(id));
   const yOffset = variant === MOB_VARIANT.large ? 1.75 : 0.75;
   return (
     <group position={[0, 3.5 * yOffset, 0]}>

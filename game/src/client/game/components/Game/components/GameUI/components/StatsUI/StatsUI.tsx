@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-import {subscribe, useProxy} from "valtio";
+import { subscribe, useSnapshot } from "valtio";
 import {playerEnergy} from "../../../../../../../state/player";
 import Health from "./Health/Health";
 import Juice from "./Juice/Juice";

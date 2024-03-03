@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { useProxy } from "valtio";
+import { useSnapshot } from "valtio";
 import { playerHealth } from "../../../../../../../../state/player";
 import { GiHearts } from "react-icons/gi";
 import { COLORS } from "../../../../../../../../ui/colors";
@@ -46,7 +46,7 @@ const StyledHeartFg = styled.div<{
 `;
 
 const Health: React.FC = () => {
-  const healthProxy = useProxy(playerHealth);
+  const healthProxy = useSnapshot(playerHealth);
   return (
     <StyledContainer>
       <StyledHeartsContainer>

@@ -28,7 +28,7 @@
     "socket.io-client": "^4",
     "styled-components": "^6.1.8",
     "three": "^0.162.0",
-    "valtio": "^0.4.3",
+    "valtio": "^1.13.2",
     "vite": "^5.0.12",
     "vite-express": "^0.14.0",
     "worker-loader": "^3.0.8",

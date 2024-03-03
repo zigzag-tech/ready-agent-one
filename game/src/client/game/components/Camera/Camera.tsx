@@ -1,7 +1,16 @@
-import React, { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { gameRefs } from "../../../state/refs";
+import { DirectionalLightShadow, Object3D, Vector3 } from "three";
 import { cameraPosition, playerPosition } from "../../../state/positions";
 import { numLerp } from "../../../utils/numbers";
+
 import { useEnemiesInRange, usePlayerHasTarget } from "../../../state/player";
 import { useIsPortrait } from "../../../utils/responsive";
 
@@ -32,7 +41,9 @@ const useCameraShadowBounds = (
 };
 
 const Camera: React.FC = () => {
+  const lightRef: any = useRef();
   const ref = useRef<any>();
+  const { set } = useThree();
   const targetLocked = usePlayerHasTarget();
   const inDanger = useEnemiesInRange();
   const [allowedX, allowedY] = useAllowedMovementOffset();
@@ -41,9 +52,25 @@ const Camera: React.FC = () => {
   const [shadowLeft, shadowRight, shadowTop, shadowBottom] =
     useCameraShadowBounds(portrait);
 
+  useEffect(() => void set({ camera: ref.current }), []);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    if (!lightRef.current) return;
+    const light = lightRef.current;
+    const camera = ref.current;
+    ref.current.lookAt(0, 2, 0);
+
+    light.target.position.x = camera.position.x;
+    light.target.position.y = camera.position.y;
+    light.target.position.z = camera.position.z;
+    light.target.updateMatrixWorld();
+  }, []);
+
   useFrame(() => {
     if (!ref.current) return;
-
+    if (!lightRef.current) return;
+    const light = lightRef.current;
     const camera = ref.current;
     const { x, z: y } = camera.position;
 
@@ -100,7 +127,10 @@ const Camera: React.FC = () => {
     if (x !== newX || y !== newY) {
       camera.position.x = numLerp(x, newX, 0.05);
       camera.position.z = numLerp(y, newY, 0.05);
-
+      light.target.position.x = camera.position.x;
+      light.target.position.y = camera.position.y;
+      light.target.position.z = camera.position.z;
+      light.target.updateMatrixWorld();
       cameraPosition.previousX = x;
       cameraPosition.previousY = y;
     }
@@ -126,6 +156,15 @@ const Camera: React.FC = () => {
     }
   });
 
+  // const s = useMemo(() => {
+  //   const s = new DirectionalLightShadow();
+  //   s.camera.left = shadowLeft;
+  //   s.camera.right = shadowRight;
+  //   s.camera.top = shadowTop;
+  //   s.camera.bottom = shadowBottom;
+  //   return s;
+  // }, [shadowLeft, shadowRight, shadowTop, shadowBottom]);
+
   return (
     <perspectiveCamera
       ref={ref}
@@ -135,10 +174,12 @@ const Camera: React.FC = () => {
       far={250}
     >
       <directionalLight
-        intensity={100}
+        ref={lightRef}
+        intensity={40}
         position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
+        // shadow={s}
         castShadow
       />
       {/*{light.current && <directionalLightHelper args={[light.current, 5]}/>}*/}

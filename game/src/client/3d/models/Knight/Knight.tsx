@@ -170,7 +170,7 @@ export default function Knight({
           playAnimation(animation, quickDuration, quickDuration, key);
         }
 
-        const onFinished = (event: Event) => {
+        const onFinished = (event: any) => {
           mixer.removeEventListener("finished", onFinished);
           if (actions.current && event.action === animation) {
             currentAnimation.finished = true;

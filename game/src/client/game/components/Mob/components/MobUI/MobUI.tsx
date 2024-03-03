@@ -15,7 +15,7 @@ const cssLargeVariant = css`
 `;
 
 const StyledContainer = styled.div<{
-  hide: boolean;
+  hide: number;
   variant: MOB_VARIANT;
 }>`
   pointer-events: none;
@@ -52,7 +52,7 @@ const MobUI: React.FC<{
   return (
     <group position={[0, 3.5 * yOffset, 0]}>
       <Html center>
-        <StyledContainer hide={managerProxy.health <= 0} variant={variant}>
+        <StyledContainer hide={+(managerProxy.health <= 0)} variant={variant}>
           <StyledAmount
             amount={(managerProxy.health / managerProxy.maxHealth) * 100}
           />

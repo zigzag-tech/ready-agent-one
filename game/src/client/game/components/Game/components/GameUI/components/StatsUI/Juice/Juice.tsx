@@ -6,16 +6,16 @@ import {JUICE_RECHARGE_COST, playerCanRecharge, playerEnergy, playerJuice} from 
 const StyledContainer = styled.div``;
 
 const StyledBar = styled.div<{
-    full: boolean,
+  full: number;
 }>`
-    width: 100%;
-    max-width: 200px;
-    height: 14px;
-    border: 2px solid white;
-    overflow: hidden;
-    position: relative;
-    opacity: ${props => props.full ? '1' : '0.5'};
-    transition: opacity 250ms ease;
+  width: 100%;
+  max-width: 200px;
+  height: 14px;
+  border: 2px solid white;
+  overflow: hidden;
+  position: relative;
+  opacity: ${(props) => (props.full ? "1" : "0.5")};
+  transition: opacity 250ms ease;
 `;
 
 const StyledBarInner = styled.div`
@@ -55,11 +55,11 @@ const Juice: React.FC = () => {
     }, [])
 
     return (
-        <StyledContainer>
-            <StyledBar full={full}>
-                <StyledBarInner ref={barRef}/>
-            </StyledBar>
-        </StyledContainer>
+      <StyledContainer>
+        <StyledBar full={+full}>
+          <StyledBarInner ref={barRef} />
+        </StyledBar>
+      </StyledContainer>
     );
 };
 

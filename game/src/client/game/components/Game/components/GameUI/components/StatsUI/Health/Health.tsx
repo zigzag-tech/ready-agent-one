@@ -16,7 +16,7 @@ const StyledHeart = styled.div`
 `;
 
 const StyledHeartBg = styled.div<{
-  full: boolean;
+  full: number;
 }>`
   color: rgba(0, 0, 0, 0.5);
 `;
@@ -30,8 +30,8 @@ const cssFull = css`
 `;
 
 const StyledHeartFg = styled.div<{
-  full: boolean;
-  half: boolean;
+  full: number;
+  half: number;
 }>`
   position: absolute;
   top: 0;
@@ -55,10 +55,10 @@ const Health: React.FC = () => {
           const half = healthProxy.health === index + 0.5;
           return (
             <StyledHeart key={index}>
-              <StyledHeartBg full={full}>
+              <StyledHeartBg full={+full}>
                 <GiHearts size={18} />
               </StyledHeartBg>
-              <StyledHeartFg full={full} half={half}>
+              <StyledHeartFg full={+full} half={+half}>
                 <GiHearts size={18} />
               </StyledHeartFg>
             </StyledHeart>

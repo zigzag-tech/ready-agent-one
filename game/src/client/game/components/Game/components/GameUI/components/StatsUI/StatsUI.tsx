@@ -23,16 +23,16 @@ const StyledContainer = styled.div`
 `;
 
 const StyledBar = styled.div<{
-    full: boolean,
+  full: number;
 }>`
-    width: 100%;
-    max-width: 200px;
-    height: 14px;
-    border: 2px solid white;
-    opacity: ${props => props.full ? 0 : 0.5};
-    overflow: hidden;
-    position: relative;
-    transition: opacity 300ms ${props => props.full ? "200ms" : ""} ease;
+  width: 100%;
+  max-width: 200px;
+  height: 14px;
+  border: 2px solid white;
+  opacity: ${(props) => (props.full ? 0 : 0.5)};
+  overflow: hidden;
+  position: relative;
+  transition: opacity 300ms ${(props) => (props.full ? "200ms" : "")} ease;
 `;
 
 const StyledBarInner = styled.div`
@@ -65,17 +65,17 @@ const StatsUI: React.FC = () => {
     }, [])
 
     return (
-        <>
-            <StyledTopLeftContainer>
-                <Health/>
-                <Juice/>
-            </StyledTopLeftContainer>
-            <StyledContainer>
-                <StyledBar full={full}>
-                    <StyledBarInner ref={barRef}/>
-                </StyledBar>
-            </StyledContainer>
-        </>
+      <>
+        <StyledTopLeftContainer>
+          <Health />
+          <Juice />
+        </StyledTopLeftContainer>
+        <StyledContainer>
+          <StyledBar full={+full}>
+            <StyledBarInner ref={barRef} />
+          </StyledBar>
+        </StyledContainer>
+      </>
     );
 };
 

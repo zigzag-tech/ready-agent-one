@@ -1,5 +1,5 @@
 import React, { Suspense, useCallback, useEffect, useRef } from "react";
-import { inputData, nippleManager } from "../Joystick/Joystick";
+import { inputData, useNippleManager } from "../Joystick/Joystick";
 import { useFrame } from "@react-three/fiber";
 import { radians, rotateVector } from "../../../utils/angles";
 import { gameRefs } from "../../../state/refs";
@@ -141,6 +141,7 @@ const tempVec2 = Vec2(0, 0);
 
 const Player: React.FC = () => {
   const [ref, api, largeColliderRef, largeColliderApi] = usePlayerPhysics();
+  const nippleManager = useNippleManager();
 
   usePlayerCollisionsHandler(api);
   usePlayerControls();
@@ -154,7 +155,7 @@ const Player: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    nippleManager?.on("start", () => {
+    nippleManager && nippleManager.on("start", () => {
       nippleState.active = true;
       if (inputData.lastTouchStart > Date.now() - 450) {
         inputsState[InputKeys.SHIFT].rawLastPressed = Date.now();
@@ -162,7 +163,7 @@ const Player: React.FC = () => {
       }
     });
 
-    nippleManager?.on("end", () => {
+    nippleManager && nippleManager.on("end", () => {
       nippleState.active = false;
       playerJoystickVelocity.previousX = 0;
       playerJoystickVelocity.previousY = 0;
@@ -171,7 +172,7 @@ const Player: React.FC = () => {
       inputsState[InputKeys.SHIFT].raw = false;
     });
 
-    nippleManager?.on("move", (_, data) => {
+    nippleManager && nippleManager.on("move", (_, data) => {
       const { x, y } = data.vector;
       playerJoystickVelocity.previousX = playerJoystickVelocity.x;
       playerJoystickVelocity.previousY = playerJoystickVelocity.y;

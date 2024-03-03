@@ -5,6 +5,7 @@ import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
 import Player from "../Player/Player";
 import Joystick from "../Joystick/Joystick";
+import { NippleContext } from "../Joystick/Joystick";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import Lights from "../Lights/Lights";
 import Camera from "../Camera/Camera";

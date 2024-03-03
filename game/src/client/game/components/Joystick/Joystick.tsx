@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, createContext, useContext } from "react";
 import nipplejs, { JoystickManager } from "nipplejs";
 import styled from "styled-components";
+
+export const NippleContext = createContext<JoystickManager | null>(null);
 
 const StyledContainer = styled.div`
   position: absolute;
@@ -14,8 +17,6 @@ const StyledContainer = styled.div`
   }
 `;
 
-export let nippleManager: JoystickManager;
-
 export const inputData = {
   lastTouchStart: 0,
   lastTouchEnd: 0,
@@ -25,9 +26,30 @@ const Joystick = ({ children }) => {
   const ref = useRef<any>();
 
   useEffect(() => {
-    nippleManager = nipplejs.create({
+    const manager = nipplejs.create({
       zone: ref.current,
     });
+    setNippleManager(manager);
+  }, []);
+
+  const [nippleManager, setNippleManager] = useState<JoystickManager | null>(null);
+
+  return (
+    <NippleContext.Provider value={nippleManager}>
+      <StyledContainer
+        ref={ref}
+        onTouchStart={() => (inputData.lastTouchStart = Date.now())}
+        onTouchEnd={() => (inputData.lastTouchEnd = Date.now())}
+      >
+        {children}
+      </StyledContainer>
+    </NippleContext.Provider>
+  );
+};
+
+export const useNippleManager = () => useContext(NippleContext);
+
+export default Joystick;
   }, []);
 
   return (

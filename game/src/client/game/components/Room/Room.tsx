@@ -3,7 +3,7 @@ import { RoomDirection, roomWalls } from "../../../temp/rooms";
 import RoomWall from "./components/RoomWall/RoomWall";
 import { useBody } from "../../../physics/components/Physics/hooks";
 import { BodyShape, BodyType } from "../../../physics/bodies";
-import { Vec2 } from "planck-js";
+import { Vec2 } from "planck";
 import { COLLISION_FILTER_GROUPS } from "../../../physics/collisions/filters";
 
 const Room: React.FC = () => {

@@ -8,7 +8,7 @@ import { usePlayerControls } from "./hooks/controls";
 import { InputKeys, inputsState } from "../../../state/inputs";
 import { lerpRadians, numLerp, PI, PI_TIMES_TWO } from "../../../utils/numbers";
 import { DIAGONAL } from "../../../utils/common";
-import { Vec2 } from "planck-js";
+import { Vec2 } from "planck";
 import { usePlayerPhysics } from "./hooks/physics";
 import PlayerVisuals, {
   playerVisualState,

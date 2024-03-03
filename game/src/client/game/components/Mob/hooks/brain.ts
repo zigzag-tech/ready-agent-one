@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getMob, MobAIGoal } from "../../../../temp/ai";
 import { BodyApi } from "../../../../physics/components/Physics/hooks";
 import { playerPosition } from "../../../../state/positions";
-import { Vec2 } from "planck-js";
+import { Vec2 } from "planck";
 import { useProxy } from "valtio";
 import { getMobHealthManager } from "../../../../state/mobs";
 import {

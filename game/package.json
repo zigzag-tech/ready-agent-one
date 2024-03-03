@@ -20,7 +20,7 @@
     "hotkeys-js": "^3.13.7",
     "nipplejs": "^0.10.1",
     "ollama": "^0.4.9",
-    "planck-js": "^0.3.31",
+    "planck": "^1.0.0",
     "react": "^18",
     "react-dom": "^18.2.0",
     "react-full-screen": "^1.1.1",

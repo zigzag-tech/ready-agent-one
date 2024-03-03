@@ -13,7 +13,7 @@ import {
   workerUpdateBody,
 } from "./worker";
 import { AddBodyDef, BodyType, UpdateBodyData } from "../../bodies";
-import { Vec2 } from "planck-js";
+import { Vec2 } from "planck";
 import { useFrame } from "@react-three/fiber";
 import {
   applyPositionAngle,

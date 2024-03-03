@@ -4816,7 +4816,7 @@ __metadata:
     hotkeys-js: "npm:^3.13.7"
     nipplejs: "npm:^0.10.1"
     ollama: "npm:^0.4.9"
-    planck-js: "npm:^0.3.31"
+    planck: "npm:^1.0.0"
     react: "npm:^18"
     react-dom: "npm:^18.2.0"
     react-full-screen: "npm:^1.1.1"
@@ -8148,12 +8148,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"planck-js@npm:^0.3.31":
-  version: 0.3.31
-  resolution: "planck-js@npm:0.3.31"
+"planck@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "planck@npm:1.0.0"
   dependencies:
-    stage-js: "npm:^0.9.4"
-  checksum: 10c0/35bd96090e0f6158768d1fc4e60156cf78e9d999cd8cc6988bb8d093a244352a5ae98a925944231faaf40e94f4752dda923920944cade5f733bd5aee12cbbfb6
+    stage-js: "github:piqnt/stage.js#v1-alpha"
+  checksum: 10c0/25c6b8b652dd9e80eeec84601c2ddae376c5a02b2dcdf85ef6d06d6cb6eaa67988b8262e7efb5782e2bc0ac70ff31a97ffca33d86648225b567baff742ee68a2
   languageName: node
   linkType: hard
 
@@ -9252,10 +9252,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stage-js@npm:^0.9.4":
-  version: 0.9.5
-  resolution: "stage-js@npm:0.9.5"
-  checksum: 10c0/36c99cf297a64260d86d68acff3be4daafaa53f5b9dc02ee14bbc3a65b84e8a06e2fae49505f266b054184347a44ce9bedf1853db0671e7873b35254315be1d3
+"stage-js@github:piqnt/stage.js#v1-alpha":
+  version: 1.0.0-alpha.1
+  resolution: "stage-js@https://github.com/piqnt/stage.js.git#commit=15b1b4dee24c2b6853ec25a03db39417e5c37e1b"
+  checksum: 10c0/18ce1a3898ded70bd198accd0a220d1e160e2d9371a5bd07742e9041672bbd8d4c3a0a5d73bb0e310eabd48f26001139cea46c73d9c3e0cae3d9468e3c25982f
   languageName: node
   linkType: hard
 

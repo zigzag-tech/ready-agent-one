@@ -3,7 +3,7 @@ import {Cylinder, Sphere} from "@react-three/drei";
 import {attackColliders} from "../../../../../Player/hooks/attack";
 import {useBody} from "../../../../../../../physics/components/Physics/hooks";
 import {BodyShape, BodyType} from "../../../../../../../physics/bodies";
-import {Vec2} from "planck-js";
+import { Vec2 } from "planck";
 import {COLLISION_FILTER_GROUPS} from "../../../../../../../physics/collisions/filters";
 import {getMobHealthManager} from "../../../../../../../state/mobs";
 import {PhysicsCacheKeys} from "../../../../../../../physics/cache";

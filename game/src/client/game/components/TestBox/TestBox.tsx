@@ -4,7 +4,7 @@ import {radians} from "../../../utils/angles";
 import {Box} from "@react-three/drei";
 import {useBody} from "../../../physics/components/Physics/hooks";
 import {BodyShape, BodyType} from "../../../physics/bodies";
-import {Vec2} from "planck-js";
+import { Vec2 } from "planck";
 import {COLLISION_FILTER_GROUPS} from "../../../physics/collisions/filters";
 
 const TestBox: React.FC = () => {

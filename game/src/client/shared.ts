@@ -1,4 +1,4 @@
-import { World, Vec2, Body } from "planck-js";
+import { World, Vec2, Body } from "planck";
 
 export const planckWorld = World({
   allowSleep: true,

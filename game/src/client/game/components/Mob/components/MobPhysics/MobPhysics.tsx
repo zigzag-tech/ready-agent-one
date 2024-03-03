@@ -2,7 +2,7 @@ import React, { MutableRefObject, useCallback } from "react";
 import { Object3D } from "three";
 import { useBody } from "../../../../../physics/components/Physics/hooks";
 import { BodyShape, BodyType } from "../../../../../physics/bodies";
-import { Vec2 } from "planck-js";
+import { Vec2 } from "planck";
 import { COLLISION_FILTER_GROUPS } from "../../../../../physics/collisions/filters";
 import { FixtureType } from "../../../../../physics/collisions/types";
 import { updateMob } from "../../../../../temp/ai";

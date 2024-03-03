@@ -2,7 +2,7 @@ import React, {Suspense, useEffect} from "react"
 import Wall from "../../../3d/models/Wall/Wall";
 import {useBody} from "../../../physics/components/Physics/hooks";
 import {BodyShape, BodyType} from "../../../physics/bodies";
-import {Vec2} from "planck-js";
+import { Vec2 } from "planck";
 import {COLLISION_FILTER_GROUPS} from "../../../physics/collisions/filters";
 import WallMesh from "../../../3d/components/WallMesh/WallMesh";
 import WallCornerMesh from "../../../3d/components/WallCornerMesh/WallCornerMesh";

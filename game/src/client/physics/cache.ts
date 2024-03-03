@@ -1,4 +1,4 @@
-import { Body } from "planck-js";
+import { Body } from "planck";
 
 export enum PhysicsCacheKeys {
   PUNCH = "PUNCH",

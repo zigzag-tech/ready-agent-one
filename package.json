@@ -2,8 +2,9 @@
   "name": "echoes-of-sentience-root",
   "version": "1.0.0",
   "description": "",
+  "packageManager": "yarn@4.1.0",
   "scripts": {
-    "dev": "NODE_OPTIONS='-r dotenv/config' ts-node src/server/index.ts"
+    "dev": "yarn workspace echoes-of-sentience dev"
   },
   "author": "",
   "license": "MIT",

@@ -5,7 +5,9 @@
   "packageManager": "yarn@4.1.0",
   "scripts": {
     "dev": "yarn workspace echoes-of-sentience dev",
-    "postinstall": "preconstruct dev"
+    "postinstall": "preconstruct dev",
+    "sync": "git submodule sync && git submodule update --init --recursive",
+    "preinstall": "yarn sync"
   },
   "type": "module",
   "author": "",

@@ -76,25 +76,34 @@ const GameUI: React.FC = () => {
     }, [])
 
     return (
-        <StyledWrapper>
-            <StatsUI/>
-            <StyledContainer>
-                {/*<StyledAttackButton onMouseDown={onPunchMouseDown} onMouseUp={onPunchMouseUp}*/}
-                {/*                    onTouchStart={onPunchMouseDown} onTouchEnd={onPunchMouseUp}>*/}
-                {/*    <GiPunch size={60}/>*/}
-                {/*</StyledAttackButton>*/}
-                <StyledButtons>
-                    <StyledAttackButton onMouseDown={onRechargeMouseDown} onMouseUp={onRechargeMouseUp}
-                                        onTouchStart={onRechargeMouseDown} onTouchEnd={onRechargeMouseUp} disabled={!canRecharge}>
-                        <GiPrayer size={60}/>
-                    </StyledAttackButton>
-                    {/*<StyledAttackButton onMouseDown={onRunMouseDown} onMouseUp={onRunMouseUp}*/}
-                    {/*                    onTouchStart={onRunMouseDown} onTouchEnd={onRunMouseUp}>*/}
-                    {/*    <GiRun size={60}/>*/}
-                    {/*</StyledAttackButton>*/}
-                </StyledButtons>
-            </StyledContainer>
-        </StyledWrapper>
+      <StyledWrapper>
+        <StatsUI />
+        <StyledContainer>
+          <StyledAttackButton
+            onMouseDown={onPunchMouseDown}
+            onMouseUp={onPunchMouseUp}
+            onTouchStart={onPunchMouseDown}
+            onTouchEnd={onPunchMouseUp}
+          >
+            <GiPunch size={60} />
+          </StyledAttackButton>
+          <StyledButtons>
+            <StyledAttackButton
+              onMouseDown={onRechargeMouseDown}
+              onMouseUp={onRechargeMouseUp}
+              onTouchStart={onRechargeMouseDown}
+              onTouchEnd={onRechargeMouseUp}
+              disabled={!canRecharge}
+            >
+              <GiPrayer size={60} />
+            </StyledAttackButton>
+            {/*<StyledAttackButton onMouseDown={onRunMouseDown} onMouseUp={onRunMouseUp}*/}
+            {/*                    onTouchStart={onRunMouseDown} onTouchEnd={onRunMouseUp}>*/}
+            {/*    <GiRun size={60}/>*/}
+            {/*</StyledAttackButton>*/}
+          </StyledButtons>
+        </StyledContainer>
+      </StyledWrapper>
     );
 };
 

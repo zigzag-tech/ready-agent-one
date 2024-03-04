@@ -11,7 +11,7 @@ import {
   WorkerOwnerMessageType,
 } from "../../../workers/physics/types";
 
-const Physics = ({ children }) => {
+const Physics = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const loop = () => {
       if (

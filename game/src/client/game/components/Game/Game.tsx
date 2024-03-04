@@ -5,7 +5,6 @@ import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
 import Player from "../Player/Player";
 import Joystick from "../Joystick/Joystick";
-import { NippleContext } from "../Joystick/Joystick";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import Lights from "../Lights/Lights";
 import Camera from "../Camera/Camera";
@@ -17,7 +16,8 @@ import Room from "../Room/Room";
 import GameAI from "./components/GameAI/GameAI";
 import MobsManager from "../MobsManager/MobsManager";
 import AttackUIContainer from "./components/AttackUIContainer/AttackUIContainer";
-import PhysWall from "../PhysWall/PhysWall";
+import { LiveJob } from "./LiveJob";
+import { LiveJobUI } from "./LiveJobUI";
 
 export const STATS_CSS_CLASS = "stats";
 
@@ -36,25 +36,29 @@ const Game: React.FC = () => {
   return (
     <FullScreen handle={handle} className="fullscreen-container">
       <StyledContainer>
-        <Joystick>
-          <Canvas shadows>
-            <GameAI />
-            <Physics>
-              <Camera />
-              <Lights />
-              <Floor />
-              <Player />
-              {/*<OldMob/>*/}
-              <MobsManager />
-              <AttackColliders />
-              <Stats className={STATS_CSS_CLASS} />
-              <Room />
-              {/* <PhysWall /> */}
-              {/*<TestBox/>*/}
-            </Physics>
-          </Canvas>
-        </Joystick>
+        <LiveJob>
+          <Joystick>
+            <Canvas shadows>
+              <GameAI />
+              <Physics>
+                <Camera />
+                <Lights />
+                <Floor />
+                <Player />
+                {/*<OldMob/>*/}
+                <MobsManager />
+                <AttackColliders />
+                <Stats className={STATS_CSS_CLASS} />
+                <Room />
+                {/* <PhysWall /> */}
+                {/*<TestBox/>*/}
+              </Physics>
+            </Canvas>
+          </Joystick>
+        </LiveJob>
         <GameUI />
+        <LiveJobUI />
+
         <AttackUIContainer />
       </StyledContainer>
     </FullScreen>
@@ -62,3 +66,4 @@ const Game: React.FC = () => {
 };
 
 export default Game;
+

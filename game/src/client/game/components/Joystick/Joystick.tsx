@@ -28,7 +28,7 @@ export const inputData = {
   lastTouchEnd: 0,
 };
 
-const Joystick = ({ children }) => {
+const Joystick = ({ children }: { children: React.ReactNode }) => {
   const ref = useRef<any>();
 
   useEffect(() => {

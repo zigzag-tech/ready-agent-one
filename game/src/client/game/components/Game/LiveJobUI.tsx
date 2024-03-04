@@ -2,6 +2,14 @@ import React from "react";
 import { useInput, useOutput } from "@livestack/client/src";
 import { EventResponseZ, GameEventZ } from "../../../../common/game";
 import { LiveJobContext } from "./LiveJob";
+import styled from "styled-components";
+
+const LiveJobUIStyled = styled.div`
+  z-index: 100;
+  position: fixed;
+  top: 0;
+  right: 0;
+`;
 
 export function LiveJobUI() {
   const job = React.useContext(LiveJobContext).mainJob;
@@ -15,7 +23,7 @@ export function LiveJobUI() {
   });
   const { feed } = useInput({ tag: "default", def: GameEventZ, job });
   return (
-    <div className="App">
+    <LiveJobUIStyled>
       <button
         onClick={() =>
           feed({ eventType: "player-move", fromX: 1, fromY: 1, x: -1, y: 0 })
@@ -27,6 +35,6 @@ export function LiveJobUI() {
         Player Attack
       </button>
       <div>{playerResponse?.data.response}</div>
-    </div>
+    </LiveJobUIStyled>
   );
 }

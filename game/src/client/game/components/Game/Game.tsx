@@ -34,9 +34,9 @@ const Game: React.FC = () => {
   const { active, enter } = handle;
 
   return (
-    <FullScreen handle={handle} className="fullscreen-container">
-      <StyledContainer>
-        <LiveJob>
+    <LiveJob>
+      <FullScreen handle={handle} className="fullscreen-container">
+        <StyledContainer>
           <Joystick>
             <Canvas shadows>
               <GameAI />
@@ -55,13 +55,13 @@ const Game: React.FC = () => {
               </Physics>
             </Canvas>
           </Joystick>
-        </LiveJob>
-        <GameUI />
-        <LiveJobUI />
+          <GameUI />
 
-        <AttackUIContainer />
-      </StyledContainer>
-    </FullScreen>
+          <AttackUIContainer />
+        </StyledContainer>
+      </FullScreen>
+      <LiveJobUI />
+    </LiveJob>
   );
 };
 

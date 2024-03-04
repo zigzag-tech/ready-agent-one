@@ -83,6 +83,7 @@ export default function Demon({
   const [mixer] = useState(() => new AnimationMixer(nodes.Demon001));
   useFrame((state, delta) => mixer.update(delta));
   useEffect(() => {
+    if (!group.current) return;
     actions.current = {
       Bite_Front: mixer.clipAction(animations[0], group.current),
       Bite_InPlace: mixer.clipAction(animations[1], group.current),

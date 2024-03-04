@@ -6,14 +6,12 @@ import React, {
   useState,
 } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { gameRefs } from "../../../state/refs";
-import { DirectionalLightShadow, Object3D, Vector3 } from "three";
+import * as THREE from "three";
 import { cameraPosition, playerPosition } from "../../../state/positions";
 import { numLerp } from "../../../utils/numbers";
 
 import { useEnemiesInRange, usePlayerHasTarget } from "../../../state/player";
 import { useIsPortrait } from "../../../utils/responsive";
-
 const data = {
   atRest: true,
   atRestTimestamp: 0,
@@ -52,7 +50,7 @@ const Camera: React.FC = () => {
   const [shadowLeft, shadowRight, shadowTop, shadowBottom] =
     useCameraShadowBounds(portrait);
 
-  useEffect(() => void set({ camera: ref.current }), []);
+  useEffect(() => set({ camera: ref.current }), []);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -64,8 +62,15 @@ const Camera: React.FC = () => {
     light.target.position.x = camera.position.x;
     light.target.position.y = camera.position.y;
     light.target.position.z = camera.position.z;
-    light.target.updateMatrixWorld();
   }, []);
+
+  const viewport = useThree((state) => state.viewport);
+
+  useLayoutEffect(() => {
+    const camera = ref.current;
+    camera.aspect = viewport.width / viewport.height;
+    camera.updateProjectionMatrix();
+  }, [viewport]);
 
   useFrame(() => {
     if (!ref.current) return;
@@ -154,30 +159,30 @@ const Camera: React.FC = () => {
         }
       }
     }
-    camera.updateProjectionMatrix();
   });
 
-  // const s = useMemo(() => {
-  //   const s = new DirectionalLightShadow();
-  //   s.camera.left = shadowLeft;
-  //   s.camera.right = shadowRight;
-  //   s.camera.top = shadowTop;
-  //   s.camera.bottom = shadowBottom;
-  //   return s;
-  // }, [shadowLeft, shadowRight, shadowTop, shadowBottom]);
+  useEffect(() => {
+    if (!lightRef.current) {
+      return;
+    }
+    lightRef.current.shadow.camera.left = shadowLeft;
+    lightRef.current.shadow.camera.right = shadowRight;
+    lightRef.current.shadow.camera.top = shadowTop;
+    lightRef.current.shadow.camera.bottom = shadowBottom;
+  }, [lightRef.current]);
 
   return (
     <>
       <perspectiveCamera
         ref={ref}
-        fov={11}
+        fov={10}
         position={[-cameraXOffset, cameraYOffset, -cameraZOffset]}
         near={100}
         far={250}
       >
         <directionalLight
           ref={lightRef}
-          intensity={20}
+          intensity={10}
           position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
           castShadow
         />

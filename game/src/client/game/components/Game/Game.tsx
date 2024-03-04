@@ -38,7 +38,7 @@ const Game: React.FC = () => {
       <FullScreen handle={handle} className="fullscreen-container">
         <StyledContainer>
           <Joystick>
-            <Canvas shadows>
+            <Canvas shadows dpr={[1, 1.2]}>
               <GameAI />
               <Physics>
                 <Camera />

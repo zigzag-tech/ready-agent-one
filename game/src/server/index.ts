@@ -8,12 +8,13 @@ const { ZZEnv, JobSpec } = pkg;
 const { initJobBinding } = gatewayPkg;
 const app = express();
 
-const zzEnv = new ZZEnv({
-  projectId: GAME_SPEC_NAME + new Date().getTime(),
-});
+ZZEnv.setGlobal(
+  new ZZEnv({
+    projectId: GAME_SPEC_NAME + new Date().getTime(),
+  })
+);
 
 const gameSpec = JobSpec.define({
-  zzEnv,
   name: GAME_SPEC_NAME,
   input: GameEventZ,
   output: EventResponseZ,
@@ -105,7 +106,6 @@ const server = ViteExpress.listen(app, PORT, () =>
 );
 
 initJobBinding({
-  zzEnv,
   httpServer: server,
   allowedSpecsForBinding: [gameSpec],
 });

@@ -19,9 +19,7 @@
   ],
   "preconstruct": {
     "packages": [
-      "livestack/packages/*",
-      "cloud-dashboard",
-      "example-projects/rag-chatbot"
+      "livestack/packages/*"
     ]
   },
   "devDependencies": {

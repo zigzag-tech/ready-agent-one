@@ -110,4 +110,3 @@ initJobBinding({
   allowedSpecsForBinding: [gameSpec],
 });
 
-var exports = {};

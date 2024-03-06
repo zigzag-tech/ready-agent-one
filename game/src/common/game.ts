@@ -38,6 +38,11 @@ export const GameEventZ = z.union([
       z.literal("boss-dies"),
     ]),
   }),
+  z.object({
+    eventType: z.literal("player-health"),
+    health: z.number(),
+    prevHealth: z.number(),
+  }),
 ]);
 
 export const EventResponseZ = z.object({

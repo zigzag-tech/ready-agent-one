@@ -232,28 +232,28 @@ export default function Knight({
         castShadow
         material={armorDarkMaterial}
         object={nodes["Cube004_1"]}
-        // skeleton={nodes["Cube.004_1"].skeleton}
+        // skeleton={nodes["Cube004_1"].skeleton}
       />
       <primitive
         receiveShadow
         castShadow
         material={armorDarkMaterial}
         object={nodes["Cube004_2"]}
-        // skeleton={nodes["Cube.004_2"].skeleton}
+        // skeleton={nodes["Cube004_2"].skeleton}
       />
       <primitive
         receiveShadow
         castShadow
         material={armorMaterial}
         object={nodes["Cube004_3"]}
-        // skeleton={nodes["Cube.004_3"].skeleton}
+        // skeleton={nodes["Cube004_3"].skeleton}
       />
       <primitive
         receiveShadow
         castShadow
         material={armorMaterial}
         object={nodes["Cube004_4"]}
-        // skeleton={nodes["Cube.004_4"].skeleton}
+        // skeleton={nodes["Cube004_4"].skeleton}
       />
     </group>
   );

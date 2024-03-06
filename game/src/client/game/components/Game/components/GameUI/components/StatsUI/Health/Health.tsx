@@ -47,6 +47,7 @@ const StyledHeartFg = styled.div<{
 
 const Health: React.FC = () => {
   const healthProxy = useSnapshot(playerHealth);
+
   return (
     <StyledContainer>
       <StyledHeartsContainer>

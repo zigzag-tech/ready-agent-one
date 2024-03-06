@@ -63,7 +63,7 @@ const gameWorker = gameSpec.defineWorker({
             response: `I just moved ${movement}`,
           });
           break;
-        case "player-attack":
+        case "player-attack": {
           const response = await ollama.chat({
             model: "mistral",
             messages: [
@@ -78,6 +78,7 @@ const gameWorker = gameSpec.defineWorker({
             response: response.message.content,
           });
           break;
+        }
         case "player-hurt":
           output.emit({
             response: "Ouch! That hurt!",
@@ -93,10 +94,55 @@ const gameWorker = gameSpec.defineWorker({
             response: "YAY I won!",
           });
           break;
+
+        case "player-health": {
+          const response = await healthTemp(data);
+          output.emit({
+            response,
+          });
+          break;
+        }
       }
     }
   },
 });
+
+async function healthTemp({
+  health,
+  prevHealth,
+}: {
+  health: number;
+  prevHealth: number;
+}) {
+  const prompt = `
+  You are a commentator for a real time game. Your job is to write one-line humorous quib about the current situation, given some state about the game.
+
+  CURRENT STATE:
+  {
+    playerName: "horn",
+    playerHealth: ${health} / 4, (0: dead, 4: full health)
+    previousHealth: ${prevHealth}
+  }
+
+  Write a one line quib about the current situation with no more than 7 words.
+
+  ONE LINE:
+  `;
+  const response = await ollama.chat({
+    options: {
+      temperature: 0.5,
+    },
+    model: "mistral",
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  });
+
+  return response.message.content;
+}
 
 gameWorker.startWorker();
 

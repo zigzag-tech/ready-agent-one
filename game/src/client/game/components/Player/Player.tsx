@@ -431,7 +431,7 @@ const Player: React.FC = () => {
 
     gl.render(scene, camera);
   }, 100);
-  const job2 = React.useContext(LiveJobContext).poemJob1;
+  const job2 = React.useContext(LiveJobContext).poemJob2;
   if (!job2) return null;
   const resp = useOutput({
     tag: "default",

@@ -18,9 +18,11 @@ export function LiveJob({ children }: { children: React.ReactNode }) {
 
   const poemJob1 = useJobBinding({
     specName: POEM_SPEC_NAME,
+    uniqueSpecLabel: "poem1",
   });
   const poemJob2 = useJobBinding({
     specName: POEM_SPEC_NAME,
+    uniqueSpecLabel: "poem2",
   });
 
   return (

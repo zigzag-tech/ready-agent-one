@@ -2624,8 +2624,8 @@ __metadata:
   linkType: hard
 
 "@react-three/drei@npm:^9.99.5":
-  version: 9.99.5
-  resolution: "@react-three/drei@npm:9.99.5"
+  version: 9.99.7
+  resolution: "@react-three/drei@npm:9.99.7"
   dependencies:
     "@babel/runtime": "npm:^7.11.2"
     "@mediapipe/tasks-vision": "npm:0.10.8"
@@ -2656,13 +2656,13 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 10c0/622e297dcf286423300a6ebe09f9ae4a0604fe88042935fa8bc8858f70f6861dadab769ae40d27d5acfe5b8fb17fea158dece179c96bc03ceee7328aa3cbcdc6
+  checksum: 10c0/7228802faa9944cbbe67f614f683770b6856f75ae5ce4c5505ab0e1876244d6e424f6330d588ee3dda4627d2ce2b1af1f292b47c6c23908cd634b804d9370863
   languageName: node
   linkType: hard
 
 "@react-three/fiber@npm:^8.15.16":
-  version: 8.15.16
-  resolution: "@react-three/fiber@npm:8.15.16"
+  version: 8.15.19
+  resolution: "@react-three/fiber@npm:8.15.19"
   dependencies:
     "@babel/runtime": "npm:^7.17.8"
     "@types/react-reconciler": "npm:^0.26.7"
@@ -2697,7 +2697,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10c0/2dc34cf7b7a581b93d4bc05b5fb0f4d16949aadc4f722cef61885da8e3b7bfe6cc63166b9c439caee72d6c65529c60ed499c9a12e1338571f17d66e8ae687beb
+  checksum: 10c0/2923e6a56dd3578652d9063ba8a13f27b172224374e74afbd4f838ae8f39b9192c954223021e5ca469ff35d18af776b5e8d1980282ddaa072dc6d162e5acf114
   languageName: node
   linkType: hard
 
@@ -3282,11 +3282,11 @@ __metadata:
   linkType: hard
 
 "@types/react-dom@npm:^18":
-  version: 18.2.19
-  resolution: "@types/react-dom@npm:18.2.19"
+  version: 18.2.20
+  resolution: "@types/react-dom@npm:18.2.20"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/88d7c6daa4659f661d0c97985d9fca492f24b421a34bb614dcd94c343aed7bea121463149e97fb01ecaa693be17b7d1542cf71ddb1705f3889a81eb2639a88aa
+  checksum: 10c0/d352fb9c4fbb773f1db1e463b0228dfb0dc0a670a742983ae840d77f54ad9d4ac38084b23c975487fc37814f44425fc6d1adafbb432a7c48957669c124b5f8df
   languageName: node
   linkType: hard
 
@@ -3309,13 +3309,13 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:*, @types/react@npm:^18":
-  version: 18.2.61
-  resolution: "@types/react@npm:18.2.61"
+  version: 18.2.63
+  resolution: "@types/react@npm:18.2.63"
   dependencies:
     "@types/prop-types": "npm:*"
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/a03fbb6ca8108bbccf12ac616e77e1457ae9324040c4a5d1293caaa62c187300b4eb38ec78c4724fb43d40d4c6fb909803db057c8b69ae441e2aab7b2acdc29a
+  checksum: 10c0/53d86727b966a3ba097553b5ef75a1f2bea78bd8c54ebcf6d00bd338000112b208ab30536c8c0a9f5fc61055cc3fbabbc7a23910c55092341602845de4c13714
   languageName: node
   linkType: hard
 
@@ -4160,9 +4160,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001587":
-  version: 1.0.30001591
-  resolution: "caniuse-lite@npm:1.0.30001591"
-  checksum: 10c0/21937d341c3d75994504db21340f65573a1e847a8ab33ee4964ed493994d6552864c494ba144485459abd9c711c75c0708bc9fa19f2bff525bff75ffb0a42c3b
+  version: 1.0.30001594
+  resolution: "caniuse-lite@npm:1.0.30001594"
+  checksum: 10c0/738b4ea8b12f040baafe5fe4c63f16f27c10334e0a36cc9786811b781a92c749523abc88cf20a4f4f9da0413e1c13b0482ee8e8b7398a3554742fba036b8ed91
   languageName: node
   linkType: hard
 
@@ -4852,9 +4852,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.690
-  resolution: "electron-to-chromium@npm:1.4.690"
-  checksum: 10c0/fba87387968bac5ac55161dc176e55d92a54146ae1e5fb16c3fdd5bf4f250ce6f271713659c0cdfa7fc0fd9a9ea1a79803f266fa2b936535b208c0759a4d3983
+  version: 1.4.693
+  resolution: "electron-to-chromium@npm:1.4.693"
+  checksum: 10c0/776014c015d3c326a357d3e9a2d007ad771d0ba0a70156d21fcc09fb68f5dad5e318b4ecf5bfdf0daa2805c126e5dc20da6da66bcd56331376e95c6b051fe088
   languageName: node
   linkType: hard
 
@@ -7292,11 +7292,11 @@ __metadata:
   linkType: hard
 
 "magic-string@npm:^0.30.0":
-  version: 0.30.7
-  resolution: "magic-string@npm:0.30.7"
+  version: 0.30.8
+  resolution: "magic-string@npm:0.30.8"
   dependencies:
     "@jridgewell/sourcemap-codec": "npm:^1.4.15"
-  checksum: 10c0/d1d949f7a53c37c6e685f4ea7b2b151c2fe0cc5af8f1f979ecba916f7d60d58f35309aaf4c8b09ce1aef7c160b957be39a38b52b478a91650750931e4ddd5daf
+  checksum: 10c0/51a1f06f678c082aceddfb5943de9b6bdb88f2ea1385a1c2adf116deb73dfcfa50df6c222901d691b529455222d4d68d0b28be5689ac6f69b3baa3462861f922
   languageName: node
   linkType: hard
 
@@ -9600,8 +9600,8 @@ __metadata:
   linkType: hard
 
 "three-stdlib@npm:^2.29.4":
-  version: 2.29.4
-  resolution: "three-stdlib@npm:2.29.4"
+  version: 2.29.5
+  resolution: "three-stdlib@npm:2.29.5"
   dependencies:
     "@types/draco3d": "npm:^1.4.0"
     "@types/offscreencanvas": "npm:^2019.6.4"
@@ -9611,7 +9611,7 @@ __metadata:
     potpack: "npm:^1.0.1"
   peerDependencies:
     three: ">=0.128.0"
-  checksum: 10c0/8ec598e7e98225ff7b1b02167f78c59b601a9ecebdd4915a7e77f4d52aa274a9c307ad50d1002db356efcdd3f940fe83c1d448c1a93deee5839eb79498828c68
+  checksum: 10c0/2f088b12b62eac2784177f28a764bff0329b1f7822512a45f56429757c6a30f395cbfab6108a06ccb74d4721cc8da86f078b6ad7ab95ad2539b13efee79bd173
   languageName: node
   linkType: hard
 
@@ -10188,8 +10188,8 @@ __metadata:
   linkType: hard
 
 "vite@npm:^5.0.12":
-  version: 5.1.4
-  resolution: "vite@npm:5.1.4"
+  version: 5.1.5
+  resolution: "vite@npm:5.1.5"
   dependencies:
     esbuild: "npm:^0.19.3"
     fsevents: "npm:~2.3.3"
@@ -10223,7 +10223,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/8f04c8bed33f266bde27f432412456a3b893b51fe1857f0b8cd259100b376c1393a7927db1dd6344a4376baed72ed179ec5b0428aef2ae8508f1f28f95acb908
+  checksum: 10c0/29be99ba0bec5e3ad50290510ba764b6c1016979a1ba70cf2071be9f1338f27e582a120836222e1fad6efb01c886a8fb57cb33471fadd0fceaa922bfc92bbbf7
   languageName: node
   linkType: hard
 
@@ -10296,7 +10296,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"winston-transport@npm:^4.5.0":
+"winston-transport@npm:^4.7.0":
   version: 4.7.0
   resolution: "winston-transport@npm:4.7.0"
   dependencies:
@@ -10308,8 +10308,8 @@ __metadata:
   linkType: hard
 
 "winston@npm:^3.x":
-  version: 3.11.0
-  resolution: "winston@npm:3.11.0"
+  version: 3.12.0
+  resolution: "winston@npm:3.12.0"
   dependencies:
     "@colors/colors": "npm:^1.6.0"
     "@dabh/diagnostics": "npm:^2.0.2"
@@ -10321,8 +10321,8 @@ __metadata:
     safe-stable-stringify: "npm:^2.3.1"
     stack-trace: "npm:0.0.x"
     triple-beam: "npm:^1.3.0"
-    winston-transport: "npm:^4.5.0"
-  checksum: 10c0/7e1f8919cbdc62cfe46e6204d79a83e1364696ef61111483f3ecf204988922383fe74192c5bc9f89df9b47caf24c2d34f5420ef6f3b693f8d1286b46432e97be
+    winston-transport: "npm:^4.7.0"
+  checksum: 10c0/f86e4eebc409bcdfcda7cd2b262f2be81c21715c6222381b94bb48795b881da4ed54e060fa57824c7df2bf0d2bd2a04fc9cc061070a8f2cdbfc39951a85a3fa8
   languageName: node
   linkType: hard
 

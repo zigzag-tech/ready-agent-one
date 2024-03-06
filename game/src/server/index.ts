@@ -2,11 +2,19 @@ import pkg from "@livestack/core";
 import express from "express";
 import ViteExpress from "vite-express";
 import gatewayPkg from "@livestack/gateway";
-import { EventResponseZ, GAME_SPEC_NAME, GameEventZ } from "../common/game";
+import {
+  EventResponseZ,
+  GAME_SPEC_NAME,
+  GameEventZ,
+  POEM_SPEC_NAME,
+} from "../common/game";
 import ollama from "ollama";
+import { z } from "zod";
 const { ZZEnv, JobSpec } = pkg;
 const { initJobBinding } = gatewayPkg;
 const app = express();
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 ZZEnv.setGlobal(
   new ZZEnv({
@@ -107,6 +115,39 @@ const gameWorker = gameSpec.defineWorker({
   },
 });
 
+const poemSpec = JobSpec.define({
+  name: POEM_SPEC_NAME,
+  // input: z.object({
+  //   prompt: z.string(),
+  // }),
+  output: z.object({
+    poem: z.string(),
+  }),
+});
+
+const fakePoemWorker = poemSpec.defineWorker({
+  processor: async ({ output }) => {
+    while (true) {
+      const response = await ollama.chat({
+        model: "mistral",
+        messages: [
+          {
+            role: "user",
+            content: `
+            Write a two-line short poem, as an NPC character that cheers on  the action of the player.
+            `,
+          },
+        ],
+      });
+
+      await output.emit({
+        poem: response.message.content,
+      });
+      await sleep(5000);
+    }
+  },
+});
+
 async function healthTemp({
   health,
   prevHealth,
@@ -145,6 +186,8 @@ async function healthTemp({
 }
 
 gameWorker.startWorker();
+fakePoemWorker.startWorker();
+fakePoemWorker.startWorker();
 
 const PORT = 3000;
 const server = ViteExpress.listen(app, PORT, () =>
@@ -153,6 +196,6 @@ const server = ViteExpress.listen(app, PORT, () =>
 
 initJobBinding({
   httpServer: server,
-  allowedSpecsForBinding: [gameSpec],
+  allowedSpecsForBinding: [gameSpec, poemSpec],
 });
 

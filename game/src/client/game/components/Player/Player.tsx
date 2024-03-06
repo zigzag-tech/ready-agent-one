@@ -33,6 +33,9 @@ import {
   attackStateProxy,
 } from "../Game/components/AttackUIContainer/components/AttackUI/AttackUI";
 import { Html } from "@react-three/drei";
+import { useOutput } from "@livestack/client/src";
+import { z } from "zod";
+import { LiveJobContext } from "../Game/LiveJob";
 
 export const coroutine = (f: any, params: any[] = []) => {
   const o = f(...params); // instantiate the coroutine
@@ -428,6 +431,15 @@ const Player: React.FC = () => {
 
     gl.render(scene, camera);
   }, 100);
+  const job2 = React.useContext(LiveJobContext).poemJob1;
+  if (!job2) return null;
+  const resp = useOutput({
+    tag: "default",
+    job: job2,
+    def: z.object({
+      poem: z.string(),
+    }),
+  });
 
   return (
     <>
@@ -447,9 +459,12 @@ const Player: React.FC = () => {
               borderRadius: "10px",
               border: "1px solid black",
               color: "black",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <p>Hey there! I'm the playa!</p>
+            {resp?.data.poem}
           </div>
         </Html>
         <PlayerVisuals />

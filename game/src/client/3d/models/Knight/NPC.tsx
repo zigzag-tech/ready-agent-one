@@ -1,8 +1,22 @@
 import { GroupProps } from "@react-three/fiber";
 import NPCCharacter from "./NPCCharacter";
 import { Html, Hud } from "@react-three/drei";
+import { useOutput } from "@livestack/client/src";
+import { LiveJobContext } from "../../../game/components/Game/LiveJob";
+import React from "react";
+import { z } from "zod";
 export function NPC({ ...props }: GroupProps) {
   const position = [0, 0, 3] as [number, number, number];
+  const job1 = React.useContext(LiveJobContext).poemJob1;
+  if (!job1) return null;
+
+  const resp = useOutput({
+    tag: "default",
+    job: job1,
+    def: z.object({
+      poem: z.string(),
+    }),
+  });
   return (
     <group position={position} rotation={[0, Math.PI, 0]} {...props}>
       {/* <Hud> */}
@@ -21,12 +35,14 @@ export function NPC({ ...props }: GroupProps) {
             borderRadius: "10px",
             border: "1px solid black",
             color: "black",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <p>Hey there! I'm an NPC!</p>
+          {resp?.data.poem}
         </div>
       </Html>
-      {/* </Hud> */}
       <NPCCharacter
         lastAttack={0}
         lastDamaged={0}

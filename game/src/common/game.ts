@@ -49,3 +49,4 @@ export const EventResponseZ = z.object({
   response: z.string(),
 });
 export const GAME_SPEC_NAME = "live-game-one";
+export const POEM_SPEC_NAME = "poem-one";

@@ -32,7 +32,6 @@
     "valtio": "^1.13.2",
     "vite": "^5.0.12",
     "vite-express": "^0.14.0",
-    "worker-loader": "^3.0.8",
     "zod": "^3.22.4"
   },
   "devDependencies": {

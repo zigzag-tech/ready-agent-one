@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "NODE_OPTIONS='-r dotenv/config' node --loader ts-node/esm src/server/index.ts"
+    "dev": "NODE_OPTIONS='-r dotenv/config' node --loader ts-node/esm src/server/index.ts",
+    "test": "NODE_OPTIONS='-r dotenv/config' node --loader ts-node/esm src/server/conversationWorkers.test.ts"
   },
   "author": "",
   "license": "MIT",

@@ -20,7 +20,7 @@ export const playerWorker = playerWorkerSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const data of input) {
       const response = await generateResponse(
-        `You are a game player. You will receive an input prompt and you need to respond to it. If you think the conversation is going nowhere, you can reply "quit" to end the conversation.
+        `You are a game player. You will receive an input prompt and you need to respond to it. Keep the response under 20 words. If you think the conversation is going nowhere, you can reply "quit" to end the conversation.
 INPUT PROMPT: ${data}`
       );
       if (!response.includes("quit")) {
@@ -34,7 +34,7 @@ export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const data of input) {
       const response = await generateResponse(
-        `You are a non-player character. You will receive an input prompt from the player and you need to respond to it. Make sure to respond in a way that can keep the game going.
+        `You are a non-player character. You will receive an input prompt from the player and you need to respond to it. Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
 INPUT PROMPT: ${data}`
       );
       output.emit(response);

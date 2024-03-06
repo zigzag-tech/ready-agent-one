@@ -1,7 +1,7 @@
 import pkg from "@livestack/core";
 import ollama from "ollama";
 import { z } from "zod";
-const { ZZEnv, JobSpec } = pkg;
+const { ZZEnv, JobSpec, Workflow, conn, expose } = pkg;
 
 const stringZ = z.string();
 
@@ -14,6 +14,49 @@ export const npcWorkerSpec = JobSpec.define({
   name: "NPC_WORKER",
   input: stringZ,
   output: stringZ,
+});
+
+export const workflow = Workflow.define({
+  name: "conversation",
+  exposures: [
+    expose({
+      spec: playerWorkerSpec,
+      input: {
+        default: "player-input",
+      },
+      output: {
+        default: "player-talk",
+      },
+    }),
+    expose({
+      spec: npcWorkerSpec,
+      // input: {
+      //   default: "npc-input",
+      // },
+      output: {
+        default: "npc-talk",
+      },
+    }),
+  ],
+
+  connections: [
+    conn({
+      from: {
+        spec: playerWorkerSpec,
+      },
+      to: {
+        spec: npcWorkerSpec,
+      },
+    }),
+    conn({
+      from: {
+        spec: npcWorkerSpec,
+      },
+      to: {
+        spec: playerWorkerSpec,
+      },
+    }),
+  ],
 });
 
 export const playerWorker = playerWorkerSpec.defineWorker({

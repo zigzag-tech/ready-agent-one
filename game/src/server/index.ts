@@ -130,7 +130,7 @@ const fakePoemWorker = poemSpec.defineWorker({
   processor: async ({ output }) => {
     while (true) {
       const response = await ollama.chat({
-        model: "mistral",
+        model: "zephyr",
         messages: [
           {
             role: "user",
@@ -174,7 +174,7 @@ async function healthTemp({
     options: {
       temperature: 0.5,
     },
-    model: "mistral",
+    model: "zephyr",
     messages: [
       {
         role: "user",

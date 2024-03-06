@@ -90,7 +90,7 @@ async function generateResponse(prompt: string) {
     options: {
       temperature: 0.5,
     },
-    model: "mistral",
+    model: "zephyr",
     messages: [
       {
         role: "user",

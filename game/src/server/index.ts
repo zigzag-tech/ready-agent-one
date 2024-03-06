@@ -74,7 +74,7 @@ const gameWorker = gameSpec.defineWorker({
           break;
         case "player-attack": {
           const response = await ollama.chat({
-            model: "mistral",
+            model: "zephyr",
             messages: [
               {
                 role: "user",

@@ -64,7 +64,10 @@ export const playerWorker = playerWorkerSpec.defineWorker({
     for await (const data of input) {
       const response = await generateResponse(
         `You are a game player. You will receive an input prompt and you need to respond to it. Keep the response under 20 words. If you think the conversation is going nowhere, you can reply "quit" to end the conversation.
-INPUT PROMPT: ${data}`
+INPUT PROMPT: ${data}
+
+ONE-LINE RESPONSE:
+`
       );
       if (!response.includes("quit")) {
         output.emit(response);
@@ -78,7 +81,10 @@ export const npcWorker = npcWorkerSpec.defineWorker({
     for await (const data of input) {
       const response = await generateResponse(
         `You are a non-player character. You will receive an input prompt from the player and you need to respond to it. Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
-INPUT PROMPT: ${data}`
+INPUT PROMPT: ${data}
+
+ONE-LINE RESPONSE:
+`
       );
       output.emit(response);
     }
@@ -88,9 +94,10 @@ INPUT PROMPT: ${data}`
 async function generateResponse(prompt: string) {
   const response = await ollama.chat({
     options: {
-      temperature: 0.5,
+      temperature: 0.3,
     },
-    model: "zephyr",
+    stream: true,
+    model: "mistral",
     messages: [
       {
         role: "user",
@@ -98,6 +105,11 @@ async function generateResponse(prompt: string) {
       },
     ],
   });
+  let message = "";
+  for await (const part of response) {
+    process.stdout.write(part.message.content);
+    message += part.message.content;
+  }
 
-  return response.message.content;
+  return message;
 }

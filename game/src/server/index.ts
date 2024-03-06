@@ -74,7 +74,7 @@ const gameWorker = gameSpec.defineWorker({
           break;
         case "player-attack": {
           const response = await ollama.chat({
-            model: "zephyr",
+            model: "mistral",
             messages: [
               {
                 role: "user",
@@ -130,7 +130,7 @@ const fakePoemWorker = poemSpec.defineWorker({
   processor: async ({ output }) => {
     while (true) {
       const response = await ollama.chat({
-        model: "zephyr",
+        model: "mistral",
         messages: [
           {
             role: "user",
@@ -174,7 +174,7 @@ async function healthTemp({
     options: {
       temperature: 0.5,
     },
-    model: "zephyr",
+    model: "mistral",
     messages: [
       {
         role: "user",

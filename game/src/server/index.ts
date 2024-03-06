@@ -10,7 +10,7 @@ import {
 } from "../common/game";
 import ollama from "ollama";
 import { z } from "zod";
-import { workflow } from "./conversationWorkers";
+import { npcWorker, playerWorker, workflow } from "./conversationWorkers";
 const { ZZEnv, JobSpec } = pkg;
 const { initJobBinding } = gatewayPkg;
 const app = express();
@@ -190,6 +190,8 @@ gameWorker.startWorker();
 fakePoemWorker.startWorker();
 fakePoemWorker.startWorker();
 workflow.startWorker();
+playerWorker.startWorker();
+npcWorker.startWorker();
 
 const PORT = 3000;
 const server = ViteExpress.listen(app, PORT, () =>

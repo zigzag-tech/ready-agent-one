@@ -32,6 +32,7 @@ import {
   attackInputData,
   attackStateProxy,
 } from "../Game/components/AttackUIContainer/components/AttackUI/AttackUI";
+import { Html } from "@react-three/drei";
 
 export const coroutine = (f: any, params: any[] = []) => {
   const o = f(...params); // instantiate the coroutine
@@ -155,35 +156,38 @@ const Player: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    nippleManager && nippleManager.on("start", () => {
-      nippleState.active = true;
-      if (inputData.lastTouchStart > Date.now() - 450) {
-        inputsState[InputKeys.SHIFT].rawLastPressed = Date.now();
-        inputsState[InputKeys.SHIFT].raw = true;
-      }
-    });
+    nippleManager &&
+      nippleManager.on("start", () => {
+        nippleState.active = true;
+        if (inputData.lastTouchStart > Date.now() - 450) {
+          inputsState[InputKeys.SHIFT].rawLastPressed = Date.now();
+          inputsState[InputKeys.SHIFT].raw = true;
+        }
+      });
 
-    nippleManager && nippleManager.on("end", () => {
-      nippleState.active = false;
-      playerJoystickVelocity.previousX = 0;
-      playerJoystickVelocity.previousY = 0;
-      playerJoystickVelocity.x = 0;
-      playerJoystickVelocity.y = 0;
-      inputsState[InputKeys.SHIFT].raw = false;
-    });
-
-    nippleManager && nippleManager.on("move", (_, data) => {
-      const { x, y } = data.vector;
-      playerJoystickVelocity.previousX = playerJoystickVelocity.x;
-      playerJoystickVelocity.previousY = playerJoystickVelocity.y;
-      if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
+    nippleManager &&
+      nippleManager.on("end", () => {
+        nippleState.active = false;
+        playerJoystickVelocity.previousX = 0;
+        playerJoystickVelocity.previousY = 0;
         playerJoystickVelocity.x = 0;
         playerJoystickVelocity.y = 0;
-        return;
-      }
-      playerJoystickVelocity.x = x * -1;
-      playerJoystickVelocity.y = y;
-    });
+        inputsState[InputKeys.SHIFT].raw = false;
+      });
+
+    nippleManager &&
+      nippleManager.on("move", (_, data) => {
+        const { x, y } = data.vector;
+        playerJoystickVelocity.previousX = playerJoystickVelocity.x;
+        playerJoystickVelocity.previousY = playerJoystickVelocity.y;
+        if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
+          playerJoystickVelocity.x = 0;
+          playerJoystickVelocity.y = 0;
+          return;
+        }
+        playerJoystickVelocity.x = x * -1;
+        playerJoystickVelocity.y = y;
+      });
   }, []);
 
   const applyVelocity = useCallback(
@@ -428,6 +432,26 @@ const Player: React.FC = () => {
   return (
     <>
       <group position={[0, 0, 0]} ref={ref}>
+        <Html
+          position={[0, -1, 0]}
+          prepend
+          zIndexRange={[100, 0]}
+          // position={[position[0], position[1] + 1, position[2]]}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "10px",
+              width: "200px",
+              height: "100px",
+              borderRadius: "10px",
+              border: "1px solid black",
+              color: "black",
+            }}
+          >
+            <p>Hey there! I'm the playa!</p>
+          </div>
+        </Html>
         <PlayerVisuals />
         <PlayerUI />
       </group>

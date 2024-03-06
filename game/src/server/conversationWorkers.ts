@@ -108,10 +108,13 @@ async function generateResponse(prompt: string) {
     ],
   });
   let message = "";
+  process.stdout.write("Response:  ");
+
   for await (const part of response) {
     process.stdout.write(part.message.content);
     message += part.message.content;
   }
+  process.stdout.write("\n");
 
   return message;
 }

@@ -18,6 +18,7 @@ import MobsManager from "../MobsManager/MobsManager";
 import AttackUIContainer from "./components/AttackUIContainer/AttackUIContainer";
 import { LiveJob } from "./LiveJob";
 import { LiveJobUI } from "./LiveJobUI";
+import { NPC } from "../../../3d/models/Knight/NPC";
 
 export const STATS_CSS_CLASS = "stats";
 
@@ -45,6 +46,7 @@ const Game: React.FC = () => {
                 <Lights />
                 <Floor />
                 <Player />
+                <NPC />
                 {/*<OldMob/>*/}
                 <MobsManager />
                 <AttackColliders />

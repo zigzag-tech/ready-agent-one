@@ -17,24 +17,6 @@ import {
 import { hexStringToCode } from "../../../utils/color";
 import { GLTF, SkeletonUtils } from "three/examples/jsm/Addons.js";
 
-type GLTFResult = GLTF & {
-  nodes: {
-    Cube004: SkinnedMesh;
-    ["Cube.004_1"]: SkinnedMesh;
-    ["Cube.004_2"]: SkinnedMesh;
-    ["Cube.004_3"]: SkinnedMesh;
-    ["Cube.004_4"]: SkinnedMesh;
-    Bone: Bone;
-  };
-  materials: {
-    Armor: THREE.MeshStandardMaterial;
-    Armor_Dark: THREE.MeshStandardMaterial;
-    Skin: THREE.MeshStandardMaterial;
-    Detail: THREE.MeshStandardMaterial;
-    Red: THREE.MeshStandardMaterial;
-  };
-};
-
 const redMaterial = new MeshToonMaterial({
   color: hexStringToCode("#45555a"),
   // skinning: true,
@@ -54,13 +36,13 @@ const skinMaterial = new MeshToonMaterial({
 skinMaterial.color.convertSRGBToLinear();
 
 const armorMaterial = new MeshToonMaterial({
-  color: hexStringToCode("#434e5f"),
+  color: hexStringToCode("#a3a300"),
   // skinning: true,
 });
 armorMaterial.color.convertSRGBToLinear();
 
 const armorDarkMaterial = new MeshToonMaterial({
-  color: hexStringToCode("#242937"),
+  color: hexStringToCode("#3e3e00"),
   // skinning: true,
 });
 armorDarkMaterial.color.convertSRGBToLinear();
@@ -75,7 +57,7 @@ type ActionName =
   | "Walk";
 type GLTFActions = Record<ActionName, AnimationAction>;
 
-export default function Knight({
+export default function NPCCharacter({
   moving,
   recharging,
   running,
@@ -248,13 +230,13 @@ export default function Knight({
         object={nodes["Cube004_3"]}
         // skeleton={nodes["Cube004_3"].skeleton}
       />
-      <primitive
+      {/* <primitive
         receiveShadow
         castShadow
         material={armorMaterial}
         object={nodes["Cube004_4"]}
         // skeleton={nodes["Cube004_4"].skeleton}
-      />
+      /> */}
     </group>
   );
 }

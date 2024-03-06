@@ -33,7 +33,7 @@ import {
   attackStateProxy,
 } from "../Game/components/AttackUIContainer/components/AttackUI/AttackUI";
 import { Html } from "@react-three/drei";
-import { useOutput } from "@livestack/client/src";
+import { useInput, useOutput } from "@livestack/client/src";
 import { z } from "zod";
 import { LiveJobContext } from "../Game/LiveJob";
 
@@ -431,15 +431,24 @@ const Player: React.FC = () => {
 
     gl.render(scene, camera);
   }, 100);
-  const job2 = React.useContext(LiveJobContext).poemJob2;
-  if (!job2) return null;
+  const job1 = React.useContext(LiveJobContext).conersationJob;
+  if (!job1) return null;
+
   const resp = useOutput({
-    tag: "default",
-    job: job2,
-    def: z.object({
-      poem: z.string(),
-    }),
+    tag: "player-talk",
+    job: job1,
+    def: z.string(),
   });
+
+  const { feed } = useInput({
+    tag: "player-input",
+    def: z.string(),
+    job: job1,
+  });
+
+  useEffect(() => {
+    feed && feed("yello");
+  }, [feed]);
 
   return (
     <>
@@ -464,7 +473,7 @@ const Player: React.FC = () => {
               justifyContent: "center",
             }}
           >
-            {resp?.data.poem}
+            {resp?.data}
           </div>
         </Html>
         <PlayerVisuals />

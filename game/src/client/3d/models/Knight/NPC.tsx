@@ -7,15 +7,13 @@ import React from "react";
 import { z } from "zod";
 export function NPC({ ...props }: GroupProps) {
   const position = [0, 0, 3] as [number, number, number];
-  const job1 = React.useContext(LiveJobContext).poemJob1;
+  const job1 = React.useContext(LiveJobContext).conersationJob;
   if (!job1) return null;
 
   const resp = useOutput({
-    tag: "default",
+    tag: "npc-talk",
     job: job1,
-    def: z.object({
-      poem: z.string(),
-    }),
+    def: z.string(),
   });
   return (
     <group position={position} rotation={[0, Math.PI, 0]} {...props}>
@@ -40,7 +38,7 @@ export function NPC({ ...props }: GroupProps) {
             justifyContent: "center",
           }}
         >
-          {resp?.data.poem}
+          {resp?.data}
         </div>
       </Html>
       <NPCCharacter

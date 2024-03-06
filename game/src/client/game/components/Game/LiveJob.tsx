@@ -4,29 +4,22 @@ import { GAME_SPEC_NAME, POEM_SPEC_NAME } from "../../../../common/game";
 
 export const LiveJobContext = React.createContext<{
   mainJob: JobInfo | null;
-  poemJob1: JobInfo | null;
-  poemJob2: JobInfo | null;
+  conersationJob: JobInfo | null;
 }>({
   mainJob: null,
-  poemJob1: null,
-  poemJob2: null,
+  conersationJob: null,
 });
 export function LiveJob({ children }: { children: React.ReactNode }) {
   const mainJob = useJobBinding({
     specName: GAME_SPEC_NAME,
   });
 
-  const poemJob1 = useJobBinding({
-    specName: POEM_SPEC_NAME,
-    uniqueSpecLabel: "poem1",
-  });
-  const poemJob2 = useJobBinding({
-    specName: POEM_SPEC_NAME,
-    uniqueSpecLabel: "poem2",
+  const conersationJob = useJobBinding({
+    specName: "CONVERSATION_WORKFLOW",
   });
 
   return (
-    <LiveJobContext.Provider value={{ mainJob, poemJob1, poemJob2 }}>
+    <LiveJobContext.Provider value={{ mainJob, conersationJob }}>
       {children}
     </LiveJobContext.Provider>
   );

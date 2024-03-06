@@ -17,7 +17,7 @@ export const npcWorkerSpec = JobSpec.define({
 });
 
 export const workflow = Workflow.define({
-  name: "conversation",
+  name: "CONVERSATION_WORKFLOW",
   exposures: [
     expose({
       spec: playerWorkerSpec,
@@ -30,9 +30,9 @@ export const workflow = Workflow.define({
     }),
     expose({
       spec: npcWorkerSpec,
-      // input: {
-      //   default: "npc-input",
-      // },
+      input: {
+        default: "npc-input",
+      },
       output: {
         default: "npc-talk",
       },

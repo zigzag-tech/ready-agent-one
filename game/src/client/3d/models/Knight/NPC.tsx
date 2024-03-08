@@ -6,6 +6,18 @@ import { LiveJobContext } from "../../../game/components/Game/LiveJob";
 import React from "react";
 import { z } from "zod";
 export function NPC({ ...props }: GroupProps) {
+ import { useFrame } from "@react-three/fiber";
+ import { Vector3 } from "three";
+   const playerPosition = useSnapshot(playerPosition);
+   const npcRef = useRef<GroupProps>(null);
+
+   useFrame(() => {
+     if (npcRef.current && playerPosition) {
+       const playerVec = new Vector3(playerPosition.x, npcRef.current.position.y, playerPosition.y);
+       npcRef.current.lookAt(playerVec);
+     }
+   });
+
   const position = [0, 0, 3] as [number, number, number];
   const job1 = React.useContext(LiveJobContext).conersationJob;
   if (!job1) return null;
@@ -16,7 +28,7 @@ export function NPC({ ...props }: GroupProps) {
     def: z.string(),
   });
   return (
-    <group position={position} rotation={[0, Math.PI, 0]} {...props}>
+    <group ref={npcRef} position={position} {...props}>
       {/* <Hud> */}
       <Html
         position={[-1, 9, 0]}

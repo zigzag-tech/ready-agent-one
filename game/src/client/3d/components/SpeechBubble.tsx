@@ -9,19 +9,24 @@ export function SpeechBubble({
   return (
     content && (
       <Html {...rest}>
-        <div style={{
-          backgroundColor: "white",
-          padding: "10px",
-          maxWidth: "200px",
-          borderRadius: "10px",
-          border: "1px solid black",
-          color: "black",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          whiteSpace: "pre-wrap",
-          wordWrap: "break-word"
-        }}>
+        <div
+          style={{
+            fontFamily: "comic sans ms",
+            // all uppercase
+            textTransform: "uppercase",
+            backgroundColor: "white",
+            padding: "10px",
+            maxWidth: "200px",
+            borderRadius: "10px",
+            border: "1px solid black",
+            color: "black",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            whiteSpace: "pre-wrap",
+            wordWrap: "break-word",
+          }}
+        >
           {content}
         </div>
       </Html>

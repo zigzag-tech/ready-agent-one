@@ -22,7 +22,9 @@ const PlayerVisuals: React.FC = () => {
       <Suspense fallback={null}>
         <Knight
           onPointerDown={(event) => console.log("down?", event)}
-          onPointerOver={() => console.log("over")}
+          onPointerOver={() => {
+            // console.log("over");
+          }}
           recharging={recharging || preRecharging}
           lastDamaged={lastDamaged}
           lastAttack={lastAttack}

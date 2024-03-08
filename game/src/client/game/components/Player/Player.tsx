@@ -441,13 +441,13 @@ const Player: React.FC = () => {
     def: z.string(),
   });
   const { feed } = useInput({
-    tag: "player-input",
+    tag: "npc-input",
     def: z.string(),
     job: job1,
   });
 
   useEffect(() => {
-    feed && feed("yello");
+    feed && feed("yello!");
   }, [feed]);
 
   return (

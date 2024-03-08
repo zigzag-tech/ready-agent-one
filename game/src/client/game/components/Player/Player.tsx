@@ -427,8 +427,6 @@ const Player: React.FC = () => {
 
     largeColliderApi.setAngle(ref.current.rotation.y * -1);
 
-    //console.log('angle', ref.current.rotation.y)
-
     gl.render(scene, camera);
   }, 100);
   const job1 = React.useContext(LiveJobContext).conersationJob;
@@ -439,7 +437,6 @@ const Player: React.FC = () => {
     job: job1,
     def: z.string(),
   });
-
   const { feed } = useInput({
     tag: "player-input",
     def: z.string(),
@@ -447,7 +444,7 @@ const Player: React.FC = () => {
   });
 
   useEffect(() => {
-    feed("yello");
+    feed && feed("yello");
   }, [feed]);
 
   return (

@@ -34,15 +34,17 @@ export function LiveJobUI() {
   useEffect(() => {
     let prevHealth = playerHealth.health;
     const sub = subscribe(playerHealth, async (messages) => {
-      for (const [opKey, key, val] of messages) {
-        if (opKey === "set" && typeof key === "object") {
-          if (key[0] === "health") {
-            await feed({
-              eventType: "player-health",
-              health: Number(val),
-              prevHealth: prevHealth,
-            });
-            prevHealth = Number(val);
+      if (feed) {
+        for (const [opKey, key, val] of messages) {
+          if (opKey === "set" && typeof key === "object") {
+            if (key[0] === "health") {
+              await feed({
+                eventType: "player-health",
+                health: Number(val),
+                prevHealth: prevHealth,
+              });
+              prevHealth = Number(val);
+            }
           }
         }
       }

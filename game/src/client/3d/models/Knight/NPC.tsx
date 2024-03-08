@@ -1,6 +1,5 @@
 import { GroupProps } from "@react-three/fiber";
 import NPCCharacter from "./NPCCharacter";
-import { Html, Hud } from "@react-three/drei";
 import { useOutput } from "@livestack/client/src";
 import { LiveJobContext } from "../../../game/components/Game/LiveJob";
 import React, { useRef } from "react";
@@ -9,6 +8,7 @@ import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { useSnapshot } from "valtio";
 import { playerPosition } from "../../../state/positions";
+import { SpeechBubble } from "../../components/SpeechBubble";
 export function NPC({ ...props }: GroupProps) {
   const npcRef = useRef<Group>(null);
 
@@ -35,29 +35,11 @@ export function NPC({ ...props }: GroupProps) {
   return (
     <group position={position} {...props}>
       {/* <Hud> */}
-      <Html
+      <SpeechBubble
+        content={resp?.data}
         position={[-1, 9, 0]}
-        prepend
-        zIndexRange={[100, 0]}
-        // position={[position[0], position[1] + 1, position[2]]}
-      >
-        <div
-          style={{
-            backgroundColor: "white",
-            padding: "10px",
-            width: "200px",
-            height: "100px",
-            borderRadius: "10px",
-            border: "1px solid black",
-            color: "black",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {resp?.data}
-        </div>
-      </Html>
+        zIndexRange={[0, 100]}
+      />
       <NPCCharacter
         ref={npcRef}
         lastAttack={0}
@@ -69,3 +51,4 @@ export function NPC({ ...props }: GroupProps) {
     </group>
   );
 }
+

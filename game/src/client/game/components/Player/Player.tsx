@@ -36,6 +36,7 @@ import { Html } from "@react-three/drei";
 import { useInput, useOutput } from "@livestack/client/src";
 import { z } from "zod";
 import { LiveJobContext } from "../Game/LiveJob";
+import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 
 export const coroutine = (f: any, params: any[] = []) => {
   const o = f(...params); // instantiate the coroutine
@@ -452,29 +453,12 @@ const Player: React.FC = () => {
   return (
     <>
       <group position={[0, 0, 0]} ref={ref}>
-        <Html
+        <SpeechBubble
+          content={resp?.data}
           position={[0, -1, 0]}
-          prepend
           zIndexRange={[100, 0]}
-          // position={[position[0], position[1] + 1, position[2]]}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              padding: "10px",
-              width: "200px",
-              height: "100px",
-              borderRadius: "10px",
-              border: "1px solid black",
-              color: "black",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {resp?.data}
-          </div>
-        </Html>
+        />
+
         <PlayerVisuals />
         <PlayerUI />
       </group>

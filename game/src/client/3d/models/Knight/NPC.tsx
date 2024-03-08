@@ -3,20 +3,25 @@ import NPCCharacter from "./NPCCharacter";
 import { Html, Hud } from "@react-three/drei";
 import { useOutput } from "@livestack/client/src";
 import { LiveJobContext } from "../../../game/components/Game/LiveJob";
-import React from "react";
+import React, { useRef } from "react";
 import { z } from "zod";
+import { useFrame } from "@react-three/fiber";
+import { Group, Vector3 } from "three";
+import { useSnapshot } from "valtio";
+import { playerPosition } from "../../../state/positions";
 export function NPC({ ...props }: GroupProps) {
- import { useFrame } from "@react-three/fiber";
- import { Vector3 } from "three";
-   const playerPosition = useSnapshot(playerPosition);
-   const npcRef = useRef<GroupProps>(null);
+  const npcRef = useRef<Group>(null);
 
-   useFrame(() => {
-     if (npcRef.current && playerPosition) {
-       const playerVec = new Vector3(playerPosition.x, npcRef.current.position.y, playerPosition.y);
-       npcRef.current.lookAt(playerVec);
-     }
-   });
+  useFrame(() => {
+    if (npcRef.current && playerPosition) {
+      const playerVec = new Vector3(
+        playerPosition.x,
+        npcRef.current.position.y,
+        playerPosition.y
+      );
+      npcRef.current.lookAt(playerVec);
+    }
+  });
 
   const position = [0, 0, 3] as [number, number, number];
   const job1 = React.useContext(LiveJobContext).conersationJob;
@@ -28,7 +33,7 @@ export function NPC({ ...props }: GroupProps) {
     def: z.string(),
   });
   return (
-    <group ref={npcRef} position={position} {...props}>
+    <group position={position} {...props}>
       {/* <Hud> */}
       <Html
         position={[-1, 9, 0]}
@@ -54,6 +59,7 @@ export function NPC({ ...props }: GroupProps) {
         </div>
       </Html>
       <NPCCharacter
+        ref={npcRef}
         lastAttack={0}
         lastDamaged={0}
         moving={false}

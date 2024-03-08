@@ -421,6 +421,8 @@ const Player: React.FC = () => {
 
     playerEnergy.energy = energy;
 
+    // update player position
+
     playerPosition.x = x;
     playerPosition.y = y;
     playerPosition.angle = ref.current.rotation.y;

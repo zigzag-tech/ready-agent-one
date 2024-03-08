@@ -4807,6 +4807,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-full-screen: "npm:^1.1.1"
     react-icons: "npm:^3.11.0"
+    react-merge-refs: "npm:^2.1.1"
     socket.io-client: "npm:^4"
     styled-components: "npm:^6.1.8"
     three: "npm:^0.162.0"
@@ -8418,6 +8419,13 @@ __metadata:
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: 10c0/6eb5e4b28028c23e2bfcf73371e72cd4162e4ac7ab445ddae2afe24e347a37d6dc22fae6e1748632cd43c6d4f9b8f86dcf26bf9275e1874f436d129952528ae0
+  languageName: node
+  linkType: hard
+
+"react-merge-refs@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "react-merge-refs@npm:2.1.1"
+  checksum: 10c0/b68cbc4ea51fd96f77247733388738630769d928f32958e63262ce43dff10c6b20f18a0483c6a640a1ffba48f32be26059d4ee9711881cacc63297b01311c8f6
   languageName: node
   linkType: hard
 

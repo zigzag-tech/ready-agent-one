@@ -141,7 +141,6 @@ function MyCamera({
   );
 }
 
-import MeshUVMaterial from "./meshUVMaterial";
 import { playerPosition } from "../../../state/positions";
 
 function Render() {
@@ -153,7 +152,6 @@ function Render() {
   }));
 
   const mnm = new THREE.MeshNormalMaterial();
-  const dmm = new MeshUVMaterial();
 
   const guiScene = new THREE.Scene();
   const guiCamera = React.useRef();

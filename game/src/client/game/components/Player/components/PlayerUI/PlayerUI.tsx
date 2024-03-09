@@ -36,12 +36,25 @@ const PlayerUI: React.FC = () => {
     const enemiesInRange = useEnemiesInRange()
     const enemiesInCloseRange = useEnemiesInCloseRange()
 
+    if (!enemiesInRange && !enemiesInRange) {
+      return null;
+      aw;
+    }
+
     return (
-        <group position={[0, 1.75, 0]}>
-            <Html center portal={containerPortal.ref}>
-                <AttackUI size={enemiesInCloseRange ? AttackContainerSize.LARGE : enemiesInRange ? AttackContainerSize.MEDIUM : AttackContainerSize.SMALL}/>
-            </Html>
-        </group>
+      <group position={[0, 1.75, 0]}>
+        <Html center portal={containerPortal.ref}>
+          <AttackUI
+            size={
+              enemiesInCloseRange
+                ? AttackContainerSize.LARGE
+                : enemiesInRange
+                ? AttackContainerSize.MEDIUM
+                : AttackContainerSize.SMALL
+            }
+          />
+        </Html>
+      </group>
     );
 };
 

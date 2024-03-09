@@ -1,7 +1,7 @@
-import pkg, { sleep } from "@livestack/core";
+import pkg from "@livestack/core";
 import ollama from "ollama";
 import { z } from "zod";
-const { JobSpec, Workflow, conn, expose } = pkg;
+const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
 const stringZ = z.string();
 

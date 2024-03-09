@@ -447,7 +447,7 @@ const Player: React.FC = () => {
   });
 
   useEffect(() => {
-    feed && feed("yello!");
+    // feed && feed("yello!");
   }, [feed]);
 
   return (

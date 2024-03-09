@@ -221,12 +221,14 @@ export default function Knight({
   return (
     <group ref={group} {...props} dispose={null}>
       <primitive object={nodes.Bone} />
+      {/* torso and head */}
       <primitive
         receiveShadow
         castShadow
         material={armorMaterial}
         object={nodes.Cube004}
       />
+      {/* torso 2 */}
       <primitive
         receiveShadow
         castShadow
@@ -234,6 +236,7 @@ export default function Knight({
         object={nodes["Cube004_1"]}
         // skeleton={nodes["Cube004_1"].skeleton}
       />
+      {/* armor 0  */}
       <primitive
         receiveShadow
         castShadow
@@ -241,6 +244,7 @@ export default function Knight({
         object={nodes["Cube004_2"]}
         // skeleton={nodes["Cube004_2"].skeleton}
       />
+      {/* armor  */}
       <primitive
         receiveShadow
         castShadow
@@ -248,6 +252,7 @@ export default function Knight({
         object={nodes["Cube004_3"]}
         // skeleton={nodes["Cube004_3"].skeleton}
       />
+      {/* armor 2 */}
       <primitive
         receiveShadow
         castShadow

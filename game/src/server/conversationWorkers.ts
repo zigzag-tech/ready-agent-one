@@ -69,7 +69,8 @@ export const playerWorker = playerWorkerSpec.defineWorker({
       
       ONE-LINE RESPONSE:
       `;
-      const response = await generateResponseGroq(prompt);
+      // const response = await generateResponseGroq(prompt);
+      const response = await generateResponseOllama(prompt);
       if (!response.includes("quit")) {
         output.emit(response);
       }
@@ -87,15 +88,15 @@ export const npcWorker = npcWorkerSpec.defineWorker({
       ONE-LINE RESPONSE:
       `;
 
-      // const response = await generateResponse(prompt);
-      const response = await generateResponseGroq(prompt);
+      // const response = await generateResponseGroq(prompt);
+      const response = await generateResponseOllama(prompt);
 
       await output.emit(response);
     }
   },
 });
 
-async function generateResponse(prompt: string) {
+async function generateResponseOllama(prompt: string) {
   try {
     const response = await ollama.chat({
       options: {

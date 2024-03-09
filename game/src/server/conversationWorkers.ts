@@ -1,5 +1,6 @@
 import pkg from "@livestack/core";
 import ollama from "ollama";
+import Groq from "groq-sdk";
 import { z } from "zod";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
@@ -62,14 +63,13 @@ export const workflow = Workflow.define({
 export const playerWorker = playerWorkerSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const data of input) {
-      const response = await generateResponse(
-        `You are a game player. You will receive an input prompt and you need to respond to it. Keep the response under 20 words. 
-If you think the conversation is going nowhere, you can reply "quit" to end the conversation.
-INPUT PROMPT: ${data}
-
-ONE-LINE RESPONSE:
-`
-      );
+      const prompt = `You are a game player. You will receive an input prompt and you need to respond to it. Keep the response under 20 words. 
+      If you think the conversation is going nowhere, you can reply "quit" to end the conversation.
+      INPUT PROMPT: ${data}
+      
+      ONE-LINE RESPONSE:
+      `;
+      const response = await generateResponseGroq(prompt);
       if (!response.includes("quit")) {
         output.emit(response);
       }
@@ -80,14 +80,15 @@ ONE-LINE RESPONSE:
 export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output, jobId }) => {
     for await (const data of input) {
-      const response = await generateResponse(
-        `You are a non-player character. You will receive an input prompt from the player and you need to respond to it. 
-Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
-INPUT PROMPT: ${data}
+      const prompt = `You are a non-player character. You will receive an input prompt from the player and you need to respond to it. 
+      Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
+      INPUT PROMPT: ${data}
+      
+      ONE-LINE RESPONSE:
+      `;
 
-ONE-LINE RESPONSE:
-`
-      );
+      // const response = await generateResponse(prompt);
+      const response = await generateResponseGroq(prompt);
 
       await output.emit(response);
     }
@@ -116,6 +117,39 @@ async function generateResponse(prompt: string) {
       process.stdout.write(part.message.content);
       message += part.message.content;
     }
+    process.stdout.write("\n");
+    return message;
+  } catch (e) {
+    console.log(e);
+    await sleep(1000);
+    return "Sorry, I am not able to respond right now. Please try again later.";
+  }
+}
+
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
+async function generateResponseGroq(prompt: string) {
+  try {
+    const response = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: "mixtral-8x7b-32768",
+      // stream: true,
+      temperature: 0.3,
+    });
+    // let message = "";
+    process.stdout.write("Response:  ");
+
+    // for await (const part of response) {
+    //   message += part.choices[0].delta.content!;
+    // }
+    let message = response.choices[0].message.content;
+    process.stdout.write(message);
     process.stdout.write("\n");
     return message;
   } catch (e) {

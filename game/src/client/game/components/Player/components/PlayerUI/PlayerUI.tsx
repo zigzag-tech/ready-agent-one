@@ -38,7 +38,6 @@ const PlayerUI: React.FC = () => {
 
     if (!enemiesInRange && !enemiesInRange) {
       return null;
-      aw;
     }
 
     return (

@@ -1,4 +1,4 @@
-import pkg from "@livestack/core";
+import pkg, { sleep } from "@livestack/core";
 import ollama from "ollama";
 import { z } from "zod";
 const { JobSpec, Workflow, conn, expose } = pkg;
@@ -78,7 +78,7 @@ ONE-LINE RESPONSE:
 });
 
 export const npcWorker = npcWorkerSpec.defineWorker({
-  processor: async ({ input, output }) => {
+  processor: async ({ input, output, jobId }) => {
     for await (const data of input) {
       const response = await generateResponse(
         `You are a non-player character. You will receive an input prompt from the player and you need to respond to it. 
@@ -88,33 +88,39 @@ INPUT PROMPT: ${data}
 ONE-LINE RESPONSE:
 `
       );
-      output.emit(response);
+
+      await output.emit(response);
     }
   },
 });
 
 async function generateResponse(prompt: string) {
-  const response = await ollama.chat({
-    options: {
-      temperature: 0.3,
-    },
-    stream: true,
-    model: "mistral",
-    messages: [
-      {
-        role: "user",
-        content: prompt,
+  try {
+    const response = await ollama.chat({
+      options: {
+        temperature: 0.3,
       },
-    ],
-  });
-  let message = "";
-  process.stdout.write("Response:  ");
+      stream: true,
+      model: "mistral",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    });
+    let message = "";
+    process.stdout.write("Response:  ");
 
-  for await (const part of response) {
-    process.stdout.write(part.message.content);
-    message += part.message.content;
+    for await (const part of response) {
+      process.stdout.write(part.message.content);
+      message += part.message.content;
+    }
+    process.stdout.write("\n");
+    return message;
+  } catch (e) {
+    console.log(e);
+    await sleep(1000);
+    return "Sorry, I am not able to respond right now. Please try again later.";
   }
-  process.stdout.write("\n");
-
-  return message;
 }

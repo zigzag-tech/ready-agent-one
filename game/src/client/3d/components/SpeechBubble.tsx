@@ -17,6 +17,7 @@ export function SpeechBubble({
             backgroundColor: "white",
             padding: "10px",
             maxWidth: "200px",
+            minWidth: "200px",
             borderRadius: "10px",
             border: "1px solid black",
             color: "black",

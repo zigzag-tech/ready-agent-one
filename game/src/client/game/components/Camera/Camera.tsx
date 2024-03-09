@@ -11,6 +11,7 @@ import { numLerp } from "../../../utils/numbers";
 
 import { useEnemiesInRange, usePlayerHasTarget } from "../../../state/player";
 import { useIsPortrait } from "../../../utils/responsive";
+import { PerspectiveCamera } from "@react-three/drei";
 const data = {
   atRest: true,
   atRestTimestamp: 0,
@@ -172,7 +173,8 @@ const Camera: React.FC = () => {
 
   return (
     <>
-      <perspectiveCamera
+      <PerspectiveCamera
+        makeDefault
         ref={ref}
         fov={10}
         position={[-cameraXOffset, cameraYOffset, -cameraZOffset]}
@@ -185,7 +187,7 @@ const Camera: React.FC = () => {
           position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
           castShadow
         />
-      </perspectiveCamera>
+      </PerspectiveCamera>
     </>
   );
 };

@@ -1,6 +1,17 @@
-import React from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { Stats } from "@react-three/drei";
+import React, { useEffect, useRef, useState } from "react";
+import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
+import {
+  Billboard,
+  Html,
+  Hud,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Plane,
+  Stats,
+  View,
+  useFBO,
+  useHelper,
+} from "@react-three/drei";
 import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
 import Player from "../Player/Player";
@@ -11,6 +22,7 @@ import Camera from "../Camera/Camera";
 import Physics from "../../../physics/components/Physics/Physics";
 import GameUI from "./components/GameUI/GameUI";
 import AttackColliders from "./components/AttackColliders/AttackColliders";
+import { create } from "zustand";
 
 import Room from "../Room/Room";
 import GameAI from "./components/GameAI/GameAI";
@@ -19,6 +31,8 @@ import AttackUIContainer from "./components/AttackUIContainer/AttackUIContainer"
 import { LiveJob } from "./LiveJob";
 import { LiveJobUI } from "./LiveJobUI";
 import { NPC } from "../../../3d/models/Knight/NPC";
+import { Leva, useControls } from "leva";
+import * as THREE from "three";
 
 export const STATS_CSS_CLASS = "stats";
 
@@ -42,6 +56,17 @@ const Game: React.FC = () => {
             <Canvas shadows dpr={[1, 1.2]}>
               <GameAI />
               <Physics>
+                {/* <MiniMap /> */}
+                {/* <MyCamera
+                  // animate={(ref, state) => {
+                  //   ref.position.x = Math.sin(state.clock.getElapsedTime()) * 5;
+                  //   ref.position.y = Math.cos(state.clock.getElapsedTime()) * 5;
+                  // }}
+                  near={1}
+                  label="A"
+                  position={[0, 10, 0]}
+                /> */}
+                {/* <Render /> */}
                 <Camera />
                 <Lights />
                 <Floor />
@@ -68,4 +93,124 @@ const Game: React.FC = () => {
 };
 
 export default Game;
+/** Using a centralized store to pass around the cameras */
+const useStore = create((set, get) => ({
+  ACam: null,
+  BCam: null,
+}));
 
+function MyCamera({
+  animate,
+  label,
+  near = 5,
+  far = 14,
+  // position = [0, 10, 5] as const,
+}) {
+  const ref = React.useRef<THREE.PerspectiveCamera>();
+  const props = useControls(label, {
+    near,
+    far,
+    fov: 25,
+    zoom: -1,
+  });
+
+  const t = new THREE.Vector3(0, 0, 0);
+
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.position.set(playerPosition.x, 0, playerPosition.y);
+      // ref.current.lookAt(t);
+      ref.current.rotation.y = playerPosition.angle + Math.PI;
+    }
+  });
+
+  useEffect(() => {
+    useStore.setState({
+      [`${label}Cam`]: ref,
+    });
+
+    // ref.current.lookAt(t);
+  }, [label]);
+
+  useHelper(ref, THREE.CameraHelper);
+
+  return (
+    <PerspectiveCamera {...props} ref={ref}>
+      <Html className="label">{label}</Html>
+    </PerspectiveCamera>
+  );
+}
+
+import MeshUVMaterial from "./meshUVMaterial";
+import { playerPosition } from "../../../state/positions";
+
+function Render() {
+  const aTarget = useFBO(window.innerWidth / 4, window.innerHeight / 4);
+
+  const { ACam } = useStore((state) => ({
+    ACam: state.ACam,
+    // BCam: state.BCam,
+  }));
+
+  const mnm = new THREE.MeshNormalMaterial();
+  const dmm = new MeshUVMaterial();
+
+  const guiScene = new THREE.Scene();
+  const guiCamera = React.useRef();
+
+  // just to make component re-render on canvas size change
+  useThree();
+
+  const debugBG = new THREE.Color("#fff");
+  const originalBg = new THREE.Color("#080406");
+
+  useFrame(({ gl, camera, scene }) => {
+    gl.autoClear = false;
+
+    scene.background = debugBG;
+
+    /** Render scene from camera A to a render target */
+    scene.overrideMaterial = mnm;
+    gl.setRenderTarget(aTarget);
+    gl.render(scene, ACam.current);
+
+    /** Render scene from camera B to a different render target */
+    // scene.overrideMaterial = dmm;
+    // gl.setRenderTarget(bTarget);
+    // gl.render(scene, BCam.current);
+
+    scene.background = originalBg;
+    // render main scene
+    scene.overrideMaterial = null;
+    gl.setRenderTarget(null);
+    gl.render(scene, camera);
+
+    // render GUI panels on top of main scene
+    // gl.render(guiScene, guiCamera.current);
+    gl.autoClear = true;
+  }, 1);
+
+  const r = window.innerWidth / window.innerHeight;
+  const SIZE = 10;
+
+  /**
+   * Just some planes  + boring calculations to make them stick to the side of the screen
+   */
+  return (
+    <>
+      {/* <OrthographicCamera ref={guiCamera} near={0.0001} far={1} /> */}
+
+      <Billboard>
+        <Plane args={[SIZE, SIZE / r, 1]}>
+          <meshBasicMaterial map={aTarget.texture} />
+        </Plane>
+      </Billboard>
+      {/* <Billboard>
+        <Plane args={[SIZE, SIZE / r, 1]}>
+          <meshBasicMaterial map={bTarget.texture} />
+        </Plane>
+      </Billboard> */}
+    </>
+    // guiScene
+  );
+}

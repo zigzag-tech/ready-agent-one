@@ -19,6 +19,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "hotkeys-js": "^3.13.7",
+    "leva": "^0.9.35",
     "nipplejs": "^0.10.1",
     "ollama": "^0.4.9",
     "planck": "^1.0.0",
@@ -33,7 +34,8 @@
     "valtio": "^1.13.2",
     "vite": "^5.0.12",
     "vite-express": "^0.14.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

@@ -14,6 +14,7 @@ import PlayerVisuals, {
   playerVisualState,
 } from "./components/PlayerVisuals/PlayerVisuals";
 import PlayerDebug from "./components/PlayerDebug/PlayerDebug";
+import { summaryPlusHistorySchema } from "../../../../common/summaryPlusHistorySchema";
 import {
   JUICE_RECHARGE_COST,
   playerCanRecharge,
@@ -442,12 +443,16 @@ const Player: React.FC = () => {
   });
   const { feed } = useInput({
     tag: "npc-input",
-    def: z.string(),
+    def: summaryPlusHistorySchema,
     job: job1,
   });
 
   useEffect(() => {
-    feed && feed("yello!");
+    feed &&
+      feed({
+        summary: "This is the ancient dark times.",
+        recentHistory: ["Human Player: yello."],
+      });
   }, [feed]);
 
   return (

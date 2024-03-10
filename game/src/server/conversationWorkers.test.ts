@@ -16,7 +16,7 @@ ZZEnv.setGlobal(
   await npcWorker.startWorker();
   await workflow.startWorker();
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
-  const initialInput = "Hello player, welcome to the Mob-attack game!";
+  const initialInput = "Hello, let's talk about something!";
 
   const { input, output } = await workflow.enqueueJob({});
   await input("player-input").feed(initialInput);

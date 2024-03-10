@@ -18,11 +18,11 @@ ZZEnv.setGlobal(
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
   const initialInput = {
     summary: "This is the ancient dark times.",
-    recentHistory: ["Human Player: yello."],
+    recentHistory: ["NPC: yello."],
   };
 
   const { input, output } = await workflow.enqueueJob({});
-  await input("npc-input").feed(initialInput);
+  await input("player-input").feed(initialInput);
 
   (async () => {
     for await (const data of output("player-talk")) {

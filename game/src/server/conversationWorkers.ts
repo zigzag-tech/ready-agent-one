@@ -24,7 +24,10 @@ export const summarySpec = JobSpec.define({
     npc: stringZ,
     player: stringZ,
   },
-  output: summaryPlusHistorySchema,
+  output: {
+    "for-npc": summaryPlusHistorySchema,
+    "for-player": summaryPlusHistorySchema,
+  },
 });
 
 export const workflow = Workflow.define({
@@ -72,6 +75,7 @@ export const workflow = Workflow.define({
     conn({
       from: {
         spec: summarySpec,
+        output: "for-player",
       },
       to: {
         spec: playerWorkerSpec,
@@ -80,6 +84,7 @@ export const workflow = Workflow.define({
     conn({
       from: {
         spec: summarySpec,
+        output: "for-npc",
       },
       to: {
         spec: npcWorkerSpec,
@@ -91,6 +96,7 @@ export const workflow = Workflow.define({
 export const playerWorker = playerWorkerSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const { summary, recentHistory } of input) {
+      console.log("PLAYER WORKER INPUT", summary, recentHistory);
       // if the last message was from the player, then the player should not respond
       if (recentHistory[recentHistory.length - 1].startsWith("Human Player")) {
         continue;
@@ -108,6 +114,7 @@ export const playerWorker = playerWorkerSpec.defineWorker({
       // const response = await generateResponseGroq(prompt);
       const response = await generateResponseOllama(prompt);
       if (!response.includes("quit")) {
+        console.log("PLAYER WORKER RESPONSE", response);
         output.emit(response);
       }
     }
@@ -117,6 +124,7 @@ export const playerWorker = playerWorkerSpec.defineWorker({
 export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output, jobId }) => {
     for await (const { summary, recentHistory } of input) {
+      console.log("NPC WORKER INPUT", summary, recentHistory);
       // if the last message was from the player, then the player should not respond
       if (recentHistory[recentHistory.length - 1].startsWith("NPC")) {
         continue;
@@ -134,6 +142,7 @@ export const npcWorker = npcWorkerSpec.defineWorker({
 
       // const response = await generateResponseGroq(prompt);
       const response = await generateResponseOllama(prompt);
+      console.log("NPC WORKER RESPONSE", response);
       await output.emit(response);
     }
   },
@@ -144,45 +153,55 @@ export const summaryWorker = summarySpec.defineWorker({
     const recentHistory: string[] = [];
     let summaryOfAllThePast = "";
 
-    while (true) {
-      const { type, value } = await Promise.race([
-        input("npc")
-          .nextValue()
-          .then((r) => ({
-            type: "NPC" as const,
-            value: r,
-          })),
-        input("player")
-          .nextValue()
-          .then((r) => ({
-            type: "Human Player" as const,
-            value: r,
-          })),
-      ]);
+    (async () => {
+      for await (const data of input("npc")) {
+        recentHistory.push(`${"NPC"}: ${data}`);
+        // keep accululating the history until it reaches 10
+        // then take the oldest 5 and fold it into the summary
 
-      if (!value) {
-        console.log("No value");
-        break;
+        if (recentHistory.length > 10) {
+          const oldest = recentHistory.splice(0, 5);
+          const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
+  SUMMARY OF PAST CONVERSATION:
+  ${summaryOfAllThePast}
+  RECENT CONVERSATION HISTORY:
+  ${oldest.join("\n")}
+  
+  NEW SUMMARY:
+          `;
+          summaryOfAllThePast = await generateResponseOllama(prompt);
+        }
+        console.log(
+          "SUMMARY WORKER OUTPUT",
+          summaryOfAllThePast,
+          recentHistory
+        );
+        await output("for-player").emit({
+          summary: summaryOfAllThePast,
+          recentHistory: recentHistory,
+        });
       }
+    })();
 
-      recentHistory.push(`${type}: ${value}`);
+    for await (const data of input("player")) {
+      recentHistory.push(`Human Player: ${data}`);
       // keep accululating the history until it reaches 10
       // then take the oldest 5 and fold it into the summary
 
       if (recentHistory.length > 10) {
         const oldest = recentHistory.splice(0, 5);
         const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
-SUMMARY OF PAST CONVERSATION:
-${summaryOfAllThePast}
-RECENT CONVERSATION HISTORY:
-${oldest.join("\n")}
-
-NEW SUMMARY:
-        `;
+  SUMMARY OF PAST CONVERSATION:
+  ${summaryOfAllThePast}
+  RECENT CONVERSATION HISTORY:
+  ${oldest.join("\n")}
+  
+  NEW SUMMARY:
+          `;
         summaryOfAllThePast = await generateResponseOllama(prompt);
       }
-
-      await output.emit({
+      console.log("SUMMARY WORKER OUTPUT", summaryOfAllThePast, recentHistory);
+      await output("for-npc").emit({
         summary: summaryOfAllThePast,
         recentHistory: recentHistory,
       });

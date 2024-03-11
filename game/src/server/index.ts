@@ -157,7 +157,7 @@ async function healthTemp({
 // playerWorker.startWorker();
 // npcWorker.startWorker();
 
-const PORT = 3000;
+const PORT = 3520;
 const server = ViteExpress.listen(app, PORT, () =>
   console.log(`Hello World server listening on http://localhost:${PORT}.`)
 );

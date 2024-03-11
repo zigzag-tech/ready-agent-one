@@ -26,12 +26,12 @@ ZZEnv.setGlobal(
 
   (async () => {
     for await (const data of output("player-talk")) {
-      console.log("player:", data.data);
+      // console.log("player:", data.data);
     }
   })();
   (async () => {
     for await (const data of output("npc-talk")) {
-      console.log("npc:", data.data);
+      // console.log("npc:", data.data);
     }
   })();
 

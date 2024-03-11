@@ -450,7 +450,8 @@ const Player: React.FC = () => {
   useEffect(() => {
     feed &&
       feed({
-        summary: "This is the ancient dark times.",
+        summary:
+          "Before our story begins, rumor has it there was an ancient civilization that worshipped dolphins.",
         recentHistory: ["Human Player: yello."],
       });
   }, [feed]);

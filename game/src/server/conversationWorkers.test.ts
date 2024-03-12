@@ -18,7 +18,7 @@ ZZEnv.setGlobal(
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
   const initialInput = {
     summary:
-      "This is a strange time in a strange place. Rumor has it that there was an ancient civilization hiding here.",
+      "This is a strange time in a strange place. Rumor has it that there was a mysterious ancient civilization hiding here, in plain sight.",
     recentHistory: ["NPC: yello."],
   };
 

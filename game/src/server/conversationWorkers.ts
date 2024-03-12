@@ -5,6 +5,8 @@ import { z } from "zod";
 import { summaryPlusHistorySchema } from "../common/summaryPlusHistorySchema";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
+const CONVO_MODEL = "mixtral";
+
 const stringZ = z.string();
 
 export const playerWorkerSpec = JobSpec.define({
@@ -102,9 +104,7 @@ export const playerWorker = playerWorkerSpec.defineWorker({
         continue;
       }
 
-      const prompt = `      
-      
-      You are a game player. You will receive a conversation history and you need to respond to it. Keep the response under 20 words. 
+      const context = `You are a game player in a open-world game. Your job is to respond to the human player's conversation so that the conversation and plot keeps going. A conversation history will be provided to you below. Keep the response under 20 words. 
       If you think the conversation is going nowhere, you can response by setting "quit" to true to end the conversation. 
       Avoid repeating what was already said in the conversation. If the conversation history becomes repetitive, you suggest a new topic or direction for the conversation.
 
@@ -112,76 +112,36 @@ export const playerWorker = playerWorkerSpec.defineWorker({
       ${summary}
       RECENT CONVERSATION HISTORY:
       ${recentHistory.join("\n")}
-      
-      You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
-      
-      "JSON Schema" is a declarative language that allows you to annotate and validate JSON documents.
-      
-      For example, the example "JSON Schema" instance {{"properties": {{"foo": {{"description": "a list of test words", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}}}
-      would match an object with one required property, "foo". The "type" property specifies "foo" must be an "array", and the "description" property semantically describes it as "a list of test words". The items within "foo" must be strings.
-      Thus, the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of this example "JSON Schema". The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
-      
-      Your output will be parsed and type-checked according to the provided schema instance, so make sure all fields in your output match the schema exactly and there are no trailing commas!
-      
-      Here is the JSON Schema instance your output must adhere to. Include the enclosing markdown codeblock:
-      
-      {"type":"object","properties":{"humanPlayerResponse":{"type":"string","description":"the response of the human player"},"quit":{"type":"boolean","description":"whether the human player decides to quit."}}},"required":["humanPlayerResponse", "quit"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}
-      
-
-      What's the human player's response?
       `;
+      const question = `What's the human player's response?`;
+      const prompt = coercedJSONPrompt({ context, question });
       // const response = await generateResponseGroq(prompt);
       const response = await generateResponseOllama(prompt);
-      try {
-        // heuristic to find the {} enclosure substring
-        const start = response.indexOf("{");
-        const end = response.lastIndexOf("}") + 1;
-        const responseJsonString = response.slice(start, end);
-        const responseJson = JSON.parse(responseJsonString) as {
-          humanPlayerResponse: string;
-          quit: boolean;
-        };
-        if (!responseJson.quit) {
-          // console.log("PLAYER WORKER RESPONSE", response);
-          output.emit(responseJson.humanPlayerResponse);
-        }
-      } catch (e) {
-        console.log("Error parsing response", e);
-        await output.emit(
-          "Sorry, I am not able to respond right now. Please try again later."
-        );
-      }
+      await output.emit(parseJSONResponse(response));
     }
   },
 });
 
-function coercedJSONPrompt({
-  context,
-  question,
-}: {
-  context: string;
-  question: string;
-}) {
-  const prompt = `${context}
-      
-      You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
-      
-      "JSON Schema" is a declarative language that allows you to annotate and validate JSON documents.
-      
-      For example, the example "JSON Schema" instance {{"properties": {{"foo": {{"description": "a list of test words", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}}}
-      would match an object with one required property, "foo". The "type" property specifies "foo" must be an "array", and the "description" property semantically describes it as "a list of test words". The items within "foo" must be strings.
-      Thus, the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of this example "JSON Schema". The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
-      
-      Your output will be parsed and type-checked according to the provided schema instance, so make sure all fields in your output match the schema exactly and there are no trailing commas!
-      
-      Here is the JSON Schema instance your output must adhere to. Include the enclosing markdown codeblock:
-      
-      {"type":"object","properties":{"humanPlayerResponse":{"type":"string","description":"the response of the human player"},"quit":{"type":"boolean","description":"whether the human player decides to quit."}}},"required":["humanPlayerResponse", "quit"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}
-      
-
-      ${question}
-      `;
-  return prompt;
+function parseJSONResponse(raw: string) {
+  try {
+    // heuristic to find the {} enclosure substring
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}") + 1;
+    const responseJsonString = raw.slice(start, end);
+    const responseJson = JSON.parse(responseJsonString) as {
+      nextResponse: string;
+      quit: boolean;
+    };
+    if (!responseJson.quit) {
+      // console.log("PLAYER WORKER RESPONSE", response);
+      return responseJson.nextResponse;
+    } else {
+      return "[The human player has decided to quit the conversation.]";
+    }
+  } catch (e) {
+    console.log("Error parsing response", e, "raw:", raw);
+    return "Sorry, I am not able to respond right now. Please try again later.";
+  }
 }
 
 export const npcWorker = npcWorkerSpec.defineWorker({
@@ -193,7 +153,7 @@ export const npcWorker = npcWorkerSpec.defineWorker({
         continue;
       }
 
-      const prompt = `You are a non-player character. You will receive a conversaiton history from the player and you need to respond to it. 
+      const context = `You are a non-player character (NPC) in an open world game. Your job is to respond to the human player's conversation so that the conversation and plot keeps going. A conversation history will be provided to you below.
       Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
       Avoid repeating what was already said in the conversation. If the conversation history becomes repetitive, you suggest a new topic or direction for the conversation.
 
@@ -201,12 +161,13 @@ export const npcWorker = npcWorkerSpec.defineWorker({
       ${summary}
       RECENT CONVERSATION HISTORY:
       ${recentHistory.join("\n")}
-      
-      NPC:
       `;
+      const question = `What's the NPC's response?`;
+      const prompt = coercedJSONPrompt({ context, question });
 
       // const response = await generateResponseGroq(prompt);
-      const response = await generateResponseOllama(prompt);
+      const raw = await generateResponseOllama(prompt);
+      const response = parseJSONResponse(raw);
       // console.log("NPC WORKER RESPONSE", response);
       await output.emit(response);
     }
@@ -281,7 +242,7 @@ async function generateResponseOllama(prompt: string) {
         temperature: 0.3,
       },
       stream: true,
-      model: "mixtral",
+      model: CONVO_MODEL,
       messages: [
         {
           role: "user",
@@ -301,12 +262,13 @@ async function generateResponseOllama(prompt: string) {
     // erase all of what was written
     // Move the cursor to the beginning of the line
     process.stdout.write("\r");
+    // process.stdout.write("\r\n");
     // Clear the entire line
     process.stdout.write("\x1b[2K");
     return message;
   } catch (e) {
     console.log(e);
-    await sleep(1000);
+    await sleep(200);
     return "Sorry, I am not able to respond right now. Please try again later.";
   }
 }
@@ -342,4 +304,33 @@ async function generateResponseGroq(prompt: string) {
     await sleep(1000);
     return "Sorry, I am not able to respond right now. Please try again later.";
   }
+}
+
+function coercedJSONPrompt({
+  context,
+  question,
+}: {
+  context: string;
+  question: string;
+}) {
+  const prompt = `[INST]
+  ${context}
+      
+      You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
+      
+     
+      Here is an example JSON that  yur output must adhere to:
+      {
+        "nextResponse": "[Your response here]",
+        "quit": false
+      }
+      OR 
+      {
+        "quit": true
+      }
+      
+      Please provide your response based the context and the question below:
+      ${question}
+      [/INST]`;
+  return prompt;
 }

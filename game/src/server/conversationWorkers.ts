@@ -104,9 +104,12 @@ export const playerWorker = playerWorkerSpec.defineWorker({
         continue;
       }
 
-      const context = `You are a game player in a open-world game. Your job is to respond to the human player's conversation so that the conversation and plot keeps going. A conversation history will be provided to you below. Keep the response under 20 words. 
-      If you think the conversation is going nowhere, you can response by setting "quit" to true to end the conversation. 
-      Avoid repeating what was already said in the conversation. If the conversation history becomes repetitive, you suggest a new topic or direction for the conversation.
+      const context = `You are a lone human player in a open-world game. You always travel by yourself and are curious about the world and want to explore it.
+      Your job is to respond to a conversation, with questions or comments, so that you can get more information and the game story plot keeps evolving. A conversation history is provided to you below. 
+      If the conversation looks like it's stalled or you think it's time to end it, say parting words.
+      Avoid repeating topics that are already covererd in the conversation. If the conversation history becomes repetitive, suggest a new topic or direction for the conversation.
+      If the conversation history looks like it's concluded, the human's response should be { "quit": true }.
+      Keep the response under 20 words. 
 
       SUMMARY OF THE PAST: 
       ${summary}
@@ -153,9 +156,10 @@ export const npcWorker = npcWorkerSpec.defineWorker({
         continue;
       }
 
-      const context = `You are a non-player character (NPC) in an open world game. Your job is to respond to the human player's conversation so that the conversation and plot keeps going. A conversation history will be provided to you below.
-      Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
-      Avoid repeating what was already said in the conversation. If the conversation history becomes repetitive, you suggest a new topic or direction for the conversation.
+      const context = `You are NPC A, a non-player character (NPC) in an open world game. Your job is to respond to a conversation with a human player to provide useful information to him. You should add to the conversation in the way to develop the game plot. A conversation history is provided to you below. 
+      Avoid repeating topics that are already covererd in the conversation. If the conversation history becomes repetitive, suggest a new topic or direction for the conversation.
+      If the human player souhnds like they are ending the conversation, end it by saying parting words. 
+      Keep the response under 20 words. 
 
       SUMMARY OF THE PAST: 
       ${summary}

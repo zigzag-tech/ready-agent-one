@@ -105,10 +105,10 @@ export const playerWorker = playerWorkerSpec.defineWorker({
       const prompt = `      
       
       You are a game player. You will receive a conversation history and you need to respond to it. Keep the response under 20 words. 
-      If you think the conversation is going nowhere, you can response "quit" to end the conversation. 
-      Avoid repeating what was already said in the conversation. Add something new to the conversation for your response.
+      If you think the conversation is going nowhere, you can response by setting "quit" to true to end the conversation. 
+      Avoid repeating what was already said in the conversation. If the conversation history becomes repetitive, you suggest a new topic or direction for the conversation.
 
-      SUMMARY OF PAST CONVERSATION: 
+      SUMMARY OF THE PAST: 
       ${summary}
       RECENT CONVERSATION HISTORY:
       ${recentHistory.join("\n")}
@@ -124,9 +124,10 @@ export const playerWorker = playerWorkerSpec.defineWorker({
       Your output will be parsed and type-checked according to the provided schema instance, so make sure all fields in your output match the schema exactly and there are no trailing commas!
       
       Here is the JSON Schema instance your output must adhere to. Include the enclosing markdown codeblock:
-      \`\`\`
+      
       {"type":"object","properties":{"humanPlayerResponse":{"type":"string","description":"the response of the human player"},"quit":{"type":"boolean","description":"whether the human player decides to quit."}}},"required":["humanPlayerResponse", "quit"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}
-      \`\`\`
+      
+
       What's the human player's response?
       `;
       // const response = await generateResponseGroq(prompt);
@@ -154,6 +155,35 @@ export const playerWorker = playerWorkerSpec.defineWorker({
   },
 });
 
+function coercedJSONPrompt({
+  context,
+  question,
+}: {
+  context: string;
+  question: string;
+}) {
+  const prompt = `${context}
+      
+      You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
+      
+      "JSON Schema" is a declarative language that allows you to annotate and validate JSON documents.
+      
+      For example, the example "JSON Schema" instance {{"properties": {{"foo": {{"description": "a list of test words", "type": "array", "items": {{"type": "string"}}}}}}, "required": ["foo"]}}}}
+      would match an object with one required property, "foo". The "type" property specifies "foo" must be an "array", and the "description" property semantically describes it as "a list of test words". The items within "foo" must be strings.
+      Thus, the object {{"foo": ["bar", "baz"]}} is a well-formatted instance of this example "JSON Schema". The object {{"properties": {{"foo": ["bar", "baz"]}}}} is not well-formatted.
+      
+      Your output will be parsed and type-checked according to the provided schema instance, so make sure all fields in your output match the schema exactly and there are no trailing commas!
+      
+      Here is the JSON Schema instance your output must adhere to. Include the enclosing markdown codeblock:
+      
+      {"type":"object","properties":{"humanPlayerResponse":{"type":"string","description":"the response of the human player"},"quit":{"type":"boolean","description":"whether the human player decides to quit."}}},"required":["humanPlayerResponse", "quit"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}
+      
+
+      ${question}
+      `;
+  return prompt;
+}
+
 export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output, jobId }) => {
     for await (const { summary, recentHistory } of input) {
@@ -165,8 +195,9 @@ export const npcWorker = npcWorkerSpec.defineWorker({
 
       const prompt = `You are a non-player character. You will receive a conversaiton history from the player and you need to respond to it. 
       Keep the response under 20 words. Make sure to respond in a way that can keep the game going.
-      Avoid repeating what was already said in the conversation. Add something new to the conversation for your response.
-      SUMMARY OF PAST CONVERSATION: 
+      Avoid repeating what was already said in the conversation. If the conversation history becomes repetitive, you suggest a new topic or direction for the conversation.
+
+      SUMMARY OF THE PAST: 
       ${summary}
       RECENT CONVERSATION HISTORY:
       ${recentHistory.join("\n")}
@@ -193,8 +224,8 @@ export const summaryWorker = summarySpec.defineWorker({
         // keep accululating the history until it reaches 10
         // then take the oldest 5 and fold it into the summary
 
-        if (recentHistory.length > 10) {
-          const oldest = recentHistory.splice(0, 5);
+        if (recentHistory.length > 20) {
+          const oldest = recentHistory.splice(0, 10);
           const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
   SUMMARY OF PAST CONVERSATION:
   ${summaryOfAllThePast}
@@ -222,8 +253,8 @@ export const summaryWorker = summarySpec.defineWorker({
       // keep accululating the history until it reaches 10
       // then take the oldest 5 and fold it into the summary
 
-      if (recentHistory.length > 10) {
-        const oldest = recentHistory.splice(0, 5);
+      if (recentHistory.length > 20) {
+        const oldest = recentHistory.splice(0, 10);
         const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
   SUMMARY OF PAST CONVERSATION:
   ${summaryOfAllThePast}
@@ -250,7 +281,7 @@ async function generateResponseOllama(prompt: string) {
         temperature: 0.3,
       },
       stream: true,
-      model: "mistral",
+      model: "mixtral",
       messages: [
         {
           role: "user",
@@ -262,13 +293,14 @@ async function generateResponseOllama(prompt: string) {
     // process.stdout.write("Response:  ");
 
     for await (const part of response) {
-      process.stdout.write(part.message.content);
+      process.stdout.write(
+        part.message.content.replace("\n", " ").replace("\r", " ")
+      );
       message += part.message.content;
     }
     // erase all of what was written
     // Move the cursor to the beginning of the line
     process.stdout.write("\r");
-
     // Clear the entire line
     process.stdout.write("\x1b[2K");
     return message;

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { summaryPlusHistorySchema } from "../common/summaryPlusHistorySchema";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
-const CONVO_MODEL = "gemma";
+const CONVO_MODEL = "mixtral";
 
 const stringZ = z.string();
 
@@ -104,22 +104,30 @@ export const playerWorker = playerWorkerSpec.defineWorker({
         continue;
       }
 
-      const context = `You are a lone human player in a open-world game. You always travel by yourself and are curious about the world and want to explore it.
-      Your job is to respond to a conversation, with questions or comments, so that you can get more information and the game story plot keeps evolving. A conversation history is provided to you below. 
-      If the conversation looks like it's stalled or you think it's time to end it, say parting words.
-      Avoid asking about the same question over and over. If the conversation history becomes repetitive, change topic or say parting words.
-      If the conversation history looks like it's concluded, the human's response should be { "quit": true }.
-      Keep the response under 20 words. 
+      const context = `Below is a conversation that happened in an open world game. 
 
-      SUMMARY OF THE PAST: 
-      ${summary}
-      RECENT CONVERSATION HISTORY:
-      ${recentHistory.join("\n")}
+### BACKGROUND
+${summary}
+
+### CONVERSATION HISTORY
+${
+  recentHistory.length > 0
+    ? recentHistory.join("\n")
+    : "No conversation history yet."
+}
+      
+### INSTRUCTIONS
+
+Your job is to detect if the conversation has come to an end.
+If the CONVERSATION HISTORY looks like either of them have said good luck or farewell, respond with JSON { "ended": true }. Otherwise, response with JSON { "nextMessage": "[your message]" }
+Replace [your message] with what the player should say next.
+DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
       `;
-      const question = `What's the human player's response?`;
-      const prompt = coercedJSONPrompt({ context, question });
+      // const question = `What's the human player's response?`;
+      // const prompt = coercedJSONPrompt({ context, question });
       // const response = await generateResponseGroq(prompt);
-      const response = await generateResponseOllama(prompt);
+      // console.log(context);
+      const response = await generateResponseOllama(context);
       await output.emit(parseJSONResponse(response));
     }
   },
@@ -131,15 +139,22 @@ function parseJSONResponse(raw: string) {
     const start = raw.indexOf("{");
     const end = raw.lastIndexOf("}") + 1;
     const responseJsonString = raw.slice(start, end);
-    const responseJson = JSON.parse(responseJsonString) as {
-      nextResponse: string;
-      quit: boolean;
-    };
-    if (!responseJson.quit) {
+    const responseJson = JSON.parse(responseJsonString) as
+      | {
+          nextMessage: string;
+        }
+      | {
+          ended: true;
+        };
+    if ((responseJson as { ended: true }).ended) {
       // console.log("PLAYER WORKER RESPONSE", response);
-      return responseJson.nextResponse;
-    } else {
       return "[The human player has decided to quit the conversation.]";
+    } else {
+      return (
+        responseJson as {
+          nextMessage: string;
+        }
+      ).nextMessage;
     }
   } catch (e) {
     console.log("Error parsing response", e, "raw:", raw);
@@ -156,21 +171,31 @@ export const npcWorker = npcWorkerSpec.defineWorker({
         continue;
       }
 
-      const context = `You are NPC A, a non-player character (NPC) in an open world game. Your job is to respond to a conversation with a human player to provide useful information to him. You should add to the conversation in the way to develop the game plot. A conversation history is provided to you below. 
-      Avoid repeating topics that are already covererd in the conversation. If the conversation history becomes repetitive, suggest a new topic or direction for the conversation.
-      If the human player souhnds like they are ending the conversation, end it by saying parting words. 
-      Keep the response under 20 words. 
+      const context = `Below is a conversation that happened in an open world game. 
 
-      SUMMARY OF THE PAST: 
-      ${summary}
-      RECENT CONVERSATION HISTORY:
-      ${recentHistory.join("\n")}
-      `;
-      const question = `What's the NPC's response?`;
-      const prompt = coercedJSONPrompt({ context, question });
+### BACKGROUND
+${summary}
+
+### CONVERSATION HISTORY
+${
+  recentHistory.length > 0
+    ? recentHistory.join("\n")
+    : "No conversation history yet."
+}
+      
+### INSTRUCTIONS
+
+Detect if the conversation has come to an end.
+If the CONVERSATION HISTORY looks like either of them have said good luck or farewell, respond with JSON { "ended": true }. Otherwise, response with JSON { "nextMessage": "[your message]" }
+Replace [your message] with what the NPC should say next. The NPC has a somewhat sarcastic personality but should also be helpful and not too cryptic.
+DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
+`;
+      // const question = `What's the NPC's response?`;
+      // const prompt = coercedJSONPrompt({ context, question });
 
       // const response = await generateResponseGroq(prompt);
-      const raw = await generateResponseOllama(prompt);
+      // console.log(context);
+      const raw = await generateResponseOllama(context);
       const response = parseJSONResponse(raw);
       // console.log("NPC WORKER RESPONSE", response);
       await output.emit(response);
@@ -201,11 +226,11 @@ export const summaryWorker = summarySpec.defineWorker({
           `;
           summaryOfAllThePast = await generateResponseOllama(prompt);
         }
-        // console.log(
-        //   "SUMMARY WORKER OUTPUT",
-        //   summaryOfAllThePast,
-        //   recentHistory
-        // );
+        console.log(
+          "SUMMARY WORKER OUTPUT",
+          summaryOfAllThePast,
+          recentHistory
+        );
         await output("for-player").emit({
           summary: summaryOfAllThePast,
           recentHistory: recentHistory,
@@ -335,3 +360,4 @@ function coercedJSONPrompt({
       [/INST]`;
   return prompt;
 }
+

@@ -17,7 +17,8 @@ ZZEnv.setGlobal(
   await workflow.startWorker();
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
   const initialInput = {
-    summary: "This is the ancient dark times.",
+    summary:
+      "This is a strange time in a strange place. Rumor has it that there was an ancient civilization hiding here.",
     recentHistory: ["NPC: yello."],
   };
 

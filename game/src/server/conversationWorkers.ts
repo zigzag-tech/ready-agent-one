@@ -5,7 +5,7 @@ import { z } from "zod";
 import { summaryPlusHistorySchema } from "../common/summaryPlusHistorySchema";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
-const CONVO_MODEL = "mixtral";
+const CONVO_MODEL = "gemma";
 
 const stringZ = z.string();
 
@@ -107,7 +107,7 @@ export const playerWorker = playerWorkerSpec.defineWorker({
       const context = `You are a lone human player in a open-world game. You always travel by yourself and are curious about the world and want to explore it.
       Your job is to respond to a conversation, with questions or comments, so that you can get more information and the game story plot keeps evolving. A conversation history is provided to you below. 
       If the conversation looks like it's stalled or you think it's time to end it, say parting words.
-      Avoid repeating topics that are already covererd in the conversation. If the conversation history becomes repetitive, suggest a new topic or direction for the conversation.
+      Avoid asking about the same question over and over. If the conversation history becomes repetitive, change topic or say parting words.
       If the conversation history looks like it's concluded, the human's response should be { "quit": true }.
       Keep the response under 20 words. 
 
@@ -243,7 +243,7 @@ async function generateResponseOllama(prompt: string) {
   try {
     const response = await ollama.chat({
       options: {
-        temperature: 0.3,
+        temperature: 0.8,
       },
       stream: true,
       model: CONVO_MODEL,
@@ -291,7 +291,7 @@ async function generateResponseGroq(prompt: string) {
       ],
       model: "mixtral-8x7b-32768",
       // stream: true,
-      temperature: 0.3,
+      temperature: 0.5,
     });
     // let message = "";
     // process.stdout.write("Response:  ");
@@ -326,12 +326,9 @@ function coercedJSONPrompt({
       Here is an example JSON that  yur output must adhere to:
       {
         "nextResponse": "[Your response here]",
-        "quit": false
+        "quit": false | true // true indicates that the conversation is over
       }
-      OR 
-      {
-        "quit": true
-      }
+      
       
       Please provide your response based the context and the question below:
       ${question}

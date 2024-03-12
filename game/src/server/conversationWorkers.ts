@@ -224,7 +224,7 @@ export const summaryWorker = summarySpec.defineWorker({
   SUMMARY OF PAST CONVERSATION:
   ${summaryOfAllThePast}
   RECENT CONVERSATION HISTORY:
-  ${oldest.join("\n")}
+  ${recentHistory.join("\n")}
   
   NEW SUMMARY:
           `;

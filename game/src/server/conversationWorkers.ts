@@ -5,7 +5,7 @@ import { z } from "zod";
 import { summaryPlusHistorySchema } from "../common/summaryPlusHistorySchema";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
-const CONVO_MODEL = "mistral";
+const CONVO_MODEL = "dolphin-mistral";
 
 const stringZ = z.string();
 
@@ -145,7 +145,7 @@ ${
 ### INSTRUCTIONS
 
 Your job is to detect if the conversation has come to an end.
-If the CONVERSATION HISTORY looks like either of them have said good luck or farewell, respond with JSON { "ended": true }. Otherwise, response with JSON { "nextMessage": "[your message]" }
+Response with JSON { "nextMessage": "[your message]" }
 Replace [your message] with what the player should say next.
 DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
       `;
@@ -206,7 +206,7 @@ export const npcWorker = npcWorkerSpec.defineWorker({
         continue;
       }
 
-      console.log(topicTracker);
+      // console.log(topicTracker);
       const context = generateContextByTopicSignal({
         summary,
         recentHistory,
@@ -265,7 +265,7 @@ ${
 ### INSTRUCTIONS
 
 Detect if the conversation has come to an end.
-If the CONVERSATION HISTORY looks like either of them have said good luck or farewell, respond with JSON { "ended": true }. Otherwise, response with JSON { "nextMessage": "[your message]" }
+Response with JSON { "nextMessage": "[your message]" }
 Replace [your message] with what the NPC should say next. The NPC has a somewhat sarcastic personality but should also be helpful and not too cryptic.
 DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
 Keep response under 20 words.

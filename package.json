@@ -15,6 +15,7 @@
   "private": true,
   "workspaces": [
     "livestack/packages/*",
+    "livestack/crosslang/*",
     "game"
   ],
   "preconstruct": {

@@ -1,4 +1,4 @@
-# echoes-of-sentience
+# Ｅｃｈｏｅｓ  ｏｆ  Ｓｅｎｔｉｅｎｃｅ
 
 AN LLM-powered multiplayer RPG game.
 

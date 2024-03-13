@@ -1,8 +1,17 @@
-# Ｅｃｈｏｅｓ  ｏｆ  Ｓｅｎｔｉｅｎｃｅ
+<h1 align="center"> Ｅｃｈｏｅｓ　ｏｆ　Ｓｅｎｔｉｅｎｃｅ </h1>
+<p align="center">AN LLM-powered multiplayer game.</p>
 
-AN LLM-powered multiplayer RPG game.
+## Project Status
 
-Work in Progress.
+Experimental prototype. Work in Progress.
+
+## Technology
+
+Powered by [LiveStack](https://github.com/zigzag-tech/livestack)
+
+## Live coding
+
+[Join our biweekly live coding session on YouTube](https://www.youtube.com/@zigzag-ai/streams) (Every Tuesday & Saturday @7:30pm EST).
 
 
 # Credits

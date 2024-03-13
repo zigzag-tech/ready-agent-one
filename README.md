@@ -7,7 +7,7 @@ Experimental prototype. Work in Progress.
 
 ## Technology
 
-Powered by [LiveStack](https://github.com/zigzag-tech/livestack)
+Powered by [LiveStack](https://github.com/zigzag-tech/livestack).
 
 ## Live coding
 

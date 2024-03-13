@@ -14,8 +14,7 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "livestack/packages/*",
-    "livestack/crosslang/*",
+    "livestack/*",
     "game"
   ],
   "preconstruct": {

@@ -2139,9 +2139,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@livestack/client@workspace:livestack/packages/client":
+"@livestack/client@workspace:livestack/client":
   version: 0.0.0-use.local
-  resolution: "@livestack/client@workspace:livestack/packages/client"
+  resolution: "@livestack/client@workspace:livestack/client"
   dependencies:
     "@livestack/shared": "npm:*"
     "@preconstruct/cli": "npm:^2.8.3"
@@ -2156,9 +2156,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/core@npm:*, @livestack/core@workspace:livestack/packages/core":
+"@livestack/core@npm:*, @livestack/core@workspace:livestack/core":
   version: 0.0.0-use.local
-  resolution: "@livestack/core@workspace:livestack/packages/core"
+  resolution: "@livestack/core@workspace:livestack/core"
   dependencies:
     "@google-cloud/storage": "npm:^7.x"
     "@livestack/shared": "npm:*"
@@ -2187,9 +2187,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/gateway@workspace:livestack/packages/gateway":
+"@livestack/gateway@workspace:livestack/gateway":
   version: 0.0.0-use.local
-  resolution: "@livestack/gateway@workspace:livestack/packages/gateway"
+  resolution: "@livestack/gateway@workspace:livestack/gateway"
   dependencies:
     "@livestack/core": "npm:*"
     "@livestack/shared": "npm:*"
@@ -2198,9 +2198,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/replicate@workspace:livestack/packages/replicate":
+"@livestack/replicate@workspace:livestack/replicate":
   version: 0.0.0-use.local
-  resolution: "@livestack/replicate@workspace:livestack/packages/replicate"
+  resolution: "@livestack/replicate@workspace:livestack/replicate"
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
     replicate: "npm:^0.21"
@@ -2210,9 +2210,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/runpod@workspace:livestack/packages/runpod":
+"@livestack/runpod@workspace:livestack/runpod":
   version: 0.0.0-use.local
-  resolution: "@livestack/runpod@workspace:livestack/packages/runpod"
+  resolution: "@livestack/runpod@workspace:livestack/runpod"
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
     typescript: "npm:5.4.2"
@@ -2222,9 +2222,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/shared@npm:*, @livestack/shared@workspace:livestack/packages/shared":
+"@livestack/shared@npm:*, @livestack/shared@workspace:livestack/shared":
   version: 0.0.0-use.local
-  resolution: "@livestack/shared@workspace:livestack/packages/shared"
+  resolution: "@livestack/shared@workspace:livestack/shared"
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
     "@types/chai": "npm:^4.3.11"
@@ -2242,9 +2242,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/vault-client@npm:*, @livestack/vault-client@workspace:livestack/packages/vault-client":
+"@livestack/vault-client@npm:*, @livestack/vault-client@workspace:livestack/vault-client":
   version: 0.0.0-use.local
-  resolution: "@livestack/vault-client@workspace:livestack/packages/vault-client"
+  resolution: "@livestack/vault-client@workspace:livestack/vault-client"
   dependencies:
     "@livestack/vault-interface": "npm:*"
     "@preconstruct/cli": "npm:^2.8.3"
@@ -2254,9 +2254,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/vault-dev-server@npm:*, @livestack/vault-dev-server@workspace:livestack/packages/vault-dev-server":
+"@livestack/vault-dev-server@npm:*, @livestack/vault-dev-server@workspace:livestack/vault-dev-server":
   version: 0.0.0-use.local
-  resolution: "@livestack/vault-dev-server@workspace:livestack/packages/vault-dev-server"
+  resolution: "@livestack/vault-dev-server@workspace:livestack/vault-dev-server"
   dependencies:
     "@livestack/shared": "npm:*"
     "@livestack/vault-interface": "npm:*"
@@ -2276,9 +2276,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/vault-interface@npm:*, @livestack/vault-interface@workspace:livestack/packages/vault-interface":
+"@livestack/vault-interface@npm:*, @livestack/vault-interface@workspace:livestack/vault-interface":
   version: 0.0.0-use.local
-  resolution: "@livestack/vault-interface@workspace:livestack/packages/vault-interface"
+  resolution: "@livestack/vault-interface@workspace:livestack/vault-interface"
   dependencies:
     "@grpc/grpc-js": "npm:^1.9.14"
     "@grpc/proto-loader": "npm:^0.7.10"
@@ -2293,9 +2293,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/viz@workspace:livestack/packages/viz":
+"@livestack/viz@workspace:livestack/viz":
   version: 0.0.0-use.local
-  resolution: "@livestack/viz@workspace:livestack/packages/viz"
+  resolution: "@livestack/viz@workspace:livestack/viz"
   dependencies:
     typescript: "npm:5.4.2"
   peerDependencies:
@@ -5625,7 +5625,7 @@ __metadata:
     styled-components: "npm:^6.1.8"
     three: "npm:^0.162.0"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
     valtio: "npm:^1.13.2"
     vite: "npm:^5.0.12"
     vite-express: "npm:^0.14.0"
@@ -8216,9 +8216,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"livestack-shared-crosslang-js@npm:*, livestack-shared-crosslang-js@workspace:livestack/packages/shared-ts":
+"livestack-shared-crosslang-js@npm:*, livestack-shared-crosslang-js@workspace:livestack/shared-ts":
   version: 0.0.0-use.local
-  resolution: "livestack-shared-crosslang-js@workspace:livestack/packages/shared-ts"
+  resolution: "livestack-shared-crosslang-js@workspace:livestack/shared-ts"
   dependencies:
     "@napi-rs/cli": "npm:^2.18.0"
     ava: "npm:^6.0.1"
@@ -11309,16 +11309,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.4.1-rc":
-  version: 5.4.1-rc
-  resolution: "typescript@npm:5.4.1-rc"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/518a2017453d38c09b121abcb922d13becf2fec9b09cef84fe9f873518464ca3ac7dfac9e0b470966eaa3378d003c3178d49b429e12fcbb0d7aada9abfbcf83e
-  languageName: node
-  linkType: hard
-
 "typescript@npm:5.4.2":
   version: 5.4.2
   resolution: "typescript@npm:5.4.2"
@@ -11326,16 +11316,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/583ff68cafb0c076695f72d61df6feee71689568179fb0d3a4834dac343df6b6ed7cf7b6f6c801fa52d43cd1d324e2f2d8ae4497b09f9e6cfe3d80a6d6c9ca52
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A5.4.1-rc#optional!builtin<compat/typescript>":
-  version: 5.4.1-rc
-  resolution: "typescript@patch:typescript@npm%3A5.4.1-rc#optional!builtin<compat/typescript>::version=5.4.1-rc&hash=d69c25"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/96164326d56edbafb1c641649a60408fb64b8b597ed02a70f78ed2e04096479e2d65f96d54b8987eef6aeedb556cbbd3f78fa28e8731aa0018d847f09e045a1f
   languageName: node
   linkType: hard
 

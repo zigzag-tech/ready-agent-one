@@ -2147,7 +2147,7 @@ __metadata:
     "@preconstruct/cli": "npm:^2.8.3"
     "@types/react": "npm:^18"
     rxjs: "npm:^7"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
     use-deep-compare-effect: "npm:^1.8.1"
     uuid: "npm:^9"
   peerDependencies:
@@ -2174,7 +2174,7 @@ __metadata:
     lru-cache: "npm:^10.2.0"
     p-limit: "npm:^3"
     rxjs: "npm:^7"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
     uuid: "npm:^9"
     winston: "npm:^3.x"
     zod: "npm:^3"
@@ -2194,7 +2194,7 @@ __metadata:
     "@livestack/core": "npm:*"
     "@livestack/shared": "npm:*"
     socket.io: "npm:^4"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -2204,7 +2204,7 @@ __metadata:
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
     replicate: "npm:^0.21"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
   peerDependencies:
     "@livestack/core": "*"
   languageName: unknown
@@ -2215,7 +2215,7 @@ __metadata:
   resolution: "@livestack/runpod@workspace:livestack/packages/runpod"
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
   peerDependencies:
     "@livestack/core": "*"
     zod: ^3
@@ -2237,7 +2237,7 @@ __metadata:
     livestack-shared-crosslang-js: "npm:*"
     ts-jest: "npm:^29.1.2"
     ts-node: "npm:^10.9.1"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
     zod: "npm:^3"
   languageName: unknown
   linkType: soft
@@ -2250,7 +2250,7 @@ __metadata:
     "@preconstruct/cli": "npm:^2.8.3"
     "@types/node": "npm:^20.11.0"
     nice-grpc: "npm:^2.1.7"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -2271,7 +2271,7 @@ __metadata:
     nice-grpc: "npm:^2.1"
     redis: "npm:^4"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
     uuid: "npm:^9"
   languageName: unknown
   linkType: soft
@@ -2289,7 +2289,7 @@ __metadata:
     long: "npm:^5.2.3"
     protobufjs: "npm:^7.2.6"
     ts-proto: "npm:^1.167.3"
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
   languageName: unknown
   linkType: soft
 
@@ -2297,7 +2297,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@livestack/viz@workspace:livestack/packages/viz"
   dependencies:
-    typescript: "npm:5.4.1-rc"
+    typescript: "npm:5.4.2"
   peerDependencies:
     "@livestack/core": "*"
   languageName: unknown
@@ -8216,9 +8216,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"livestack-shared-crosslang-js@npm:*, livestack-shared-crosslang-js@workspace:livestack/crosslang/shared-ts":
+"livestack-shared-crosslang-js@npm:*, livestack-shared-crosslang-js@workspace:livestack/packages/shared-ts":
   version: 0.0.0-use.local
-  resolution: "livestack-shared-crosslang-js@workspace:livestack/crosslang/shared-ts"
+  resolution: "livestack-shared-crosslang-js@workspace:livestack/packages/shared-ts"
   dependencies:
     "@napi-rs/cli": "npm:^2.18.0"
     ava: "npm:^6.0.1"
@@ -11319,6 +11319,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:5.4.2":
+  version: 5.4.2
+  resolution: "typescript@npm:5.4.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/583ff68cafb0c076695f72d61df6feee71689568179fb0d3a4834dac343df6b6ed7cf7b6f6c801fa52d43cd1d324e2f2d8ae4497b09f9e6cfe3d80a6d6c9ca52
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A5.4.1-rc#optional!builtin<compat/typescript>":
   version: 5.4.1-rc
   resolution: "typescript@patch:typescript@npm%3A5.4.1-rc#optional!builtin<compat/typescript>::version=5.4.1-rc&hash=d69c25"
@@ -11326,6 +11336,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/96164326d56edbafb1c641649a60408fb64b8b597ed02a70f78ed2e04096479e2d65f96d54b8987eef6aeedb556cbbd3f78fa28e8731aa0018d847f09e045a1f
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>":
+  version: 5.4.2
+  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=d69c25"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/22e2f213c3ffe5960c5eaec6c95c04e01858fed57a94be250746f540b935b2c18c3c3fc80d3ab65d28c0aba1eb76284557ba3bf521d28caee811c44ba2b648f9
   languageName: node
   linkType: hard
 

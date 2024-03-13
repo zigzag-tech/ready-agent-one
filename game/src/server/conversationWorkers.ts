@@ -26,11 +26,7 @@ export const summarySpec = JobSpec.define({
     npc: stringZ,
     player: stringZ,
   },
-  output: {
-    "for-npc": summaryPlusHistorySchema,
-    "for-supervisor": summaryPlusHistorySchema,
-    "for-player": summaryPlusHistorySchema,
-  },
+  output: summaryPlusHistorySchema,
 });
 
 export const supervisorSpec = JobSpec.define({
@@ -84,7 +80,6 @@ export const workflow = Workflow.define({
     conn({
       from: {
         spec: summarySpec,
-        output: "for-player",
       },
       to: {
         spec: playerWorkerSpec,
@@ -93,7 +88,6 @@ export const workflow = Workflow.define({
     conn({
       from: {
         spec: summarySpec,
-        output: "for-npc",
       },
       to: {
         spec: npcWorkerSpec,
@@ -103,7 +97,6 @@ export const workflow = Workflow.define({
     conn({
       from: {
         spec: summarySpec,
-        output: "for-supervisor",
       },
       to: {
         spec: supervisorSpec,
@@ -303,7 +296,7 @@ export const summaryWorker = summarySpec.defineWorker({
           recentHistory
         );
         counter++;
-        await output("for-player").emit({
+        await output.emit({
           summary: summaryOfAllThePast,
           recentHistory: recentHistory,
           counter,
@@ -330,12 +323,7 @@ export const summaryWorker = summarySpec.defineWorker({
       }
       console.log("SUMMARY WORKER OUTPUT", summaryOfAllThePast, recentHistory);
       counter++;
-      await output("for-npc").emit({
-        summary: summaryOfAllThePast,
-        recentHistory: recentHistory,
-        counter,
-      });
-      await output("for-supervisor").emit({
+      await output.emit({
         summary: summaryOfAllThePast,
         recentHistory: recentHistory,
         counter,

@@ -14,4 +14,5 @@ export const summaryPlusHistorySchema = z.object({
       }
     )
   ),
+  counter: z.number(),
 });

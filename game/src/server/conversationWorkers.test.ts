@@ -20,6 +20,7 @@ ZZEnv.setGlobal(
     summary:
       "This is a strange time in a strange place. Rumor has it that there was a mysterious ancient civilization hiding here, in plain sight.",
     recentHistory: ["NPC: yello."],
+    counter: 0,
   };
 
   const { input, output } = await workflow.enqueueJob({});

@@ -451,8 +451,9 @@ const Player: React.FC = () => {
     feed &&
       feed({
         summary:
-          "Before our story begins, rumor has it there was an ancient civilization that worshipped dolphins.",
+          "Before our story begins, rumor has it there was a meow meow land that's ruled by cats.",
         recentHistory: ["Human Player: yello."],
+        counter: 0,
       });
   }, [feed]);
 

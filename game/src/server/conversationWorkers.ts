@@ -5,7 +5,7 @@ import { z } from "zod";
 import { summaryPlusHistorySchema } from "../common/summaryPlusHistorySchema";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
-const CONVO_MODEL = "mixtral";
+const CONVO_MODEL = "mistral";
 
 const stringZ = z.string();
 
@@ -16,7 +16,7 @@ export const playerWorkerSpec = JobSpec.define({
 });
 export const npcWorkerSpec = JobSpec.define({
   name: "NPC_WORKER",
-  input: summaryPlusHistorySchema,
+  input: { default: summaryPlusHistorySchema, supervision: stringZ },
   output: stringZ,
 });
 
@@ -28,8 +28,15 @@ export const summarySpec = JobSpec.define({
   },
   output: {
     "for-npc": summaryPlusHistorySchema,
+    "for-supervisor": summaryPlusHistorySchema,
     "for-player": summaryPlusHistorySchema,
   },
+});
+
+export const supervisorSpec = JobSpec.define({
+  name: "SUPERVISOR_WORKER",
+  input: summaryPlusHistorySchema,
+  output: stringZ,
 });
 
 export const workflow = Workflow.define({
@@ -90,6 +97,25 @@ export const workflow = Workflow.define({
       },
       to: {
         spec: npcWorkerSpec,
+        input: "default",
+      },
+    }),
+    conn({
+      from: {
+        spec: summarySpec,
+        output: "for-supervisor",
+      },
+      to: {
+        spec: supervisorSpec,
+      },
+    }),
+    conn({
+      from: {
+        spec: supervisorSpec,
+      },
+      to: {
+        spec: npcWorkerSpec,
+        input: "supervision",
       },
     }),
   ],
@@ -164,14 +190,67 @@ function parseJSONResponse(raw: string) {
 
 export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output, jobId }) => {
-    for await (const { summary, recentHistory } of input) {
+    let topicTracker = { currentTopic: "", isNewTopic: false };
+    (async () => {
+      for await (const data of input("supervision")) {
+        if (data !== topicTracker.currentTopic) {
+          topicTracker = { currentTopic: data, isNewTopic: true };
+        }
+      }
+    })();
+
+    for await (const { summary, recentHistory } of input("default")) {
       // console.log("NPC WORKER INPUT", summary, recentHistory);
       // if the last message was from the player, then the player should not respond
       if (recentHistory[recentHistory.length - 1].startsWith("NPC")) {
         continue;
       }
 
-      const context = `Below is a conversation that happened in an open world game. 
+      console.log(topicTracker);
+      const context = generateContextByTopicSignal({
+        summary,
+        recentHistory,
+        topicTracker,
+      });
+
+      topicTracker.isNewTopic && (topicTracker.isNewTopic = false);
+      // const question = `What's the NPC's response?`;
+      // const prompt = coercedJSONPrompt({ context, question });
+
+      // const response = await generateResponseGroq(prompt);
+      // console.log(context);
+      const raw = await generateResponseOllama(context);
+      const response = parseJSONResponse(raw);
+      // console.log("NPC WORKER RESPONSE", response);
+      await output.emit(response);
+    }
+  },
+});
+
+const generateContextByTopicSignal = ({
+  summary,
+  recentHistory,
+  topicTracker,
+}: {
+  summary: string;
+  recentHistory: string[];
+  topicTracker: { currentTopic: string; isNewTopic: boolean };
+}) => {
+  if (topicTracker.isNewTopic) {
+    const context = `You are an NPC. Your job is to start a conversation with a human player based on the topic supplied:
+### TOPIC
+${topicTracker.currentTopic}
+
+### INSTRUCTIONS
+
+Response with JSON { "nextMessage": "[your message]" }.
+Replace [your message] with what the NPC should say next. The NPC has a somewhat sarcastic personality but should also be helpful and not too cryptic.
+Write only the JSON and nothing else. Keep response under 20 words.
+`;
+
+    return context;
+  } else {
+    const context = `Below is a conversation that happened in an open world game. 
 
 ### BACKGROUND
 ${summary}
@@ -189,24 +268,16 @@ Detect if the conversation has come to an end.
 If the CONVERSATION HISTORY looks like either of them have said good luck or farewell, respond with JSON { "ended": true }. Otherwise, response with JSON { "nextMessage": "[your message]" }
 Replace [your message] with what the NPC should say next. The NPC has a somewhat sarcastic personality but should also be helpful and not too cryptic.
 DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
+Keep response under 20 words.
 `;
-      // const question = `What's the NPC's response?`;
-      // const prompt = coercedJSONPrompt({ context, question });
-
-      // const response = await generateResponseGroq(prompt);
-      // console.log(context);
-      const raw = await generateResponseOllama(context);
-      const response = parseJSONResponse(raw);
-      // console.log("NPC WORKER RESPONSE", response);
-      await output.emit(response);
-    }
-  },
-});
-
+    return context;
+  }
+};
 export const summaryWorker = summarySpec.defineWorker({
   processor: async ({ input, output }) => {
     const recentHistory: string[] = [];
     let summaryOfAllThePast = "";
+    let counter = 0;
 
     (async () => {
       for await (const data of input("npc")) {
@@ -231,9 +302,11 @@ export const summaryWorker = summarySpec.defineWorker({
           summaryOfAllThePast,
           recentHistory
         );
+        counter++;
         await output("for-player").emit({
           summary: summaryOfAllThePast,
           recentHistory: recentHistory,
+          counter,
         });
       }
     })();
@@ -256,10 +329,38 @@ export const summaryWorker = summarySpec.defineWorker({
         summaryOfAllThePast = await generateResponseOllama(prompt);
       }
       console.log("SUMMARY WORKER OUTPUT", summaryOfAllThePast, recentHistory);
+      counter++;
       await output("for-npc").emit({
         summary: summaryOfAllThePast,
         recentHistory: recentHistory,
+        counter,
       });
+      await output("for-supervisor").emit({
+        summary: summaryOfAllThePast,
+        recentHistory: recentHistory,
+        counter,
+      });
+    }
+  },
+});
+
+export const supervisorWorker = supervisorSpec.defineWorker({
+  processor: async ({ input, output }) => {
+    for await (const data of input) {
+      // if data.counter is a multiple of 10, then propose a new topic
+      if (data.counter % 2 === 0 || data.counter % 3 === 0) {
+        const prompt = `Propose a new topic for the conversation. Keep it under 20 words.`;
+        // SUMMARY OF PAST CONVERSATION:
+        // ${data.summary}
+        // RECENT CONVERSATION HISTORY:
+        // ${data.recentHistory.join("\n")}
+
+        // NEW TOPIC:
+        //         `;
+        const newTopic = await generateResponseOllama(prompt);
+        console.log("SUPERVISOR WORKER OUTPUT", newTopic);
+        await output.emit(newTopic);
+      }
     }
   },
 });
@@ -360,4 +461,3 @@ function coercedJSONPrompt({
       [/INST]`;
   return prompt;
 }
-

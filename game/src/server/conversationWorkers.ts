@@ -14,7 +14,7 @@ export const playerWorkerSpec = JobSpec.define({
 
 export const npcWorkerSpec = JobSpec.define({
   name: "NPC_WORKER",
-  input: { default: summaryPlusHistorySchema, supervision: stringZ },
+  input: { summary: summaryPlusHistorySchema, supervision: stringZ },
   output: stringZ,
 });
 
@@ -48,7 +48,8 @@ export const workflow = Workflow.define({
     expose({
       spec: npcWorkerSpec,
       input: {
-        default: "npc-input",
+        summary: "npc-input",
+        supervision: "npc-supervision",
       },
       output: {
         default: "npc-talk",
@@ -79,7 +80,7 @@ export const workflow = Workflow.define({
       from: summarySpec,
       to: {
         spec: npcWorkerSpec,
-        input: "default",
+        input: "summary",
       },
     }),
     conn({
@@ -166,38 +167,40 @@ function parseJSONResponse(raw: string) {
 export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output, jobId }) => {
     let topicTracker = { currentTopic: "", isNewTopic: false };
-    (async () => {
-      for await (const data of input("supervision")) {
-        if (data !== topicTracker.currentTopic) {
-          topicTracker = { currentTopic: data, isNewTopic: true };
+
+    for await (const { data, tag } of input.merge("supervision", "summary")) {
+      switch (tag) {
+        case "supervision": {
+          if (data !== topicTracker.currentTopic) {
+            topicTracker = { currentTopic: data, isNewTopic: true };
+          }
+          break;
+        }
+        case "summary": {
+          // console.log("NPC WORKER INPUT", summary, recentHistory);
+          // if the last message was from the player, then the player should not respond
+          const { summary, recentHistory } = data;
+          if (recentHistory[recentHistory.length - 1].startsWith("NPC")) {
+            continue;
+          }
+
+          const context = generateContextByTopicSignal({
+            summary,
+            recentHistory,
+            topicTracker,
+          });
+
+          topicTracker.isNewTopic && (topicTracker.isNewTopic = false);
+          const raw = await generateResponseOllama(context);
+          const response = parseJSONResponse(raw);
+          // console.log("NPC WORKER RESPONSE", response);
+          await output.emit(response);
+          break;
+        }
+        default: {
+          throw new Error(`Invalid tag: ${tag} in npcWorker.`);
         }
       }
-    })();
-
-    for await (const { summary, recentHistory } of input("default")) {
-      // console.log("NPC WORKER INPUT", summary, recentHistory);
-      // if the last message was from the player, then the player should not respond
-      if (recentHistory[recentHistory.length - 1].startsWith("NPC")) {
-        continue;
-      }
-
-      // console.log(topicTracker);
-      const context = generateContextByTopicSignal({
-        summary,
-        recentHistory,
-        topicTracker,
-      });
-
-      topicTracker.isNewTopic && (topicTracker.isNewTopic = false);
-      // const question = `What's the NPC's response?`;
-      // const prompt = coercedJSONPrompt({ context, question });
-
-      // const response = await generateResponseGroq(prompt);
-      // console.log(context);
-      const raw = await generateResponseOllama(context);
-      const response = parseJSONResponse(raw);
-      // console.log("NPC WORKER RESPONSE", response);
-      await output.emit(response);
     }
   },
 });

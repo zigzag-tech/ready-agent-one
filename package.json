@@ -19,7 +19,15 @@
   ],
   "preconstruct": {
     "packages": [
-      "livestack/packages/*"
+      "livestack/core",
+      "livestack/client",
+      "livestack/gateway",
+      "livestack/replicate",
+      "livestack/runpod",
+      "livestack/shared",
+      "livestack/vault-client",
+      "vault-dev-server",
+      "vault-interface"
     ]
   },
   "devDependencies": {

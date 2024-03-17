@@ -53,7 +53,8 @@ export const summaryWorker = summarySpec.defineWorker({
   ### INSTRUCTIONS
   - Keep the response under 30 words.
 `;
-            currentState.current.summary = await generateResponseOllama(prompt);
+
+currentState.current.summary = (await generateResponseOllama(prompt)) || "";
           }
           // console.log(
           //   "SUMMARY WORKER OUTPUT",

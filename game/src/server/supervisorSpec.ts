@@ -20,13 +20,13 @@ export const supervisorWorker = supervisorSpec.defineWorker({
 
 ${
   state.previous
-    ? `### PREVIOUS SUMMARY (SCENES 1 - ${state.sceneNumber - 1})\n${
+    ? `### SUMMARY FOR PAST PLOT (SCENES 1 - ${state.sceneNumber - 1})\n${
         state.previous.summary
       }`
     : ""
 }
 
-### CURRENT SCENE SUMMARY
+### CURRENT SCENE PLOT
 ${state.current.summary}
 ### LAST FEW LINES OF CONVERSATION (FOR YOUR REFERENCE)
 ${state.recentHistory.join("\n")}
@@ -36,11 +36,11 @@ ${state.recentHistory.join("\n")}
           (await generateResponseOllama(previousScenesPrompt)) || "";
         const newSceneNumber = state.sceneNumber + 1;
         const newTopicPrompt = `You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
-### SUMMARY (SCENES 1 - ${state.sceneNumber})
+### SUMMARY OF PAST PLOT (SCENES 1 - ${state.sceneNumber})
 ${previousScenesSummary}
 
 ### INSTRUCTIONS
-- Write for new scene ${newSceneNumber}.
+- Write the plot for new scene ${newSceneNumber}.
 - Do not introduce new characters. Limit the plot to only be about interactions and adventure among [${Object.keys(
           charactersEnum.Values
         ).join(", ")}].
@@ -72,5 +72,5 @@ ${previousScenesSummary}
 });
 
 function conversationTooLong(state: GameState) {
-  return state.totalNumOfLines > 18;
+  return state.totalNumOfLines > 12;
 }

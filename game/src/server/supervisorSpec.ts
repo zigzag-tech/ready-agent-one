@@ -32,15 +32,15 @@ ${state.current.summary}
 ${state.recentHistory.join("\n")}
         `;
         // console.log("SUPERVISOR: SUMMARIZING PREVIOUS SCENE");
-        const previousScenesSummary = await generateResponseOllama(
-          previousScenesPrompt
-        );
-
+        const previousScenesSummary =
+          (await generateResponseOllama(previousScenesPrompt)) || "";
+        const newSceneNumber = state.sceneNumber + 1;
         const newTopicPrompt = `You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
-### WHAT HAPPENED PREVIOUSLY
+### SUMMARY (SCENES 1 - ${state.sceneNumber})
 ${previousScenesSummary}
 
 ### INSTRUCTIONS
+- Write for new scene ${newSceneNumber}.
 - Do not introduce new characters. Limit the plot to only be about interactions and adventure among [${Object.keys(
           charactersEnum.Values
         ).join(", ")}].
@@ -49,7 +49,7 @@ ${previousScenesSummary}
 - Keep the response under 30 words.
 `;
         // console.log("SUPERVISOR: GENERATING NEW SCENE");
-        const newTopic = await generateResponseOllama(newTopicPrompt);
+        const newTopic = (await generateResponseOllama(newTopicPrompt)) || "";
 
         const newState: GameState = {
           previous: {
@@ -58,7 +58,7 @@ ${previousScenesSummary}
           current: {
             summary: newTopic,
           },
-          sceneNumber: state.sceneNumber + 1,
+          sceneNumber: newSceneNumber,
           totalNumOfLines: 0,
           // only keep the last 3 lines of conversation
           // recentHistory: state.recentHistory.slice(-3),

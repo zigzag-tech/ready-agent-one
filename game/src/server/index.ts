@@ -1,13 +1,11 @@
-import pkg from "@livestack/core";
+import { ZZEnv, JobSpec } from "@livestack/core";
 import express from "express";
 import ViteExpress from "vite-express";
-import gatewayPkg from "@livestack/gateway";
+import { initJobBinding } from "@livestack/gateway";
 import ollama from "ollama";
 import { EventResponseZ, GAME_SPEC_NAME, GameEventZ } from "../common/game";
 import { workflow } from "./workflow.conversation";
 
-const { ZZEnv, JobSpec } = pkg;
-const { initJobBinding } = gatewayPkg;
 const app = express();
 
 export const sleep = (ms: number) =>
@@ -149,7 +147,6 @@ async function healthTemp({
   return response.message.content;
 }
 
-
 const PORT = 3520;
 const server = ViteExpress.listen(app, PORT, () =>
   console.log(`Hello World server listening on http://localhost:${PORT}.`)
@@ -159,4 +156,3 @@ initJobBinding({
   httpServer: server,
   allowedSpecsForBinding: [gameSpec, workflow],
 });
-

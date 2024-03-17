@@ -1,7 +1,6 @@
 import ollama from "ollama";
 import { CONVO_MODEL } from "./workflow.conversation";
-import corePkg from "@livestack/core";
-const { sleep } = corePkg;
+import { sleep } from "@livestack/core";
 
 export async function generateResponseOllama(prompt: string) {
   try {

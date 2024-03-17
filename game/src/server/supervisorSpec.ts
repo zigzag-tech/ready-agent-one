@@ -1,7 +1,7 @@
 import { generateResponseOllama } from "./generateResponseOllama";
-import pkg from "@livestack/core";
-import { GameState, gameStateSchema } from "./summarySpec";
-const { JobSpec } = pkg;
+import { JobSpec } from "@livestack/core";
+import { GameState } from "./summarySpec";
+import { gameStateSchema } from "../common/gameStateSchema";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -14,9 +14,13 @@ export const supervisorWorker = supervisorSpec.defineWorker({
     for await (const state of input) {
       // if the conversation has gone too long, change context by producing the next chapter
       if (conversationTooLong(state)) {
-        const previousChaptersPrompt = `Write a consolidated summary of the previous chapters, current chapter, and the last few lines of conversation.
-### PREVIOUS CHAPTER SUMMARY
-${state.previous.summary}
+        const previousChaptersPrompt = `Write a summary of everything listed below.
+
+${
+  state.previous.summary
+    ? `### PREVIOUS CHAPTER SUMMARY\n${state.previous.summary}`
+    : ""
+}
 
 ### CURRENT CHAPTER SUMMARY
 ${state.current.summary}

@@ -1,49 +1,30 @@
-import pkg from "@livestack/core";
 import { z } from "zod";
-;
-import { supervisorSpec } from "./supervisorSpec";
+import { Workflow, conn, expose } from "@livestack/core";
 import { summarySpec } from "./summarySpec";
-import { gameStateSchema } from "../common/gameStateSchema";
-const { JobSpec, Workflow, conn, expose, sleep } = pkg;
+import { characterSpec } from "./playerWorker";
+import { supervisorSpec } from "./supervisorSpec";
+import { turnControl, turnControlSpec } from "./turnSpecAndWorker";
 
 export const CONVO_MODEL = "dolphin-mistral";
 export const stringZ = z.string();
-export const playerWorkerSpec = JobSpec.define({
-  name: "PLAYER_WORKER",
-  input: gameStateSchema,
-  output: stringZ,
-});
-
-export const npcWorkerSpec = JobSpec.define({
-  name: "NPC_WORKER",
-  input: gameStateSchema,
-  output: stringZ,
-});
 
 export const workflow = Workflow.define({
   name: "CONVERSATION_WORKFLOW",
   connections: [
     conn({
-      from: playerWorkerSpec,
+      from: characterSpec,
       to: {
         spec: summarySpec,
-        input: "player",
-      },
-    }),
-    conn({
-      from: npcWorkerSpec,
-      to: {
-        spec: summarySpec,
-        input: "npc",
+        input: "character",
       },
     }),
     conn({
       from: summarySpec,
-      to: playerWorkerSpec,
+      to: turnControlSpec,
     }),
     conn({
-      from: summarySpec,
-      to: npcWorkerSpec,
+      from: turnControlSpec,
+      to: characterSpec,
     }),
     conn({
       from: summarySpec,
@@ -59,24 +40,19 @@ export const workflow = Workflow.define({
   ],
   exposures: [
     expose({
-      spec: playerWorkerSpec,
+      spec: characterSpec,
       input: {
-        default: "player-input",
+        default: "character-input",
       },
       output: {
-        default: "player-talk",
+        default: "character-talk",
       },
     }),
     expose({
-      spec: npcWorkerSpec,
+      spec: summarySpec,
       input: {
-        default: "npc-input",
-      },
-      output: {
-        default: "npc-talk",
+        supervision: "summary-supervision",
       },
     }),
   ],
 });
-
-

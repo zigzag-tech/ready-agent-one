@@ -1,9 +1,7 @@
-import pkg from "@livestack/core";
+import { ZZEnv, JobSpec } from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
 import { workflow } from "./workflow.conversation";
-import { npcWorker, playerWorker } from "./playerWorker";
 import { GameState } from "./summarySpec";
-const { ZZEnv, JobSpec } = pkg;
 
 ZZEnv.setGlobal(
   new ZZEnv({
@@ -13,8 +11,8 @@ ZZEnv.setGlobal(
 
 // if (module === require.main) {
 (async () => {
-  await playerWorker.startWorker();
-  await npcWorker.startWorker();
+  // await characterSpec.startWorker();
+  // await npcWorker.startWorker();
   await workflow.startWorker();
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
   const initialInput: GameState = {
@@ -23,25 +21,17 @@ ZZEnv.setGlobal(
     },
     current: {
       summary:
-        "This is a strange time in a strange place. Rumor has it that there was a mysterious ancient civilization hiding here, in plain sight.",
+        "It is year 2300. In the outer space, two astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
     },
-    recentHistory: ["NPC: yello."],
+    recentHistory: ["NPC: Oh hi there!"],
     totalNumOfLines: 1,
   };
 
   const { input, output } = await workflow.enqueueJob({});
-  await input("player-input").feed(initialInput);
-
-  (async () => {
-    for await (const data of output("player-talk")) {
-      // console.log("player:", data.data);
-    }
-  })();
-  (async () => {
-    for await (const data of output("npc-talk")) {
-      // console.log("npc:", data.data);
-    }
-  })();
+  await input("summary-supervision").feed(initialInput);
+  for await (const data of output("character-talk")) {
+    // console.log("player:", data.data);
+  }
 
   console.log("done");
 

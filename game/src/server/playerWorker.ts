@@ -1,32 +1,30 @@
 import { generateResponseOllama } from "./generateResponseOllama";
 import { GameState } from "./summarySpec";
-import { playerWorkerSpec, npcWorkerSpec } from "./workflow.conversation";
+import { turnAndStateSchema } from "./turnSpecAndWorker";
+import { JobSpec } from "@livestack/core";
+import { z } from "zod";
 
-export const playerWorker = playerWorkerSpec.defineWorker({
+export const characterSpec = JobSpec.define({
+  name: "CHARACTER_WORKER",
+  input: turnAndStateSchema,
+  output: z.object({
+    from: z.enum(["npc", "human"]),
+    line: z.string(),
+  }),
+});
+
+export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
-    for await (const state of input) {
-      const response = await maybeGenPrompt("human", state);
-      if (!response) {
-        continue;
-      } else {
-        await output.emit(parseJSONResponse(response));
-      }
+    for await (const { whoseTurn, state } of input) {
+      const response = await genPrompt(whoseTurn, state);
+      await output.emit({
+        from: whoseTurn,
+        line: parseJSONResponse(response),
+      });
     }
   },
 });
 
-export const npcWorker = npcWorkerSpec.defineWorker({
-  processor: async ({ input, output, jobId }) => {
-    for await (const state of input) {
-      const response = await maybeGenPrompt("npc", state);
-      if (!response) {
-        continue;
-      } else {
-        await output.emit(parseJSONResponse(response));
-      }
-    }
-  },
-});
 const LABEL_BY_ROLE = {
   human: "Human Player",
   npc: "NPC",
@@ -37,16 +35,8 @@ const DIRECTIVE_BY_ROLE = {
   npc: "You are a conversation writing assistant. Your job is play the role of an NPC named Jeremy with a sarcastic streak and write what Jeremy should say next based on the context provided. Try to be funny but helpful to the human player.",
 };
 
-async function maybeGenPrompt(role: "human" | "npc", state: GameState) {
-  const { recentHistory } = state;
-
-  if (
-    recentHistory[recentHistory.length - 1]?.startsWith(LABEL_BY_ROLE[role]) ||
-    (recentHistory.length === 0 && role === "human")
-  ) {
-    return null;
-  } else {
-    const context = `${DIRECTIVE_BY_ROLE[role]}
+async function genPrompt(role: "human" | "npc", state: GameState) {
+  const context = `${DIRECTIVE_BY_ROLE[role]}
 Below is a conversation that happened in an open world game. 
 
 ${genContext(state)}
@@ -58,9 +48,8 @@ ${genContext(state)}
 - Write only the JSON and nothing else.
 - Keep the response under 20 words.
   `;
-    const response = await generateResponseOllama(context);
-    return response;
-  }
+  const response = await generateResponseOllama(context);
+  return response;
 }
 function genContext(state: GameState) {
   const { current, previous, recentHistory } = state;

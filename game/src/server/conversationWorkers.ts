@@ -3,7 +3,7 @@ import { z } from "zod";
 ;
 import { generateResponseOllama } from "./generateResponseOllama";
 import { supervisorSpec } from "./supervisorSpec";
-import { gameStateSchema, summarySpec } from "./summarySpec";
+import { GameState, gameStateSchema, summarySpec } from "./summarySpec";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
 export const CONVO_MODEL = "dolphin-mistral";
@@ -16,7 +16,7 @@ export const playerWorkerSpec = JobSpec.define({
 
 export const npcWorkerSpec = JobSpec.define({
   name: "NPC_WORKER",
-  input: { summary: gameStateSchema, supervision: stringZ },
+  input: gameStateSchema,
   output: stringZ,
 });
 
@@ -82,41 +82,66 @@ export const workflow = Workflow.define({
 
 export const playerWorker = playerWorkerSpec.defineWorker({
   processor: async ({ input, output }) => {
-    for await (const { summary, recentHistory } of input) {
-      // console.log("PLAYER WORKER INPUT", summary, recentHistory);
-      // if the last message was from the player, then the player should not respond
-      if (recentHistory[recentHistory.length - 1].startsWith("Human Player")) {
+    for await (const state of input) {
+      const response = await maybeGenPrompt("human", state);
+      if (!response) {
         continue;
+      } else {
+        await output.emit(parseJSONResponse(response));
       }
-
-      const context = `Below is a conversation that happened in an open world game. 
-
-### BACKGROUND
-${summary}
-
-### CONVERSATION HISTORY
-${
-  recentHistory.length > 0
-    ? recentHistory.join("\n")
-    : "No conversation history yet."
-}
-      
-### INSTRUCTIONS
-
-Your job is to detect if the conversation has come to an end.
-Response with JSON { "nextMessage": "[your message]" }
-Replace [your message] with what the player should say next.
-DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
-      `;
-      // const question = `What's the human player's response?`;
-      // const prompt = coercedJSONPrompt({ context, question });
-      // const response = await generateResponseGroq(prompt);
-      // console.log(context);
-      const response = await generateResponseOllama(context);
-      await output.emit(parseJSONResponse(response));
     }
   },
 });
+
+const LABEL_BY_ROLE = {
+  human: "Human Player",
+  npc: "NPC",
+};
+
+const DIRECTIVE_BY_ROLE = {
+  human:
+    "You are a conversation writing assistant. Your job is to write what the human player should say next based on the context provided.",
+  npc: "You are a conversation writing assistant. Your job is play the role of an NPC named Jeremy with a sarcastic streak and write what Jeremy should say next based on the context provided.",
+};
+
+async function maybeGenPrompt(role: "human" | "npc", state: GameState) {
+  const { recentHistory } = state;
+
+  if (recentHistory[recentHistory.length - 1].startsWith(LABEL_BY_ROLE[role])) {
+    return null;
+  }
+
+  const context = `${DIRECTIVE_BY_ROLE[role]}
+Below is a conversation that happened in an open world game. 
+
+${genContext(state)}
+  
+### INSTRUCTIONS
+- Response with JSON { "nextMessage": "[your message]" }
+- Replace [your message] with what the player should say next.
+- DO NOT repeat what's already in the CONVERSATION HISTORY. 
+- Write only the JSON and nothing else.
+  `;
+  const response = await generateResponseOllama(context);
+  return response;
+}
+
+function genContext(state: GameState) {
+  const { current, previous, recentHistory } = state;
+  return `### PREVIOUS CHAPTER
+  Previously: ${previous.summary}
+  
+  ### CURRENT CHAPTER
+  What Happened so far:
+  ${current.summary}
+  
+  ### CONVERSATION HISTORY
+  ${
+    recentHistory.length > 0
+      ? recentHistory.join("\n")
+      : "No conversation history yet."
+  }`;
+}
 
 function parseJSONResponse(raw: string) {
   try {
@@ -149,40 +174,12 @@ function parseJSONResponse(raw: string) {
 
 export const npcWorker = npcWorkerSpec.defineWorker({
   processor: async ({ input, output, jobId }) => {
-    let topicTracker = { currentTopic: "", isNewTopic: false };
-
-    for await (const { data, tag } of input.merge("supervision", "summary")) {
-      switch (tag) {
-        case "supervision": {
-          if (data !== topicTracker.currentTopic) {
-            topicTracker = { currentTopic: data, isNewTopic: true };
-          }
-          break;
-        }
-        case "summary": {
-          // console.log("NPC WORKER INPUT", summary, recentHistory);
-          // if the last message was from the player, then the player should not respond
-          const { summary, recentHistory } = data;
-          if (recentHistory[recentHistory.length - 1].startsWith("NPC")) {
-            continue;
-          }
-
-          const context = generateContextByTopicSignal({
-            summary,
-            recentHistory,
-            topicTracker,
-          });
-
-          topicTracker.isNewTopic && (topicTracker.isNewTopic = false);
-          const raw = await generateResponseOllama(context);
-          const response = parseJSONResponse(raw);
-          // console.log("NPC WORKER RESPONSE", response);
-          await output.emit(response);
-          break;
-        }
-        default: {
-          throw new Error(`Invalid tag: ${tag} in npcWorker.`);
-        }
+    for await (const state of input) {
+      const response = await maybeGenPrompt("npc", state);
+      if (!response) {
+        continue;
+      } else {
+        await output.emit(parseJSONResponse(response));
       }
     }
   },
@@ -234,29 +231,3 @@ Keep response under 20 words.
     return context;
   }
 };
-
-function coercedJSONPrompt({
-  context,
-  question,
-}: {
-  context: string;
-  question: string;
-}) {
-  const prompt = `[INST]
-  ${context}
-      
-      You must format your output as a JSON value that adheres to a given "JSON Schema" instance.
-      
-     
-      Here is an example JSON that  yur output must adhere to:
-      {
-        "nextResponse": "[Your response here]",
-        "quit": false | true // true indicates that the conversation is over
-      }
-      
-      
-      Please provide your response based the context and the question below:
-      ${question}
-      [/INST]`;
-  return prompt;
-}

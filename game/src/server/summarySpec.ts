@@ -25,7 +25,7 @@ export const gameStateSchema = z.object({
   totalNumOfLines: z.number(),
 });
 
-type GameState = z.infer<typeof gameStateSchema>;
+export type GameState = z.infer<typeof gameStateSchema>;
 
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",

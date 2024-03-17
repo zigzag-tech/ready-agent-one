@@ -14,7 +14,6 @@ import PlayerVisuals, {
   playerVisualState,
 } from "./components/PlayerVisuals/PlayerVisuals";
 import PlayerDebug from "./components/PlayerDebug/PlayerDebug";
-import { summaryPlusHistorySchema } from "../../../../common/summaryPlusHistorySchema";
 import {
   JUICE_RECHARGE_COST,
   playerCanRecharge,
@@ -33,11 +32,11 @@ import {
   attackInputData,
   attackStateProxy,
 } from "../Game/components/AttackUIContainer/components/AttackUI/AttackUI";
-import { Html } from "@react-three/drei";
 import { useInput, useOutput } from "@livestack/client/src";
 import { z } from "zod";
 import { LiveJobContext } from "../Game/LiveJob";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
+import { gameStateSchema } from "../../../../common/gameStateSchema";
 
 export const coroutine = (f: any, params: any[] = []) => {
   const o = f(...params); // instantiate the coroutine
@@ -443,17 +442,22 @@ const Player: React.FC = () => {
   });
   const { feed } = useInput({
     tag: "npc-input",
-    def: summaryPlusHistorySchema,
+    def: gameStateSchema,
     job: job1,
   });
 
   useEffect(() => {
     feed &&
       feed({
-        summary:
-          "Before our story begins, rumor has it there was a meow meow land that's ruled by cats.",
+        previous: {
+          summary: "",
+        },
+        current: {
+          summary:
+            "Before our story begins, rumor has it there was a meow meow land that's ruled by cats.",
+        },
         recentHistory: ["Human Player: yello."],
-        counter: 0,
+        totalNumOfLines: 0,
       });
   }, [feed]);
 

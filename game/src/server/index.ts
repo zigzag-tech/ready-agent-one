@@ -4,9 +4,8 @@ import ViteExpress from "vite-express";
 import gatewayPkg from "@livestack/gateway";
 import ollama from "ollama";
 import { EventResponseZ, GAME_SPEC_NAME, GameEventZ } from "../common/game";
-import { npcWorker, playerWorker, workflow } from "./conversationWorkers";
+import { workflow } from "./workflow.conversation";
 
-import { fakePoemWorker } from "./fakePoemWorker";
 const { ZZEnv, JobSpec } = pkg;
 const { initJobBinding } = gatewayPkg;
 const app = express();
@@ -150,12 +149,6 @@ async function healthTemp({
   return response.message.content;
 }
 
-// gameWorker.startWorker();
-// fakePoemWorker.startWorker();
-// fakePoemWorker.startWorker();
-// workflow.startWorker();
-// playerWorker.startWorker();
-// npcWorker.startWorker();
 
 const PORT = 3520;
 const server = ViteExpress.listen(app, PORT, () =>

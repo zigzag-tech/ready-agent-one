@@ -9,7 +9,6 @@
     "sync": "git submodule sync && git submodule update --init --recursive",
     "preinstall": "yarn sync"
   },
-  "type": "module",
   "author": "",
   "license": "MIT",
   "private": true,

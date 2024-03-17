@@ -1,6 +1,7 @@
 import pkg from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
-import { npcWorker, playerWorker, workflow } from "./conversationWorkers";
+import { workflow } from "./workflow.conversation";
+import { npcWorker, playerWorker } from "./playerWorker";
 import { GameState } from "./summarySpec";
 const { ZZEnv, JobSpec } = pkg;
 

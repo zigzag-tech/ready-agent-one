@@ -32,5 +32,8 @@
     "transpileOnly": true,
     "esm": true
   },
+  "path": {
+    "@common": ["src/common"]
+  },
   "exclude": ["node_modules", "dist"]
 }

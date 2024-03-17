@@ -1,83 +1,6 @@
-import pkg from "@livestack/core";
-import { z } from "zod";
-;
 import { generateResponseOllama } from "./generateResponseOllama";
-import { supervisorSpec } from "./supervisorSpec";
-import { GameState, gameStateSchema, summarySpec } from "./summarySpec";
-const { JobSpec, Workflow, conn, expose, sleep } = pkg;
-
-export const CONVO_MODEL = "dolphin-mistral";
-export const stringZ = z.string();
-export const playerWorkerSpec = JobSpec.define({
-  name: "PLAYER_WORKER",
-  input: gameStateSchema,
-  output: stringZ,
-});
-
-export const npcWorkerSpec = JobSpec.define({
-  name: "NPC_WORKER",
-  input: gameStateSchema,
-  output: stringZ,
-});
-
-export const workflow = Workflow.define({
-  name: "CONVERSATION_WORKFLOW",
-  connections: [
-    conn({
-      from: playerWorkerSpec,
-      to: {
-        spec: summarySpec,
-        input: "player",
-      },
-    }),
-    conn({
-      from: npcWorkerSpec,
-      to: {
-        spec: summarySpec,
-        input: "npc",
-      },
-    }),
-    conn({
-      from: summarySpec,
-      to: playerWorkerSpec,
-    }),
-    conn({
-      from: summarySpec,
-      to: npcWorkerSpec,
-    }),
-    conn({
-      from: summarySpec,
-      to: supervisorSpec,
-    }),
-    conn({
-      from: supervisorSpec,
-      to: {
-        spec: summarySpec,
-        input: "supervision",
-      },
-    }),
-  ],
-  exposures: [
-    expose({
-      spec: playerWorkerSpec,
-      input: {
-        default: "player-input",
-      },
-      output: {
-        default: "player-talk",
-      },
-    }),
-    expose({
-      spec: npcWorkerSpec,
-      input: {
-        default: "npc-input",
-      },
-      output: {
-        default: "npc-talk",
-      },
-    }),
-  ],
-});
+import { GameState } from "./summarySpec";
+import { playerWorkerSpec, npcWorkerSpec } from "./workflow.conversation";
 
 export const playerWorker = playerWorkerSpec.defineWorker({
   processor: async ({ input, output }) => {
@@ -92,11 +15,22 @@ export const playerWorker = playerWorkerSpec.defineWorker({
   },
 });
 
+export const npcWorker = npcWorkerSpec.defineWorker({
+  processor: async ({ input, output, jobId }) => {
+    for await (const state of input) {
+      const response = await maybeGenPrompt("npc", state);
+      if (!response) {
+        continue;
+      } else {
+        await output.emit(parseJSONResponse(response));
+      }
+    }
+  },
+});
 const LABEL_BY_ROLE = {
   human: "Human Player",
   npc: "NPC",
 };
-
 const DIRECTIVE_BY_ROLE = {
   human:
     "You are a conversation writing assistant. Your job is to write what the human player should say next based on the context provided.",
@@ -107,9 +41,11 @@ async function maybeGenPrompt(role: "human" | "npc", state: GameState) {
   const { recentHistory } = state;
 
   if (
-    recentHistory.length &&
-    !recentHistory[recentHistory.length - 1].startsWith(LABEL_BY_ROLE[role])
+    recentHistory[recentHistory.length - 1]?.startsWith(LABEL_BY_ROLE[role]) ||
+    (recentHistory.length === 0 && role === "human")
   ) {
+    return null;
+  } else {
     const context = `${DIRECTIVE_BY_ROLE[role]}
 Below is a conversation that happened in an open world game. 
 
@@ -124,11 +60,8 @@ ${genContext(state)}
   `;
     const response = await generateResponseOllama(context);
     return response;
-  } else {
-    return null;
   }
 }
-
 function genContext(state: GameState) {
   const { current, previous, recentHistory } = state;
   return `### PREVIOUS CHAPTER
@@ -145,7 +78,6 @@ function genContext(state: GameState) {
       : "No conversation history yet."
   }`;
 }
-
 function parseJSONResponse(raw: string) {
   try {
     // heuristic to find the {} enclosure substring
@@ -174,16 +106,3 @@ function parseJSONResponse(raw: string) {
     return "Sorry, I am not able to respond right now. Please try again later.";
   }
 }
-
-export const npcWorker = npcWorkerSpec.defineWorker({
-  processor: async ({ input, output, jobId }) => {
-    for await (const state of input) {
-      const response = await maybeGenPrompt("npc", state);
-      if (!response) {
-        continue;
-      } else {
-        await output.emit(parseJSONResponse(response));
-      }
-    }
-  },
-});

@@ -1,5 +1,5 @@
 import ollama from "ollama";
-import { CONVO_MODEL } from "./conversationWorkers";
+import { CONVO_MODEL } from "./workflow.conversation";
 import corePkg from "@livestack/core";
 const { sleep } = corePkg;
 

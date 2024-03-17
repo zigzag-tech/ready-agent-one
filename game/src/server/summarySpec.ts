@@ -1,6 +1,6 @@
 import { generateResponseOllama } from "./generateResponseOllama";
-import { stringZ } from "./conversationWorkers";
-import { JobSpec } from "@livestack/core";
+import pkg from "@livestack/core";
+const { JobSpec } = pkg;
 import { z } from "zod";
 
 export const gameStateSchema = z.object({
@@ -30,8 +30,8 @@ export type GameState = z.infer<typeof gameStateSchema>;
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: {
-    npc: stringZ,
-    player: stringZ,
+    npc: z.string(),
+    player: z.string(),
     supervision: gameStateSchema,
   },
   output: gameStateSchema,
@@ -74,16 +74,19 @@ export const summaryWorker = summarySpec.defineWorker({
   RECENT CONVERSATION HISTORY:
   ${oldest.join("\n")}
   
-  NEW SUMMARY:
-          `;
+  ### INSTRUCTIONS
+  - Keep the response under 50 words.
+`;
             currentState.current.summary = await generateResponseOllama(prompt);
           }
-          console.log(
-            "SUMMARY WORKER OUTPUT",
-            currentState.current.summary,
-            currentState.recentHistory
-          );
+          // console.log(
+          //   "SUMMARY WORKER OUTPUT",
+          //   currentState.current.summary,
+          //   currentState.recentHistory
+          // );
+
           currentState.totalNumOfLines += 1;
+          console.log(currentState);
           await output.emit(currentState);
           break;
         }

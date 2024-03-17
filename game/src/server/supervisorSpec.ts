@@ -1,7 +1,7 @@
 import { generateResponseOllama } from "./generateResponseOllama";
-import { stringZ } from "./conversationWorkers";
-import { JobSpec } from "@livestack/core";
+import pkg from "@livestack/core";
 import { GameState, gameStateSchema } from "./summarySpec";
+const { JobSpec } = pkg;
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -23,6 +23,7 @@ ${state.current.summary}
 ### LAST FEW LINES OF CONVERSATION
 ${state.recentHistory.join("\n")}
         `;
+        // console.log("SUPERVISOR: SUMMARIZING PREVIOUS CHAPTERS");
         const previousChaptersSummary = await generateResponseOllama(
           previousChaptersPrompt
         );
@@ -34,7 +35,9 @@ ${previousChaptersSummary}
 ### INSTRUCTIONS
 - Be dramatic and creative.
 - The new chapter should have a new setting or twist.
+- Keep the response under 50 words.
 `;
+        // console.log("SUPERVISOR: GENERATING NEW CHAPTER");
         const newTopic = await generateResponseOllama(newTopicPrompt);
 
         const newState: GameState = {
@@ -46,7 +49,8 @@ ${previousChaptersSummary}
           },
           totalNumOfLines: 0,
           // only keep the last 3 lines of conversation
-          recentHistory: state.recentHistory.slice(-3),
+          // recentHistory: state.recentHistory.slice(-3),
+          recentHistory: [],
         };
 
         await output.emit(newState);

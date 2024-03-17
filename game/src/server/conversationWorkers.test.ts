@@ -1,7 +1,7 @@
 import pkg from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
 import { npcWorker, playerWorker, workflow } from "./conversationWorkers";
-import { v4 } from "uuid";
+import { GameState } from "./summarySpec";
 const { ZZEnv, JobSpec } = pkg;
 
 ZZEnv.setGlobal(
@@ -16,11 +16,16 @@ ZZEnv.setGlobal(
   await npcWorker.startWorker();
   await workflow.startWorker();
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
-  const initialInput = {
-    summary:
-      "This is a strange time in a strange place. Rumor has it that there was a mysterious ancient civilization hiding here, in plain sight.",
+  const initialInput: GameState = {
+    previous: {
+      summary: "",
+    },
+    current: {
+      summary:
+        "This is a strange time in a strange place. Rumor has it that there was a mysterious ancient civilization hiding here, in plain sight.",
+    },
     recentHistory: ["NPC: yello."],
-    counter: 0,
+    totalNumOfLines: 1,
   };
 
   const { input, output } = await workflow.enqueueJob({});

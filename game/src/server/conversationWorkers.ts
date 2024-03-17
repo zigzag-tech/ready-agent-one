@@ -70,8 +70,7 @@ export const workflow = Workflow.define({
     expose({
       spec: npcWorkerSpec,
       input: {
-        summary: "npc-input",
-        supervision: "npc-supervision",
+        default: "npc-input",
       },
       output: {
         default: "npc-talk",
@@ -101,17 +100,17 @@ const LABEL_BY_ROLE = {
 const DIRECTIVE_BY_ROLE = {
   human:
     "You are a conversation writing assistant. Your job is to write what the human player should say next based on the context provided.",
-  npc: "You are a conversation writing assistant. Your job is play the role of an NPC named Jeremy with a sarcastic streak and write what Jeremy should say next based on the context provided.",
+  npc: "You are a conversation writing assistant. Your job is play the role of an NPC named Jeremy with a sarcastic streak and write what Jeremy should say next based on the context provided. Try to be funny but helpful to the human player.",
 };
 
 async function maybeGenPrompt(role: "human" | "npc", state: GameState) {
   const { recentHistory } = state;
 
-  if (recentHistory[recentHistory.length - 1].startsWith(LABEL_BY_ROLE[role])) {
-    return null;
-  }
-
-  const context = `${DIRECTIVE_BY_ROLE[role]}
+  if (
+    recentHistory.length &&
+    !recentHistory[recentHistory.length - 1].startsWith(LABEL_BY_ROLE[role])
+  ) {
+    const context = `${DIRECTIVE_BY_ROLE[role]}
 Below is a conversation that happened in an open world game. 
 
 ${genContext(state)}
@@ -121,9 +120,13 @@ ${genContext(state)}
 - Replace [your message] with what the player should say next.
 - DO NOT repeat what's already in the CONVERSATION HISTORY. 
 - Write only the JSON and nothing else.
+- Keep the response under 20 words.
   `;
-  const response = await generateResponseOllama(context);
-  return response;
+    const response = await generateResponseOllama(context);
+    return response;
+  } else {
+    return null;
+  }
 }
 
 function genContext(state: GameState) {
@@ -184,50 +187,3 @@ export const npcWorker = npcWorkerSpec.defineWorker({
     }
   },
 });
-
-const generateContextByTopicSignal = ({
-  summary,
-  recentHistory,
-  topicTracker,
-}: {
-  summary: string;
-  recentHistory: string[];
-  topicTracker: { currentTopic: string; isNewTopic: boolean };
-}) => {
-  if (topicTracker.isNewTopic) {
-    const context = `You are an NPC. Your job is to start a conversation with a human player based on the topic supplied:
-### TOPIC
-${topicTracker.currentTopic}
-
-### INSTRUCTIONS
-
-Response with JSON { "nextMessage": "[your message]" }.
-Replace [your message] with what the NPC should say next. The NPC has a somewhat sarcastic personality but should also be helpful and not too cryptic.
-Write only the JSON and nothing else. Keep response under 20 words.
-`;
-
-    return context;
-  } else {
-    const context = `Below is a conversation that happened in an open world game. 
-
-### BACKGROUND
-${summary}
-
-### CONVERSATION HISTORY
-${
-  recentHistory.length > 0
-    ? recentHistory.join("\n")
-    : "No conversation history yet."
-}
-      
-### INSTRUCTIONS
-
-Detect if the conversation has come to an end.
-Response with JSON { "nextMessage": "[your message]" }
-Replace [your message] with what the NPC should say next. The NPC has a somewhat sarcastic personality but should also be helpful and not too cryptic.
-DO NOT repeat what's already in the CONVERSATION HISTORY. Write only the JSON and nothing else.
-Keep response under 20 words.
-`;
-    return context;
-  }
-};

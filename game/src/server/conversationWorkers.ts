@@ -1,57 +1,27 @@
 import pkg from "@livestack/core";
 import { z } from "zod";
-import { summaryPlusHistorySchema } from "../common/summaryPlusHistorySchema";
+;
 import { generateResponseOllama } from "./generateResponseOllama";
 import { supervisorSpec } from "./supervisorSpec";
+import { gameStateSchema, summarySpec } from "./summarySpec";
 const { JobSpec, Workflow, conn, expose, sleep } = pkg;
 
 export const CONVO_MODEL = "dolphin-mistral";
 export const stringZ = z.string();
 export const playerWorkerSpec = JobSpec.define({
   name: "PLAYER_WORKER",
-  input: summaryPlusHistorySchema,
+  input: gameStateSchema,
   output: stringZ,
 });
 
 export const npcWorkerSpec = JobSpec.define({
   name: "NPC_WORKER",
-  input: { summary: summaryPlusHistorySchema, supervision: stringZ },
+  input: { summary: gameStateSchema, supervision: stringZ },
   output: stringZ,
-});
-
-export const summarySpec = JobSpec.define({
-  name: "SUMMARY_WORKER",
-  input: {
-    npc: stringZ,
-    player: stringZ,
-  },
-  output: summaryPlusHistorySchema,
 });
 
 export const workflow = Workflow.define({
   name: "CONVERSATION_WORKFLOW",
-  exposures: [
-    expose({
-      spec: playerWorkerSpec,
-      input: {
-        default: "player-input",
-      },
-      output: {
-        default: "player-talk",
-      },
-    }),
-    expose({
-      spec: npcWorkerSpec,
-      input: {
-        summary: "npc-input",
-        supervision: "npc-supervision",
-      },
-      output: {
-        default: "npc-talk",
-      },
-    }),
-  ],
-
   connections: [
     conn({
       from: playerWorkerSpec,
@@ -73,10 +43,7 @@ export const workflow = Workflow.define({
     }),
     conn({
       from: summarySpec,
-      to: {
-        spec: npcWorkerSpec,
-        input: "summary",
-      },
+      to: npcWorkerSpec,
     }),
     conn({
       from: summarySpec,
@@ -85,8 +52,29 @@ export const workflow = Workflow.define({
     conn({
       from: supervisorSpec,
       to: {
-        spec: npcWorkerSpec,
+        spec: summarySpec,
         input: "supervision",
+      },
+    }),
+  ],
+  exposures: [
+    expose({
+      spec: playerWorkerSpec,
+      input: {
+        default: "player-input",
+      },
+      output: {
+        default: "player-talk",
+      },
+    }),
+    expose({
+      spec: npcWorkerSpec,
+      input: {
+        summary: "npc-input",
+        supervision: "npc-supervision",
+      },
+      output: {
+        default: "npc-talk",
       },
     }),
   ],
@@ -246,40 +234,6 @@ Keep response under 20 words.
     return context;
   }
 };
-export const summaryWorker = summarySpec.defineWorker({
-  processor: async ({ input, output }) => {
-    const recentHistory: string[] = [];
-    let summaryOfAllThePast = "";
-    let counter = 0;
-
-    for await (const { data, tag } of input.merge("npc", "player")) {
-      const from = tag === "npc" ? "NPC" : "Human Player";
-      recentHistory.push(`${from}: ${data}`);
-      // keep accululating the history until it reaches 10
-      // then take the oldest 5 and fold it into the summary
-
-      if (recentHistory.length > 20) {
-        const oldest = recentHistory.splice(0, 10);
-        const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
-  SUMMARY OF PAST CONVERSATION:
-  ${summaryOfAllThePast}
-  RECENT CONVERSATION HISTORY:
-  ${oldest.join("\n")}
-  
-  NEW SUMMARY:
-          `;
-        summaryOfAllThePast = await generateResponseOllama(prompt);
-      }
-      console.log("SUMMARY WORKER OUTPUT", summaryOfAllThePast, recentHistory);
-      counter++;
-      await output.emit({
-        summary: summaryOfAllThePast,
-        recentHistory: recentHistory,
-        counter,
-      });
-    }
-  },
-});
 
 function coercedJSONPrompt({
   context,

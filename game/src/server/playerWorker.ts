@@ -53,10 +53,10 @@ ${genContext(state)}
 }
 function genContext(state: GameState) {
   const { current, previous, recentHistory } = state;
-  return `### PREVIOUS CHAPTER
+  return `### PREVIOUS SCENE
   Previously: ${previous.summary}
   
-  ### CURRENT CHAPTER
+  ### CURRENT SCENE
   What Happened so far:
   ${current.summary}
   

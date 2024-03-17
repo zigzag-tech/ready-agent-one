@@ -12,41 +12,43 @@ export const supervisorSpec = JobSpec.define({
 export const supervisorWorker = supervisorSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const state of input) {
-      // if the conversation has gone too long, change context by producing the next chapter
-      if (conversationTooLong(state)) {
-        const previousChaptersPrompt = `Write a summary of everything listed below.
+      // if the conversation has gone too long, change context by producing the next scene
+      if (!conversationTooLong(state)) {
+        await output.emit(state);
+      } else {
+        const previousScenesPrompt = `Write a summary of everything listed below.
 
 ${
   state.previous.summary
-    ? `### PREVIOUS CHAPTER SUMMARY\n${state.previous.summary}`
+    ? `### PREVIOUS SCENE SUMMARY\n${state.previous.summary}`
     : ""
 }
 
-### CURRENT CHAPTER SUMMARY
+### CURRENT SCENE SUMMARY
 ${state.current.summary}
-### LAST FEW LINES OF CONVERSATION
+### LAST FEW LINES OF CONVERSATION (FOR YOUR REFERENCE)
 ${state.recentHistory.join("\n")}
         `;
-        // console.log("SUPERVISOR: SUMMARIZING PREVIOUS CHAPTERS");
-        const previousChaptersSummary = await generateResponseOllama(
-          previousChaptersPrompt
+        // console.log("SUPERVISOR: SUMMARIZING PREVIOUS SCENE");
+        const previousScenesSummary = await generateResponseOllama(
+          previousScenesPrompt
         );
 
-        const newTopicPrompt = `You are a script writing assistant. Your job is to write a new chapter in the story based on the context provided.
+        const newTopicPrompt = `You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
 ### WHAT HAPPENED PREVIOUSLY
-${previousChaptersSummary}
+${previousScenesSummary}
 
 ### INSTRUCTIONS
 - Be dramatic and creative.
-- The new chapter should have a new setting or twist.
-- Keep the response under 50 words.
+- The new scene should have a new setting or twist.
+- Keep the response under 30 words.
 `;
-        // console.log("SUPERVISOR: GENERATING NEW CHAPTER");
+        // console.log("SUPERVISOR: GENERATING NEW SCENE");
         const newTopic = await generateResponseOllama(newTopicPrompt);
 
         const newState: GameState = {
           previous: {
-            summary: previousChaptersSummary,
+            summary: previousScenesSummary,
           },
           current: {
             summary: newTopic,
@@ -64,5 +66,5 @@ ${previousChaptersSummary}
 });
 
 function conversationTooLong(state: GameState) {
-  return state.totalNumOfLines > 10;
+  return state.totalNumOfLines > 18;
 }

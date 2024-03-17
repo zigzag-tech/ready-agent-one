@@ -6,6 +6,7 @@ import { supervisorSpec } from "./supervisorSpec";
 import { turnControl, turnControlSpec } from "./turnSpecAndWorker";
 
 export const CONVO_MODEL = "dolphin-mistral";
+// export const CONVO_MODEL = "mixtral";
 export const stringZ = z.string();
 
 export const workflow = Workflow.define({
@@ -19,7 +20,7 @@ export const workflow = Workflow.define({
       },
     }),
     conn({
-      from: summarySpec,
+      from: supervisorSpec,
       to: turnControlSpec,
     }),
     conn({

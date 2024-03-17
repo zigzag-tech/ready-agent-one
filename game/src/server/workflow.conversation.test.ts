@@ -1,4 +1,4 @@
-import { ZZEnv, JobSpec } from "@livestack/core";
+import { ZZEnv } from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
 import { workflow } from "./workflow.conversation";
 import { GameState } from "./summarySpec";
@@ -23,7 +23,7 @@ ZZEnv.setGlobal(
       summary:
         "It is year 2300. In the outer space, two astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
     },
-    recentHistory: ["NPC: Oh hi there!"],
+    recentHistory: ["NPC: Mother of god."],
     totalNumOfLines: 1,
   };
 

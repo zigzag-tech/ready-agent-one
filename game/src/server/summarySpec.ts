@@ -33,7 +33,6 @@ export const summaryWorker = summarySpec.defineWorker({
       switch (tag) {
         case "supervision": {
           currentState = data;
-          await output.emit(data);
           break;
         }
         case "character": {
@@ -42,8 +41,8 @@ export const summaryWorker = summarySpec.defineWorker({
           currentState.recentHistory.push(`${label}: ${line}`);
           // keep accululating the history until it reaches 10
           // then take the oldest 5 and fold it into the summary
-          if (currentState.recentHistory.length > 20) {
-            const oldest = currentState.recentHistory.splice(0, 10);
+          if (currentState.recentHistory.length > 40) {
+            const oldest = currentState.recentHistory.splice(0, 20);
             const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
   SUMMARY OF PAST CONVERSATION:
   ${currentState.current.summary}
@@ -51,7 +50,7 @@ export const summaryWorker = summarySpec.defineWorker({
   ${oldest.join("\n")}
   
   ### INSTRUCTIONS
-  - Keep the response under 50 words.
+  - Keep the response under 30 words.
 `;
             currentState.current.summary = await generateResponseOllama(prompt);
           }
@@ -62,6 +61,7 @@ export const summaryWorker = summarySpec.defineWorker({
           // );
 
           currentState.totalNumOfLines += 1;
+          console.clear();
           console.log(currentState);
           await output.emit(currentState);
           break;

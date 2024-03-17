@@ -38,8 +38,11 @@ export const summaryWorker = summarySpec.defineWorker({
         }
         case "character": {
           const { line, from } = data;
-          const label = from === "morgan" ? "morgan" : "jeremy";
-          currentState.recentHistory.push(`${label}: ${line}`);
+          const label = from;
+          currentState.recentHistory.push({
+            speaker: label,
+            message: line,
+          });
           // keep accululating the history until it reaches 10
           // then take the oldest 5 and fold it into the summary
           if (currentState.recentHistory.length > 40) {
@@ -54,7 +57,8 @@ export const summaryWorker = summarySpec.defineWorker({
   - Keep the response under 30 words.
 `;
 
-currentState.current.summary = (await generateResponseOllama(prompt)) || "";
+            currentState.current.summary =
+              (await generateResponseOllama(prompt)) || "";
           }
           // console.log(
           //   "SUMMARY WORKER OUTPUT",
@@ -64,7 +68,12 @@ currentState.current.summary = (await generateResponseOllama(prompt)) || "";
 
           currentState.totalNumOfLines += 1;
           console.clear();
-          console.log(currentState);
+          console.log({
+            ...currentState,
+            recentHistory: currentState.recentHistory.map(
+              (h) => `${h.speaker}: ${h.message}`
+            ),
+          });
           await output.emit(currentState);
           break;
         }

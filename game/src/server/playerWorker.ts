@@ -18,6 +18,8 @@ export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const { whoseTurn, state } of input) {
       const response = await genPrompt(whoseTurn, state);
+      // console.clear();
+      // console.log(response);
       await output.emit({
         from: whoseTurn,
         line: parseJSONResponse(response) || "...",
@@ -28,7 +30,7 @@ export const characterWorker = characterSpec.defineWorker({
 
 const DIRECTIVE_BY_ROLE = {
   morgan:
-    "You are a conversation writing assistant for a video game.  Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. Write what Morgan should say next based on the context provided. ",
+    "You are a conversation writing assistant for a video game. Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. Write what Morgan should say next based on the context provided. ",
   jeremy:
     "You are a conversation writing assistant for a video game. Your job is play the role of a supporting character Jeremy. Jeremy has a sarcastic streak but deep down he's kind and helpful. Write what Jeremy should say next based on the context provided.",
 };
@@ -37,19 +39,42 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const context = `${DIRECTIVE_BY_ROLE[role]}
-
-${genContext(state)}
+  const context = `[INST]${DIRECTIVE_BY_ROLE[role]}
   
 ### INSTRUCTIONS
-- Write the next line based on PLOT SUMMARY.
-- Response with JSON { "nextMessage": "[your message]" }
-- Replace [your message] with what the player should say next.
-- DO NOT repeat what's already in the CONVERSATION HISTORY. 
+- Keep the response in line with the PLOT SUMMARY provided and the CONVERSATION HISTORY.
+- DO NOT repeat what's already said in the CONVERSATION HISTORY. 
 - Write only the JSON and nothing else.
 - Avoid being too agreeable, predictable and repetitive. Insert drama, personality and conflict when appropriate.
-- Keep the response under 20 words.
-  `;
+- Keep the response short, under 20 words.
+- Response with JSON { "speaker": "${role}", "nextMessage": "[character message]" }, replace [character message] with what the player should say next.
+
+[/INST]${JSON.stringify({
+    previous: {
+      summary:
+        "In a fantasy world, two warriors are about to face a dragon. They went out to find the dragon to save their village.",
+    },
+    current: {
+      summary:
+        "As they gather information about the dragon, they realize the dragon is not their immediate threat. They are about to face a group of bandits.",
+    },
+    sceneNumber: 5,
+    totalNumOfLines: 0,
+    recentHistory: [
+      {
+        speaker: "morgan",
+        message:
+          "The bandit problem seems to be bigger than the dragon, for the moment.",
+      },
+      { speaker: "jeremy", message: "Well, that's unexpected." },
+    ],
+  } as GameState)}
+What should ${role} say next?
+[/INST]
+{ "speaker": "${role}", "nextMessage": "The villagers told me that the bandits, who call themselves the 'Big Red', are a group of 20 people. They have been terrorizing the village for a while now." }
+[INST]${JSON.stringify(state)}[/INST]
+What should ${role} say next?
+`;
   const response = await generateResponseOllama(context);
   return response;
 }

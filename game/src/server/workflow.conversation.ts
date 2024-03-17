@@ -3,9 +3,9 @@ import { Workflow, conn, expose } from "@livestack/core";
 import { summarySpec } from "./summarySpec";
 import { characterSpec } from "./playerWorker";
 import { supervisorSpec } from "./supervisorSpec";
-import { turnControl, turnControlSpec } from "./turnSpecAndWorker";
+import { turnControlSpec } from "./turnSpecAndWorker";
 
-export const CONVO_MODEL = "dolphin-mistral";
+export const CONVO_MODEL = "mistral:instruct";
 // export const CONVO_MODEL = "mixtral";
 export const stringZ = z.string();
 

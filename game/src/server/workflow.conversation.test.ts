@@ -24,7 +24,12 @@ ZZEnv.setGlobal(
         "It is year 2300. In the outer space, two astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
     },
     sceneNumber: 1,
-    recentHistory: ["jeremy: Mother of god."],
+    recentHistory: [
+      {
+        speaker: "jeremy",
+        message: "What the hell is going on with the oxygen indicator?",
+      },
+    ],
     totalNumOfLines: 1,
   };
 

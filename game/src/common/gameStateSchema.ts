@@ -12,20 +12,10 @@ export const gameStateSchema = z.object({
     summary: z.string(),
   }),
   recentHistory: z.array(
-    z.string().refine(
-      (val) => {
-        const allowedValues = Object.keys(charactersEnum.Values);
-
-        // Check if the string starts with any of the allowed values
-        return allowedValues.some((v) => val.startsWith(v));
-      },
-      {
-        // Custom error message
-        message: `String must start with one of the following values: ${Object.keys(
-          charactersEnum.Values
-        ).join(", ")}`,
-      }
-    )
+    z.object({
+      speaker: charactersEnum,
+      message: z.string(),
+    })
   ),
   totalNumOfLines: z.number(),
 });

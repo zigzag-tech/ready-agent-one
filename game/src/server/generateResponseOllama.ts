@@ -35,6 +35,6 @@ export async function generateResponseOllama(prompt: string) {
   } catch (e) {
     console.log(e);
     await sleep(200);
-    return "Sorry, I am not able to respond right now. Please try again later.";
+    return null;
   }
 }

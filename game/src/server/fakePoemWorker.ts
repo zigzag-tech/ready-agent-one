@@ -2,6 +2,7 @@ import ollama from "ollama";
 import { POEM_SPEC_NAME } from "../common/game";
 import { z } from "zod";
 import { sleep } from ".";
+import { JobSpec } from "@livestack/core";
 
 const poemSpec = JobSpec.define({
   name: POEM_SPEC_NAME,

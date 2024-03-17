@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { JobSpec } from "@livestack/core";
-import { gameStateSchema } from "../common/gameStateSchema";
+import { charactersEnum, gameStateSchema } from "../common/gameStateSchema";
 
 export const turnAndStateSchema = z.object({
-  whoseTurn: z.enum(["human", "npc"]),
+  whoseTurn: charactersEnum,
   state: gameStateSchema,
 });
 export const turnControlSpec = JobSpec.define({
@@ -15,7 +15,7 @@ export const turnControlSpec = JobSpec.define({
 export const turnControl = turnControlSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const state of input) {
-      const whoseTurn = state.totalNumOfLines % 2 === 1 ? "human" : "npc";
+      const whoseTurn = state.totalNumOfLines % 2 === 1 ? "morgan" : "jeremy";
       await output.emit({
         whoseTurn,
         state,

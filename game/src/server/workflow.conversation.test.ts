@@ -23,7 +23,8 @@ ZZEnv.setGlobal(
       summary:
         "It is year 2300. In the outer space, two astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
     },
-    recentHistory: ["NPC: Mother of god."],
+    sceneNumber: 1,
+    recentHistory: ["jeremy: Mother of god."],
     totalNumOfLines: 1,
   };
 

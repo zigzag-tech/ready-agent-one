@@ -1,7 +1,7 @@
 import { generateResponseOllama } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
-import { gameStateSchema } from "../common/gameStateSchema";
+import { charactersEnum, gameStateSchema } from "../common/gameStateSchema";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
@@ -9,7 +9,7 @@ export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: {
     character: z.object({
-      from: z.enum(["npc", "human"]),
+      from: charactersEnum,
       line: z.string(),
     }),
     supervision: gameStateSchema,
@@ -25,6 +25,7 @@ export const summaryWorker = summarySpec.defineWorker({
       current: {
         summary: "",
       },
+      sceneNumber: 1,
       recentHistory: [],
       totalNumOfLines: 0,
     };
@@ -37,7 +38,7 @@ export const summaryWorker = summarySpec.defineWorker({
         }
         case "character": {
           const { line, from } = data;
-          const label = from === "npc" ? "NPC" : "Human Player";
+          const label = from === "morgan" ? "morgan" : "jeremy";
           currentState.recentHistory.push(`${label}: ${line}`);
           // keep accululating the history until it reaches 10
           // then take the oldest 5 and fold it into the summary

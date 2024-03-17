@@ -1,3 +1,4 @@
+import { charactersEnum } from "../common/gameStateSchema";
 import { generateResponseOllama } from "./generateResponseOllama";
 import { GameState } from "./summarySpec";
 import { turnAndStateSchema } from "./turnSpecAndWorker";
@@ -8,7 +9,7 @@ export const characterSpec = JobSpec.define({
   name: "CHARACTER_WORKER",
   input: turnAndStateSchema,
   output: z.object({
-    from: z.enum(["npc", "human"]),
+    from: charactersEnum,
     line: z.string(),
   }),
 });
@@ -19,33 +20,34 @@ export const characterWorker = characterSpec.defineWorker({
       const response = await genPrompt(whoseTurn, state);
       await output.emit({
         from: whoseTurn,
-        line: parseJSONResponse(response),
+        line: parseJSONResponse(response) || "...",
       });
     }
   },
 });
 
-const LABEL_BY_ROLE = {
-  human: "Human Player",
-  npc: "NPC",
-};
 const DIRECTIVE_BY_ROLE = {
-  human:
-    "You are a conversation writing assistant. Your job is to write what the human player should say next based on the context provided.",
-  npc: "You are a conversation writing assistant. Your job is play the role of an NPC named Jeremy with a sarcastic streak and write what Jeremy should say next based on the context provided. Try to be funny but helpful to the human player.",
+  morgan:
+    "You are a conversation writing assistant for a video game.  Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. Write what Morgan should say next based on the context provided. ",
+  jeremy:
+    "You are a conversation writing assistant for a video game. Your job is play the role of a supporting character Jeremy. Jeremy has a sarcastic streak but deep down he's kind and helpful. Write what Jeremy should say next based on the context provided.",
 };
 
-async function genPrompt(role: "human" | "npc", state: GameState) {
+async function genPrompt(
+  role: z.infer<typeof charactersEnum>,
+  state: GameState
+) {
   const context = `${DIRECTIVE_BY_ROLE[role]}
-Below is a conversation that happened in an open world game. 
 
 ${genContext(state)}
   
 ### INSTRUCTIONS
+- Write the next line based on PLOT SUMMARY.
 - Response with JSON { "nextMessage": "[your message]" }
 - Replace [your message] with what the player should say next.
 - DO NOT repeat what's already in the CONVERSATION HISTORY. 
 - Write only the JSON and nothing else.
+- Avoid being too agreeable, predictable and repetitive. Insert drama, personality and conflict when appropriate.
 - Keep the response under 20 words.
   `;
   const response = await generateResponseOllama(context);
@@ -53,12 +55,15 @@ ${genContext(state)}
 }
 function genContext(state: GameState) {
   const { current, previous, recentHistory } = state;
-  return `### PREVIOUS SCENE
-  Previously: ${previous.summary}
+  return `${
+    (previous &&
+      `### PREVIOUS SCENE
+    Previously: ${previous.summary}`) ||
+    ""
+  }
   
   ### CURRENT SCENE
-  What Happened so far:
-  ${current.summary}
+  PLOT SUMMARY: ${current.summary}
   
   ### CONVERSATION HISTORY
   ${
@@ -67,7 +72,8 @@ function genContext(state: GameState) {
       : "No conversation history yet."
   }`;
 }
-function parseJSONResponse(raw: string) {
+function parseJSONResponse(raw: string | null) {
+  if (!raw) return null;
   try {
     // heuristic to find the {} enclosure substring
     const start = raw.indexOf("{");
@@ -92,6 +98,6 @@ function parseJSONResponse(raw: string) {
     }
   } catch (e) {
     console.log("Error parsing response", e, "raw:", raw);
-    return "Sorry, I am not able to respond right now. Please try again later.";
+    return null;
   }
 }

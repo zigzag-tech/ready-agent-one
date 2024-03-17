@@ -1,7 +1,7 @@
 import { generateResponseOllama } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { GameState } from "./summarySpec";
-import { gameStateSchema } from "../common/gameStateSchema";
+import { charactersEnum, gameStateSchema } from "../common/gameStateSchema";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -19,8 +19,10 @@ export const supervisorWorker = supervisorSpec.defineWorker({
         const previousScenesPrompt = `Write a summary of everything listed below.
 
 ${
-  state.previous.summary
-    ? `### PREVIOUS SCENE SUMMARY\n${state.previous.summary}`
+  state.previous
+    ? `### PREVIOUS SUMMARY (SCENES 1 - ${state.sceneNumber - 1})\n${
+        state.previous.summary
+      }`
     : ""
 }
 
@@ -39,6 +41,9 @@ ${state.recentHistory.join("\n")}
 ${previousScenesSummary}
 
 ### INSTRUCTIONS
+- Do not introduce new characters. Limit the plot to only be about interactions and adventure among [${Object.keys(
+          charactersEnum.Values
+        ).join(", ")}].
 - Be dramatic and creative.
 - The new scene should have a new setting or twist.
 - Keep the response under 30 words.
@@ -53,6 +58,7 @@ ${previousScenesSummary}
           current: {
             summary: newTopic,
           },
+          sceneNumber: state.sceneNumber + 1,
           totalNumOfLines: 0,
           // only keep the last 3 lines of conversation
           // recentHistory: state.recentHistory.slice(-3),

@@ -54,7 +54,7 @@ export const summaryWorker = summarySpec.defineWorker({
   ${oldest.join("\n")}
   
   ### INSTRUCTIONS
-  - Keep the response under 30 words.
+  - Keep the response under 50 words.
 `;
 
             currentState.current.summary =

@@ -39,7 +39,7 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const context = `[INST]${DIRECTIVE_BY_ROLE[role]}
+  const context = `<s>[INST]${DIRECTIVE_BY_ROLE[role]}
   
 ### INSTRUCTIONS
 - Keep the response in line with the PLOT SUMMARY provided and the CONVERSATION HISTORY.
@@ -49,31 +49,30 @@ async function genPrompt(
 - Keep the response short, under 20 words.
 - Response with JSON { "speaker": "${role}", "nextMessage": "[character message]" }, replace [character message] with what the player should say next.
 
-[/INST]${JSON.stringify({
-    previous: {
-      summary:
-        "In a fantasy world, two warriors are about to face a dragon. They went out to find the dragon to save their village.",
+For instance, the following:
+${JSON.stringify({
+  previous: {
+    summary:
+      "In a fantasy world, two warriors are about to face a dragon. They went out to find the dragon to save their village.",
+  },
+  current: {
+    summary:
+      "As they gather information about the dragon, they realize the dragon is not their immediate threat. They are about to face a group of bandits.",
+  },
+  sceneNumber: 5,
+  totalNumOfLines: 0,
+  recentHistory: [
+    {
+      speaker: "morgan",
+      message:
+        "The bandit problem seems to be bigger than the dragon, for the moment.",
     },
-    current: {
-      summary:
-        "As they gather information about the dragon, they realize the dragon is not their immediate threat. They are about to face a group of bandits.",
-    },
-    sceneNumber: 5,
-    totalNumOfLines: 0,
-    recentHistory: [
-      {
-        speaker: "morgan",
-        message:
-          "The bandit problem seems to be bigger than the dragon, for the moment.",
-      },
-      { speaker: "jeremy", message: "Well, that's unexpected." },
-    ],
-  } as GameState)}
-What should ${role} say next?
-[/INST]
-{ "speaker": "${role}", "nextMessage": "The villagers told me that the bandits, who call themselves the 'Big Red', are a group of 20 people. They have been terrorizing the village for a while now." }
+    { speaker: "jeremy", message: "Well, that's unexpected." },
+  ],
+} as GameState)}
+Would have a response:[/INST]
+{ "speaker": "${role}", "nextMessage": "The villagers told me that the bandits, who call themselves the 'Big Red', are a group of 20 people. They have been terrorizing the village for a while now." }</s>
 [INST]${JSON.stringify(state)}[/INST]
-What should ${role} say next?
 `;
   const response = await generateResponseOllama(context);
   return response;

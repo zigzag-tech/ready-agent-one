@@ -72,6 +72,7 @@ async function genPrompt(
 - Response with JSON { "speaker": "${role}", "nextMessage": "[character message]" }, replace [character message] with what the player should say next.
 
 For instance, the following:
+WORLD DEFINITION:
 ${JSON.stringify({
   previous: {
     summary:
@@ -89,12 +90,17 @@ ${JSON.stringify({
       message:
         "The bandit problem seems to be bigger than the dragon, for the moment.",
     },
-    { speaker: `${role==='morgan'?'jeremy':'morgan' }`, message: "Well, that's unexpected." },
+    {
+      speaker: `${role === "morgan" ? "jeremy" : "morgan"}`,
+      message: "Well, that's unexpected.",
+    },
   ],
 } as GameState)}
 Would have a response:[/INST]
 { "speaker": "${role}", "nextMessage": "The villagers told me that the bandits, who call themselves the 'Big Red', are a group of 20 people. They have been terrorizing the village for a while now." }</s>
-[INST]${JSON.stringify(state)}[/INST]
+[INST]
+WORLD DEFINITION:
+${JSON.stringify(state)}[/INST]
 `;
   const response = await generateResponseOllama(context);
   return response;

@@ -436,12 +436,15 @@ const Player: React.FC = () => {
   if (!job1) return null;
 
   const resp = useOutput({
-    tag: "player-talk",
+    tag: "character-talk",
     job: job1,
-    def: z.string(),
+    def: z.object({
+      from: z.string(),
+      line: z.string(),
+    }),
   });
   const { feed } = useInput({
-    tag: "npc-input",
+    tag: "summary-supervision",
     def: gameStateSchema,
     job: job1,
   });
@@ -456,7 +459,13 @@ const Player: React.FC = () => {
           summary:
             "Before our story begins, rumor has it there was a meow meow land that's ruled by cats.",
         },
-        recentHistory: ["Human Player: yello."],
+        recentHistory: [
+          {
+            speaker: "jeremy",
+            message: "yello",
+          },
+        ],
+        sceneNumber: 1,
         totalNumOfLines: 0,
       });
   }, [feed]);
@@ -464,11 +473,13 @@ const Player: React.FC = () => {
   return (
     <>
       <group position={[0, 0, 0]} ref={ref}>
-        <SpeechBubble
-          content={resp?.data}
-          position={[0, -1, 0]}
-          zIndexRange={[100, 0]}
-        />
+        {resp?.data.from === "morgan" && (
+          <SpeechBubble
+            content={resp?.data.line}
+            position={[0, -1, 0]}
+            zIndexRange={[100, 0]}
+          />
+        )}
 
         <PlayerVisuals />
         <PlayerUI />

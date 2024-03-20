@@ -28,18 +28,24 @@ export function NPC({ ...props }: GroupProps) {
   if (!job1) return null;
 
   const resp = useOutput({
-    tag: "npc-talk",
+    tag: "character-talk",
     job: job1,
-    def: z.string(),
+    def: z.object({
+      from: z.string(),
+      line: z.string(),
+    }),
   });
   return (
     <group position={position} {...props}>
       {/* <Hud> */}
-      <SpeechBubble
-        content={resp?.data}
-        position={[-1, 9, 0]}
-        zIndexRange={[0, 100]}
-      />
+      {resp?.data.from === "jeremy" && (
+        <SpeechBubble
+          content={resp?.data.line}
+          position={[-1, 9, 0]}
+          zIndexRange={[0, 100]}
+        />
+      )}
+
       <NPCCharacter
         ref={npcRef}
         lastAttack={0}

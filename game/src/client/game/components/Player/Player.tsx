@@ -449,15 +449,13 @@ const Player: React.FC = () => {
   const userSignalResp = useOutput({
     tag: "user-signal",
     job: workflowJob,
-    def: z.object({
-      signal: z.enum(["ENABLE", "DISABLE"]),
-    }),
+    def: z.enum(["ENABLE", "DISABLE"]),
   });
 
   const [inputOn, setInputOn] = React.useState(false);
 
   useEffect(() => {
-    if (userSignalResp?.data.signal === "ENABLE") {
+    if (userSignalResp?.data === "ENABLE") {
       setInputOn(true);
     }
   }, [userSignalResp]);
@@ -491,7 +489,7 @@ const Player: React.FC = () => {
           },
         ],
         sceneNumber: 1,
-        totalNumOfLines: 0,
+        totalNumOfLines: 1,
       });
   }, [feedInitState]);
 
@@ -510,7 +508,10 @@ const Player: React.FC = () => {
         {inputOn && (
           <Billboard position={[0, 5, 0]} scale={5}>
             <TextInput
-              onSubmit={(text) => feedMorganInput && feedMorganInput(text)}
+              onSubmit={(text) => {
+                feedMorganInput && feedMorganInput(text);
+                setInputOn(false);
+              }}
             />
           </Billboard>
         )}

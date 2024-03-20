@@ -45,9 +45,10 @@ ZZEnv.setGlobal(
     console.log("user-signal:", data.data);
 
     if (data.data === "ENABLE") {
-      const rl = readline.createInterface({ input: stdin, output: stdout });
-      const answer = await rl.question("What you want to say?: ");
-      rl.close();
+      // const rl = readline.createInterface({ input: stdin, output: stdout });
+      // const answer = await rl.question("What you want to say?: ");
+      const answer = "";
+      // rl.close();
 
       await input("user-provided-input").feed(answer);
     }

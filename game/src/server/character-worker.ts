@@ -57,6 +57,7 @@ async function genPrompt(
 ### INSTRUCTIONS
 - Keep the response in line with the PLOT SUMMARY provided and the CONVERSATION HISTORY.
 - DO NOT repeat what's already said in the CONVERSATION HISTORY. 
+- This is real life conversation, so be colloquial and natural.
 - Write only the JSON and nothing else.
 - Avoid being too agreeable, predictable and repetitive. Insert drama, personality and conflict when appropriate.
 - Keep the response short, under 20 words.

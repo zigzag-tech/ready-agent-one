@@ -11,17 +11,18 @@ import { stdin, stdout } from "node:process";
 
 export const characterSpec = JobSpec.define({
   name: "CHARACTER_WORKER",
-  input: turnAndStateSchema,
-  output: z.object({
-    from: charactersEnum,
-    line: z.string(),
-  }),
+  input: {default: turnAndStateSchema,
+          userInput: z.string()},
+  output: {default: z.object({
+              from: charactersEnum,
+              line: z.string(),}),
+          userSignal: z.enum(["ENABLE", "DISABLE"])},
 });
 
 export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
     const rl = readline.createInterface({ input:stdin, output:stdout });
-    for await (const { whoseTurn, state } of input) {
+    for await (const { whoseTurn, state } of input("default")) {
 
       const answer = await rl.question('What do you think of Node.js? ');
 
@@ -31,13 +32,13 @@ export const characterWorker = characterSpec.defineWorker({
           const response = await genPrompt(whoseTurn, state);
         // console.clear();
         // console.log(response);
-        await output.emit({
+        await output("default").emit({
           from: whoseTurn,
           line: parseJSONResponse(response) || "...",
         });
  
       } else{
-        await output.emit({
+        await output("default").emit({
           from: whoseTurn,
           line: answer,
         });

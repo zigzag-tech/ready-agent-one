@@ -13,7 +13,8 @@ export const workflow = Workflow.define({
   name: "CONVERSATION_WORKFLOW",
   connections: [
     conn({
-      from: characterSpec,
+      from: {spec: characterSpec,
+            output: "default"},
       to: {
         spec: summarySpec,
         input: "character",
@@ -25,7 +26,8 @@ export const workflow = Workflow.define({
     }),
     conn({
       from: turnControlSpec,
-      to: characterSpec,
+      to: {spec: characterSpec,
+      input: "default"},
     }),
     conn({
       from: summarySpec,
@@ -44,9 +46,11 @@ export const workflow = Workflow.define({
       spec: characterSpec,
       input: {
         default: "character-input",
+        userInput: "user-provided-input"
       },
       output: {
         default: "character-talk",
+        userSignal: "user-signal"
       },
     }),
     expose({

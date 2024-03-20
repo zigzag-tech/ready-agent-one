@@ -23,6 +23,7 @@
     "nipplejs": "^0.10.1",
     "ollama": "^0.4.9",
     "planck": "^1.0.0",
+    "r3f-form": "^4.0.0",
     "react": "^18",
     "react-dom": "^18.2.0",
     "react-full-screen": "^1.1.1",

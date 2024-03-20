@@ -37,6 +37,8 @@ import { z } from "zod";
 import { LiveJobContext } from "../Game/LiveJob";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
+import { Form, Input, Label, Submit } from "r3f-form";
+import { Billboard } from "@react-three/drei";
 
 export const coroutine = (f: any, params: any[] = []) => {
   const o = f(...params); // instantiate the coroutine
@@ -432,26 +434,49 @@ const Player: React.FC = () => {
 
     gl.render(scene, camera);
   }, 100);
-  const job1 = React.useContext(LiveJobContext).conersationJob;
-  if (!job1) return null;
+  const workflowJob = React.useContext(LiveJobContext).conersationJob;
+  if (!workflowJob) return null;
 
   const resp = useOutput({
     tag: "character-talk",
-    job: job1,
+    job: workflowJob,
     def: z.object({
       from: z.string(),
       line: z.string(),
     }),
   });
-  const { feed } = useInput({
+
+  const userSignalResp = useOutput({
+    tag: "user-signal",
+    job: workflowJob,
+    def: z.object({
+      signal: z.enum(["ENABLE", "DISABLE"]),
+    }),
+  });
+
+  const [inputOn, setInputOn] = React.useState(false);
+
+  useEffect(() => {
+    if (userSignalResp?.data.signal === "ENABLE") {
+      setInputOn(true);
+    }
+  }, [userSignalResp]);
+
+  const { feed: feedInitState } = useInput({
     tag: "summary-supervision",
     def: gameStateSchema,
-    job: job1,
+    job: workflowJob,
+  });
+
+  const { feed: feedMorganInput } = useInput({
+    tag: "user-provided-input",
+    def: z.string(),
+    job: workflowJob,
   });
 
   useEffect(() => {
-    feed &&
-      feed({
+    feedInitState &&
+      feedInitState({
         previous: {
           summary: "",
         },
@@ -468,7 +493,7 @@ const Player: React.FC = () => {
         sceneNumber: 1,
         totalNumOfLines: 0,
       });
-  }, [feed]);
+  }, [feedInitState]);
 
   return (
     <>
@@ -480,13 +505,49 @@ const Player: React.FC = () => {
             zIndexRange={[100, 0]}
           />
         )}
-
         <PlayerVisuals />
         <PlayerUI />
+        {inputOn && (
+          <Billboard position={[0, 5, 0]} scale={5}>
+            <TextInput
+              onSubmit={(text) => feedMorganInput && feedMorganInput(text)}
+            />
+          </Billboard>
+        )}
       </group>
+
       <PlayerDebug largeColliderRef={largeColliderRef} />
     </>
   );
 };
+
+function TextInput({ onSubmit }: { onSubmit?: (text: string) => void }) {
+  const [text, setText] = React.useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  const maybeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (inputRef.current) {
+        if (text) {
+          setText("");
+          onSubmit && onSubmit(text);
+        }
+      }
+    }
+  };
+  return (
+    <Input
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      ref={inputRef}
+      onKeyDown={maybeEnter}
+    />
+  );
+}
 
 export default Player;

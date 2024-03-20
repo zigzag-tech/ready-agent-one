@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useRef } from "react";
+import React, { Suspense, useCallback, useEffect } from "react";
 import { inputData, useNippleManager } from "../Joystick/Joystick";
 import { useFrame } from "@react-three/fiber";
 import { radians, rotateVector } from "../../../utils/angles";
@@ -39,6 +39,8 @@ import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
 import { Form, Input, InputText, Label, Submit } from "r3f-form";
 import { Billboard } from "@react-three/drei";
+import { HumanTextInput } from "./HumanTextInput";
+import { useSnapshot } from "valtio";
 
 export const coroutine = (f: any, params: any[] = []) => {
   const o = f(...params); // instantiate the coroutine
@@ -493,6 +495,8 @@ const Player: React.FC = () => {
       });
   }, [feedInitState]);
 
+  const playerVIsualStateSnap = useSnapshot(playerVisualState);
+
   return (
     <>
       <group position={[0, 0, 0]} ref={ref}>
@@ -507,7 +511,8 @@ const Player: React.FC = () => {
         <PlayerUI />
         {inputOn && (
           <Billboard position={[0, 5, 0]} scale={5}>
-            <TextInput
+            <HumanTextInput
+              show={!playerVIsualStateSnap.moving}
               onSubmit={(text) => {
                 feedMorganInput && feedMorganInput(text);
                 setInputOn(false);
@@ -521,47 +526,5 @@ const Player: React.FC = () => {
     </>
   );
 };
-
-function TextInput({ onSubmit }: { onSubmit?: (text: string) => void }) {
-  const [text, setText] = React.useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    let still = true;
-    (async () => {
-      while (still && inputRef.current === null) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-      inputRef.current!.focus();
-    })();
-    return () => {
-      still = false;
-    };
-  }, []);
-
-  const maybeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      if (inputRef.current) {
-        if (text) {
-          setText("");
-          onSubmit && onSubmit(text);
-        }
-      }
-    }
-  };
-  return (
-    <Input
-      value={text}
-      onChange={(e) => setText(e.target.value)}
-      ref={inputRef}
-      color="white"
-      backgroundOpacity={0.3}
-      backgroundColor="black"
-      onKeyDown={maybeEnter}
-      padding={[0.05, 0.05]}
-    >
-      <InputText color="white" />
-    </Input>
-  );
-}
 
 export default Player;

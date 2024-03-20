@@ -63,11 +63,11 @@ ${JSON.stringify({
   totalNumOfLines: 0,
   recentHistory: [
     {
-      speaker: "morgan",
+      speaker: `${role}`,
       message:
         "The bandit problem seems to be bigger than the dragon, for the moment.",
     },
-    { speaker: "jeremy", message: "Well, that's unexpected." },
+    { speaker: `${role==='morgan'?'jeremy':'morgan' }`, message: "Well, that's unexpected." },
   ],
 } as GameState)}
 Would have a response:[/INST]

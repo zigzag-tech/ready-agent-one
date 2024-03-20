@@ -4,6 +4,10 @@ import { GameState } from "./summarySpec";
 import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
+import readline from "node:readline/promises";
+import { stdin, stdout } from "node:process";
+
+
 
 export const characterSpec = JobSpec.define({
   name: "CHARACTER_WORKER",
@@ -16,15 +20,32 @@ export const characterSpec = JobSpec.define({
 
 export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
+    const rl = readline.createInterface({ input:stdin, output:stdout });
     for await (const { whoseTurn, state } of input) {
-      const response = await genPrompt(whoseTurn, state);
-      // console.clear();
-      // console.log(response);
-      await output.emit({
-        from: whoseTurn,
-        line: parseJSONResponse(response) || "...",
-      });
+
+      const answer = await rl.question('What do you think of Node.js? ');
+
+      console.log("Print: "+ answer);
+
+      if(!answer){
+          const response = await genPrompt(whoseTurn, state);
+        // console.clear();
+        // console.log(response);
+        await output.emit({
+          from: whoseTurn,
+          line: parseJSONResponse(response) || "...",
+        });
+ 
+      } else{
+        await output.emit({
+          from: whoseTurn,
+          line: answer,
+        });
+
+      }
+      
     }
+    rl.close();
   },
 });
 

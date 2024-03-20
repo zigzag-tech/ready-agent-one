@@ -18,12 +18,32 @@ export const npcPlayerVisual = proxy({
   running: false,
 });
 
+const FOLLOW_SPEED = 0.05; // Adjust this value to change how fast the NPC follows the player
+const MINIMAL_DISTANCE = 1; // The minimal distance the NPC should maintain from the player
+
 export function NPC({ ...props }: GroupProps) {
   const npcRef = useRef<Group>(null);
   const localPlayerState = useSnapshot(npcPlayerVisual);
 
   useFrame(() => {
     if (npcRef.current && playerPosition) {
+      // Calculate the direction vector from the NPC to the player
+      const direction = new Vector3(
+        playerPosition.x - npcPosition.x,
+        0,
+        playerPosition.y - npcPosition.y
+      );
+      const distance = direction.length();
+      // Normalize the direction vector and scale it by the follow speed
+      if (distance > MINIMAL_DISTANCE) {
+        direction.normalize().multiplyScalar(FOLLOW_SPEED);
+        // Update the NPC's position
+        npcPosition.x += direction.x;
+        npcPosition.y += direction.z;
+        npcRef.current.position.x += direction.x;
+        npcRef.current.position.z += direction.z;
+      }
+
       const playerVec = new Vector3(
         playerPosition.x,
         npcRef.current.position.y,

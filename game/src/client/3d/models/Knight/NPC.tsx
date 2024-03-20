@@ -9,6 +9,7 @@ import { Group, Vector3 } from "three";
 import { useSnapshot } from "valtio";
 import { playerPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
+import Robot from "./Robot";
 export function NPC({ ...props }: GroupProps) {
   const npcRef = useRef<Group>(null);
 
@@ -46,7 +47,15 @@ export function NPC({ ...props }: GroupProps) {
         />
       )}
 
-      <NPCCharacter
+      {/* <NPCCharacter
+        ref={npcRef}
+        lastAttack={0}
+        lastDamaged={0}
+        moving={false}
+        recharging={false}
+        running={false}
+      /> */}
+      <Robot
         ref={npcRef}
         lastAttack={0}
         lastDamaged={0}

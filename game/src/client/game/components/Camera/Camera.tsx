@@ -183,7 +183,7 @@ const Camera: React.FC = () => {
       >
         <directionalLight
           ref={lightRef}
-          intensity={10}
+          intensity={1.5}
           position={[cameraXOffset, cameraYOffset + 1, cameraZOffset + 100]}
           castShadow
         />

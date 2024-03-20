@@ -28,8 +28,7 @@ ${
 
 ### CURRENT SCENE PLOT
 ${state.current.summary}
-### LAST FEW LINES OF CONVERSATION (FOR YOUR REFERENCE)
-${state.recentHistory.join("\n")}
+
         `;
         // console.log("SUPERVISOR: SUMMARIZING PREVIOUS SCENE");
         const previousScenesSummary =
@@ -38,6 +37,9 @@ ${state.recentHistory.join("\n")}
         const newTopicPrompt = `You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
 ### SUMMARY OF PAST PLOT (SCENES 1 - ${state.sceneNumber})
 ${previousScenesSummary}
+
+### LAST FEW LINES OF CONVERSATION (FOR YOUR REFERENCE)
+${state.recentHistory.join("\n")}
 
 ### INSTRUCTIONS
 - Write the plot for new scene ${newSceneNumber}.

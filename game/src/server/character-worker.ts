@@ -4,49 +4,40 @@ import { GameState } from "./summarySpec";
 import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
-import readline from "node:readline/promises";
-import { stdin, stdout } from "node:process";
-
-
 
 export const characterSpec = JobSpec.define({
   name: "CHARACTER_WORKER",
-  input: {default: turnAndStateSchema,
-          userInput: z.string()},
-  output: {default: z.object({
-              from: charactersEnum,
-              line: z.string(),}),
-          userSignal: z.enum(["ENABLE", "DISABLE"])},
+  input: { default: turnAndStateSchema, userInput: z.string().nullable() },
+  output: {
+    default: z.object({
+      from: charactersEnum,
+      line: z.string(),
+    }),
+    userSignal: z.enum(["ENABLE", "DISABLE"]),
+  },
 });
 
 export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
     // const rl = readline.createInterface({ input:stdin, output:stdout });
     for await (const { whoseTurn, state } of input("default")) {
-
-      if(whoseTurn === "morgan"){
+      let line: string | null = null;
+      if (whoseTurn === "morgan") {
         await output("userSignal").emit("ENABLE");
-        const answer = await input("userInput").nextValue() as string;
-        await output("default").emit({
-          from: whoseTurn,
-          line: answer ,
-        });
-
+        line = await input("userInput").nextValue();
         await output("userSignal").emit("DISABLE");
-
-      }else{
-        const response = await genPrompt(whoseTurn, state);
-        // console.clear();
-        // console.log(response);
-        await output("default").emit({
-          from: whoseTurn,
-          line: parseJSONResponse(response) || "...",
-        });
-
       }
 
+      if (!line) {
+        const response = await genPrompt(whoseTurn, state);
+        line = parseJSONResponse(response) || "...";
+      }
+
+      await output("default").emit({
+        from: whoseTurn,
+        line,
+      });
     }
-    
   },
 });
 

@@ -41,20 +41,18 @@ ZZEnv.setGlobal(
     // console.log("player:", data.data);
   }})()
 
-  for await (const data of output("user-signal")){
+  for await (const data of output("user-signal")) {
     console.log("user-signal:", data.data);
 
-    if(data.data === "ENABLE"){
-      const rl = readline.createInterface({ input:stdin, output:stdout });
-      const answer = await rl.question("What you want to say?: ")
-
-      await input("user-provided-input").feed(answer);
-
+    if (data.data === "ENABLE") {
+      const rl = readline.createInterface({ input: stdin, output: stdout });
+      const answer = await rl.question("What you want to say?: ");
       rl.close();
 
+      await input("user-provided-input").feed(answer);
     }
-
   }
+
 
   console.log("done");
 

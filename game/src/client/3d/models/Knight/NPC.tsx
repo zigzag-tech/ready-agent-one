@@ -17,17 +17,17 @@ export const npcPlayerVisual = proxy({
   moving: false,
   running: false,
 });
-import { npcPlayerVisual } from "./NPCPlayerVisual";
 
 const FOLLOW_SPEED = 0.05; // Adjust this value to change how fast the NPC follows the player
-const MINIMAL_DISTANCE = 1; // The minimal distance the NPC should maintain from the player
+const MINIMAL_DISTANCE = 3; // The minimal distance the NPC should maintain from the player
 
 export function NPC({ ...props }: GroupProps) {
   const npcRef = useRef<Group>(null);
+  const groupRef = useRef<Group>(null);
   const localPlayerState = useSnapshot(npcPlayerVisual);
 
   useFrame(() => {
-    if (npcRef.current && playerPosition) {
+    if (groupRef.current && playerPosition) {
       // Calculate the direction vector from the NPC to the player
       const direction = new Vector3(
         playerPosition.x - npcPosition.x,
@@ -42,18 +42,20 @@ export function NPC({ ...props }: GroupProps) {
         // Update the NPC's position
         npcPosition.x += direction.x;
         npcPosition.y += direction.z;
-        npcRef.current.position.x += direction.x;
-        npcRef.current.position.z += direction.z;
+        groupRef.current.position.x += direction.x;
+        groupRef.current.position.z += direction.z;
       } else {
         npcPlayerVisual.moving = false;
       }
 
       const playerVec = new Vector3(
         playerPosition.x,
-        npcRef.current.position.y,
+        groupRef.current.position.y,
         playerPosition.y
       );
-      npcRef.current.lookAt(playerVec);
+      if (npcRef.current && playerVec) {
+        npcRef.current.lookAt(playerVec);
+      }
     }
   });
 
@@ -70,7 +72,7 @@ export function NPC({ ...props }: GroupProps) {
     }),
   });
   return (
-    <group position={position} {...props}>
+    <group ref={groupRef} position={position} {...props}>
       {/* <Hud> */}
       {resp?.data.from === "jeremy" && (
         <SpeechBubble

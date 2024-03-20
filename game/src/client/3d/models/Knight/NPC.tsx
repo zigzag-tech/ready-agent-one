@@ -6,12 +6,21 @@ import React, { useRef } from "react";
 import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
-import { useSnapshot } from "valtio";
+import { proxy, useSnapshot } from "valtio";
 import { npcPosition, playerPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Robot from "./Robot";
+
+export const npcPlayerVisual = proxy({
+  rollCooldown: false,
+  rolling: false,
+  moving: false,
+  running: false,
+});
+
 export function NPC({ ...props }: GroupProps) {
   const npcRef = useRef<Group>(null);
+  const localPlayerState = useSnapshot(npcPlayerVisual);
 
   useFrame(() => {
     if (npcRef.current && playerPosition) {
@@ -59,9 +68,9 @@ export function NPC({ ...props }: GroupProps) {
         ref={npcRef}
         lastAttack={0}
         lastDamaged={0}
-        moving={false}
+        moving={localPlayerState.moving}
         recharging={false}
-        running={false}
+        running={localPlayerState.rolling}
       />
     </group>
   );

@@ -2,6 +2,8 @@ import { ZZEnv } from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
 import { workflow } from "./workflow.conversation";
 import { GameState } from "./summarySpec";
+import readline from "node:readline/promises";
+import { stdin, stdout } from "node:process";
 
 ZZEnv.setGlobal(
   new ZZEnv({
@@ -35,8 +37,23 @@ ZZEnv.setGlobal(
 
   const { input, output } = await workflow.enqueueJob({});
   await input("summary-supervision").feed(initialInput);
-  for await (const data of output("character-talk")) {
+  (async ()=>{for await (const data of output("character-talk")) {
     // console.log("player:", data.data);
+  }})()
+
+  for await (const data of output("user-signal")){
+    console.log("user-signal:", data.data);
+
+    if(data.data === "ENABLE"){
+      const rl = readline.createInterface({ input:stdin, output:stdout });
+      const answer = await rl.question("What you want to say?: ")
+
+      await input("user-provided-input").feed(answer);
+
+      rl.close();
+
+    }
+
   }
 
   console.log("done");

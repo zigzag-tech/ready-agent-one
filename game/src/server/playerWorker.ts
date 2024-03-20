@@ -21,32 +21,32 @@ export const characterSpec = JobSpec.define({
 
 export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
-    const rl = readline.createInterface({ input:stdin, output:stdout });
+    // const rl = readline.createInterface({ input:stdin, output:stdout });
     for await (const { whoseTurn, state } of input("default")) {
 
-      const answer = await rl.question('What do you think of Node.js? ');
+      if(whoseTurn === "morgan"){
+        await output("userSignal").emit("ENABLE");
+        const answer = await input("userInput").nextValue() as string;
+        await output("default").emit({
+          from: whoseTurn,
+          line: answer ,
+        });
 
-      console.log("Print: "+ answer);
+        await output("userSignal").emit("DISABLE");
 
-      if(!answer){
-          const response = await genPrompt(whoseTurn, state);
+      }else{
+        const response = await genPrompt(whoseTurn, state);
         // console.clear();
         // console.log(response);
         await output("default").emit({
           from: whoseTurn,
           line: parseJSONResponse(response) || "...",
         });
- 
-      } else{
-        await output("default").emit({
-          from: whoseTurn,
-          line: answer,
-        });
 
       }
-      
+
     }
-    rl.close();
+    
   },
 });
 

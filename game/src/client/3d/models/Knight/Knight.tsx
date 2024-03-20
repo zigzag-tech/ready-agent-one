@@ -36,7 +36,7 @@ type GLTFResult = GLTF & {
 };
 
 const redMaterial = new MeshToonMaterial({
-  color: hexStringToCode("#45555a"),
+  color: hexStringToCode("#954832"),
   // skinning: true,
 });
 redMaterial.color.convertSRGBToLinear();
@@ -54,13 +54,13 @@ const skinMaterial = new MeshToonMaterial({
 skinMaterial.color.convertSRGBToLinear();
 
 const armorMaterial = new MeshToonMaterial({
-  color: hexStringToCode("#434e5f"),
+  color: hexStringToCode("#543238"),
   // skinning: true,
 });
 armorMaterial.color.convertSRGBToLinear();
 
 const armorDarkMaterial = new MeshToonMaterial({
-  color: hexStringToCode("#242937"),
+  color: hexStringToCode("#543238"),
   // skinning: true,
 });
 armorDarkMaterial.color.convertSRGBToLinear();

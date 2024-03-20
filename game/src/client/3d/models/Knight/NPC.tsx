@@ -7,18 +7,18 @@ import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { useSnapshot } from "valtio";
-import { playerPosition } from "../../../state/positions";
+import { npcPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Robot from "./Robot";
 export function NPC({ ...props }: GroupProps) {
   const npcRef = useRef<Group>(null);
 
   useFrame(() => {
-    if (npcRef.current && playerPosition) {
+    if (npcRef.current && npcPosition) {
       const playerVec = new Vector3(
-        playerPosition.x,
+        npcPosition.x,
         npcRef.current.position.y,
-        playerPosition.y
+        npcPosition.y
       );
       npcRef.current.lookAt(playerVec);
     }

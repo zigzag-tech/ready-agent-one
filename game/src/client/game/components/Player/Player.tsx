@@ -37,7 +37,7 @@ import { z } from "zod";
 import { LiveJobContext } from "../Game/LiveJob";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
-import { Form, Input, Label, Submit } from "r3f-form";
+import { Form, Input, InputText, Label, Submit } from "r3f-form";
 import { Billboard } from "@react-three/drei";
 
 export const coroutine = (f: any, params: any[] = []) => {
@@ -480,7 +480,7 @@ const Player: React.FC = () => {
         },
         current: {
           summary:
-            "Before our story begins, rumor has it there was a meow meow land that's ruled by cats.",
+            "Before our story begins, rumor has it there was a meow meow land ruled by cats. Their archenemy is woof woof land ruled by dogs. The two lands are separated by a river. The cats and dogs have been fighting for centuries.",
         },
         recentHistory: [
           {
@@ -526,9 +526,16 @@ function TextInput({ onSubmit }: { onSubmit?: (text: string) => void }) {
   const [text, setText] = React.useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    let still = true;
+    (async () => {
+      while (still && inputRef.current === null) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      inputRef.current!.focus();
+    })();
+    return () => {
+      still = false;
+    };
   }, []);
 
   const maybeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -546,8 +553,14 @@ function TextInput({ onSubmit }: { onSubmit?: (text: string) => void }) {
       value={text}
       onChange={(e) => setText(e.target.value)}
       ref={inputRef}
+      color="white"
+      backgroundOpacity={0.3}
+      backgroundColor="black"
       onKeyDown={maybeEnter}
-    />
+      padding={[0.05, 0.05]}
+    >
+      <InputText color="white" />
+    </Input>
   );
 }
 

@@ -17,3 +17,7 @@ Powered by [LiveStack](https://github.com/zigzag-tech/livestack).
 # Credits
 
 The UI starting point is derived from https://github.com/simonghales/example-react-three-game
+
+3d character models by @quaternius
+
+Other 3d models by @KayLousberg

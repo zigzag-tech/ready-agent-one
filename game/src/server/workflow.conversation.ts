@@ -13,8 +13,7 @@ export const workflow = Workflow.define({
   name: "CONVERSATION_WORKFLOW",
   connections: [
     conn({
-      from: {spec: characterSpec,
-            output: "default"},
+      from: { spec: characterSpec, output: "default" },
       to: {
         spec: summarySpec,
         input: "character",
@@ -26,8 +25,7 @@ export const workflow = Workflow.define({
     }),
     conn({
       from: turnControlSpec,
-      to: {spec: characterSpec,
-      input: "default"},
+      to: { spec: characterSpec, input: "default" },
     }),
     conn({
       from: summarySpec,
@@ -42,22 +40,10 @@ export const workflow = Workflow.define({
     }),
   ],
   exposures: [
-    expose({
-      spec: characterSpec,
-      input: {
-        default: "character-input",
-        userInput: "user-provided-input"
-      },
-      output: {
-        default: "character-talk",
-        userSignal: "user-signal"
-      },
-    }),
-    expose({
-      spec: summarySpec,
-      input: {
-        supervision: "summary-supervision",
-      },
-    }),
+    expose(characterSpec.input.default, "character-input"),
+    expose(characterSpec.input.userInput, "user-provided-input"),
+    expose(characterSpec.output.default, "character-talk"),
+    expose(characterSpec.output.userSignal, "user-signal"),
+    expose(summarySpec.input.supervision, "summary-supervision"),
   ],
 });

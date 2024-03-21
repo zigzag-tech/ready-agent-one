@@ -41,9 +41,9 @@ export const workflow = Workflow.define({
   ],
   exposures: [
     expose(characterSpec.input.default, "character-input"),
-    expose(characterSpec.input.userInput, "user-provided-input"),
+    expose(characterSpec.input["user-input"], "user-provided-input"),
     expose(characterSpec.output.default, "character-talk"),
-    expose(characterSpec.output.userSignal, "user-signal"),
+    expose(characterSpec.output["user-signal"], "user-signal"),
     expose(summarySpec.input.supervision, "summary-supervision"),
   ],
 });

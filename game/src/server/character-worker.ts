@@ -7,13 +7,13 @@ import { z } from "zod";
 
 export const characterSpec = JobSpec.define({
   name: "CHARACTER_WORKER",
-  input: { default: turnAndStateSchema, userInput: z.string().nullable() },
+  input: { default: turnAndStateSchema, "user-input": z.string().nullable() },
   output: {
     default: z.object({
       from: charactersEnum,
       line: z.string(),
     }),
-    userSignal: z.enum(["ENABLE", "DISABLE"]),
+    "user-signal": z.enum(["ENABLE", "DISABLE"]),
   },
 });
 
@@ -23,9 +23,9 @@ export const characterWorker = characterSpec.defineWorker({
     for await (const { whoseTurn, state } of input("default")) {
       let line: string | null = null;
       if (whoseTurn === "morgan") {
-        await output("userSignal").emit("ENABLE");
-        line = await input("userInput").nextValue();
-        await output("userSignal").emit("DISABLE");
+        await output("user-signal").emit("ENABLE");
+        line = await input("user-input").nextValue();
+        await output("user-signal").emit("DISABLE");
       }
 
       if (!line) {

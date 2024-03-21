@@ -2305,7 +2305,6 @@ __metadata:
   dependencies:
     "@google-cloud/storage": "npm:^7.8.0"
     "@livestack/shared": "npm:*"
-    "@livestack/shared-wasm": "npm:*"
     "@livestack/vault-client": "npm:*"
     "@livestack/vault-dev-server": "npm:*"
     "@livestack/vault-interface": "npm:*"
@@ -2366,7 +2365,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@livestack/shared-wasm@npm:*, @livestack/shared-wasm@workspace:livestack/shared-wasm":
+"@livestack/shared-wasm@workspace:livestack/shared-wasm":
   version: 0.0.0-use.local
   resolution: "@livestack/shared-wasm@workspace:livestack/shared-wasm"
   languageName: unknown
@@ -2376,7 +2375,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@livestack/shared@workspace:livestack/shared"
   dependencies:
-    "@livestack/shared-wasm": "npm:*"
     "@preconstruct/cli": "npm:^2.8.3"
     "@types/chai": "npm:^4.3.12"
     "@types/jest": "npm:^29.5.12"

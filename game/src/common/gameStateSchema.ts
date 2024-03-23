@@ -1,5 +1,5 @@
 import { z } from "zod";
-export const charactersEnum = z.enum(["morgan", "jeremy"]);
+export const charactersEnum = z.enum(["morgan", "jeremy","guy"]);
 
 export const gameStateSchema = z.object({
   previous: z

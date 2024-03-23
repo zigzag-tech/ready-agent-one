@@ -25,6 +25,7 @@
       "livestack/runpod",
       "livestack/shared",
       "livestack/vault-client",
+      "livestack/vault-interface",
       "vault-dev-server",
       "vault-interface"
     ]

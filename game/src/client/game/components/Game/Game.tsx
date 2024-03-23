@@ -72,6 +72,7 @@ const Game: React.FC = () => {
                 <Floor />
                 <Player />
                 <NPC />
+                <GUY />
                 {/*<OldMob/>*/}
                 <MobsManager />
                 <AttackColliders />
@@ -142,6 +143,7 @@ function MyCamera({
 }
 
 import { playerPosition } from "../../../state/positions";
+import { GUY } from "../../../3d/models/Knight/GUY";
 
 function Render() {
   const aTarget = useFBO(window.innerWidth / 4, window.innerHeight / 4);

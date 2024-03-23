@@ -46,6 +46,8 @@ const DIRECTIVE_BY_ROLE = {
     "You are a conversation writing assistant for a video game. Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. Write what Morgan should say next based on the context provided. ",
   jeremy:
     "You are a conversation writing assistant for a video game. Your job is play the role of a supporting character Jeremy. Jeremy has a sarcastic streak but deep down he's kind and helpful. Write what Jeremy should say next based on the context provided.",
+  guy:
+  "You are a conversation writing assistant for a video game. Your job is play the role of a supporting character Guy. Guy is tring to acting helpful but he always messes things up. Write what Guy should say next based on the context provided."
 };
 
 async function genPrompt(
@@ -68,7 +70,7 @@ WORLD DEFINITION:
 ${JSON.stringify({
   previous: {
     summary:
-      "In a fantasy world, two warriors are about to face a dragon. They went out to find the dragon to save their village.",
+      "In a fantasy world, three warriors are about to face a dragon. They went out to find the dragon to save their village.",
   },
   current: {
     summary:
@@ -94,6 +96,8 @@ Would have a response:[/INST]
 WORLD DEFINITION:
 ${JSON.stringify(state)}[/INST]
 `;
+console.log(context);
+process.exit()
   const response = await generateResponseOllama(context);
   return response;
 }

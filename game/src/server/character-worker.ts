@@ -96,8 +96,6 @@ Would have a response:[/INST]
 WORLD DEFINITION:
 ${JSON.stringify(state)}[/INST]
 `;
-console.log(context);
-process.exit()
   const response = await generateResponseOllama(context);
   return response;
 }

@@ -29,7 +29,12 @@ ZZEnv.setGlobal(
     recentHistory: [
       {
         speaker: "jeremy",
-        message: "What the hell is going on with the oxygen indicator?",
+        actions: [
+          {
+            type: "talk",
+            message: "What the hell is going on with the oxygen indicator?",
+          },
+        ],
       },
     ],
     totalNumOfLines: 1,
@@ -37,9 +42,11 @@ ZZEnv.setGlobal(
 
   const { input, output } = await workflow.enqueueJob({});
   await input("summary-supervision").feed(initialInput);
-  (async ()=>{for await (const data of output("character-talk")) {
-    // console.log("player:", data.data);
-  }})()
+  (async () => {
+    for await (const data of output("character-talk")) {
+      // console.log("player:", data.data);
+    }
+  })();
 
   for await (const data of output("user-signal")) {
     console.log("user-signal:", data.data);
@@ -53,7 +60,6 @@ ZZEnv.setGlobal(
       await input("user-provided-input").feed(answer);
     }
   }
-
 
   console.log("done");
 

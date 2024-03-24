@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Workflow, conn, expose } from "@livestack/core";
 import { summarySpec } from "./summarySpec";
-import { characterSpec } from "./character-worker";
+import { characterSpec } from "./characterWorker";
 import { supervisorSpec } from "./supervisorSpec";
 import { turnControlSpec } from "./turnSpecAndWorker";
 

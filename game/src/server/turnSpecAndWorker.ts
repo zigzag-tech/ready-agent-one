@@ -15,7 +15,8 @@ export const turnControlSpec = JobSpec.define({
 export const turnControl = turnControlSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const state of input) {
-      const whoseTurn = state.totalNumOfLines % 2 === 1 ? "morgan" : "jeremy";
+      const op = charactersEnum.options;
+      const whoseTurn = op[state.totalNumOfLines % op.length];
       await output.emit({
         whoseTurn,
         state,

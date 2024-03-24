@@ -23,7 +23,7 @@ ZZEnv.setGlobal(
     },
     current: {
       summary:
-        "It is year 2300. In the outer space, two astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
+        "It is year 2300. In the outer space, three astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
     },
     sceneNumber: 1,
     recentHistory: [

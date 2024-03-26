@@ -1,3 +1,4 @@
+import { green } from "ansis";
 import { actionSchema, charactersEnum } from "../common/gameStateSchema";
 import { generateResponseOllama } from "./generateResponseOllama";
 import { GameState } from "./summarySpec";
@@ -117,13 +118,11 @@ The character needs to be close to an object in order to inspect or perform acti
 You can perform only one action at a time.
 Output your response in JSON format, adhering to the format defined in Actions allowed.
 [/INST]
-EXAMPLE
 {
   "type": "walk",
   "destination": "mysterious artifact",
-}
+}</s>
 [INST] Your json response: [/INST]
-</s>
 `;
   // backup
   // const context = `<s>[INST]${DIRECTIVE_BY_ROLE[role]}
@@ -168,6 +167,7 @@ EXAMPLE
   // WORLD DEFINITION:
   // ${JSON.stringify(state)}[/INST]
   // `;
+  console.log("context", green`${context}`);
   const response = await generateResponseOllama(context);
   return response;
 }

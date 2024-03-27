@@ -108,21 +108,37 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const context = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an enriched action using one of the ALLOWED ACTIONS.
+  const context = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an enriched action using one of the ALLOWED ACTIONS. Respond with only the JSON and nothing else.
 CHARACTER NAME:
 Emily
 
+CHARACTER DESCRIPTION:
+Emily is a cat lover.
+
 CONTEXT:
-Emily Loves cats. She is a cat lover and she is always surrounded by cats.
+${JSON.stringify({
+  current: {
+    summary:
+      "Emily Loves cats. She is a cat lover and she is always surrounded by cats.",
+  },
+  recentHistory: [
+    { speaker: "cat", actions: [{ type: "walk", detination: "emily" }] },
+  ],
+})}
 
 VICINITY INFORMATION:
 ${JSON.stringify([
   {
-    type: "object",
-    name: "mysterious litter box",
-    description:
-      "A litter box that seems to be glowing with a mysterious light.",
+    type: "person",
+    name: "emily",
+    description: "Emily the cat lover.",
     position: "5 meters ahead",
+  },
+  {
+    type: "person",
+    name: "cat",
+    description: "A black cat.",
+    position: "2 meters ahead",
   },
 ])}
 
@@ -133,16 +149,19 @@ ALLOWED ACTIONS:
 The above example would output the following json:
 [/INST]
 {
-  "type": "walk",
-  "destination": "mysterious litter box"
+  "type": "talk",
+  "message": "oh hey there! What did you bring me today?"
 }
 </s>
 [INST]
 CHARACTER NAME:
 ${role}
 
-CONTEXT:
+CHARACTER DESCRIPTION:
 ${DIRECTIVE_BY_ROLE[role]}
+
+CONTEXT:
+${JSON.stringify(state)}
 
 VICINITY INFORMATION:
 ${JSON.stringify(vicinity)}

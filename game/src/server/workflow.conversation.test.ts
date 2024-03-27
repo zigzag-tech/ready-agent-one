@@ -28,7 +28,7 @@ ZZEnv.setGlobal(
     sceneNumber: 1,
     recentHistory: [
       {
-        speaker: "jeremy",
+        speaker: "guy",
         actions: [
           {
             type: "talk",

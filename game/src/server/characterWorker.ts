@@ -67,15 +67,51 @@ const vicinity = [
   })),
   {
     type: "object",
-    name: "tree",
-    description: "A tall tree.",
-    position: "10 meters ahead",
+    name: "wrench",
+    description: "A rusty wrench.",
+    position: "10 meters north",
   },
   {
     type: "object",
-    name: "rock",
-    description: "A big rock.",
-    position: "5 meters ahead",
+    name: "control panel",
+    description: "A control panel.",
+    position: "3 meters ahead",
+  },
+  {
+    type: "object",
+    name: "red button",
+    description: "A red button that says 'LAUNCH'",
+    position: "control panel",
+  },
+  {
+    type: "object",
+    name: "green button",
+    description: "A green button that says 'RELAX MAN'",
+    position: "control panel",
+  },
+  {
+    type: "object",
+    name: "yellow button",
+    description: "A yellow button that says 'BANANAS'",
+    position: "control panel",
+  },
+  {
+    type: "object",
+    name: "duct tape",
+    description: "roll of duct tape.",
+    position: "on the floor",
+  },
+  {
+    type: "object",
+    name: "exit sign",
+    description: "A sign that says 'EXIT' with an arrow pointing to the right.",
+    position: "5 meters south",
+  },
+  {
+    type: "object",
+    name: "oxygen tank",
+    description: "A large oxygen tank.",
+    position: "7 meters ahead",
   },
 ];
 
@@ -221,6 +257,12 @@ ALLOWED ACTIONS:
 {"type": "walk", "destination": "[sample_destination]"}
 {"type": "talk", "message": "[sample_message]"}
 {"type": "jump" }
+{"type": "examine", "target": "[sample_target]" }
+{"type": "operate", "target": "[sample_target]" }
+{"type": "punch", "target": "[sample_target]" }
+{"type": "kick", "target": "[sample_target]" }
+{"type": "run", "destination": "[sample_destination]" }
+
 [/INST]
 `;
   // console.log("prompt: ", green`${prompt}`);

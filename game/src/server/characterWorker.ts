@@ -44,12 +44,18 @@ export const characterWorker = characterSpec.defineWorker({
   },
 });
 
+// const DIRECTIVE_BY_ROLE = {
+//   morgan:
+//     "Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. ",
+//   jeremy:
+//     "Your job is play the role of a supporting character Jeremy. Jeremy has a sarcastic streak but deep down he's kind and helpful.",
+//   guy: "Your job is play the role of a supporting character Guy. Guy is tring to acting helpful but he always messes things up.",
+// };
 const DIRECTIVE_BY_ROLE = {
   morgan:
-    "Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. ",
-  jeremy:
-    "Your job is play the role of a supporting character Jeremy. Jeremy has a sarcastic streak but deep down he's kind and helpful.",
-  guy: "Your job is play the role of a supporting character Guy. Guy is tring to acting helpful but he always messes things up.",
+    "Morgan is prudent, courageous but could slip into self doubt from time to time. ",
+  jeremy: "Jeremy has a sarcastic streak but deep down he's kind and helpful.",
+  guy: "Guy is tring to acting helpful but he always messes things up.",
 };
 
 const vicinity = [
@@ -102,72 +108,52 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const context = `<s> [INST] You are a character writer for a game. Your task is to write the actions and dialogue for the character named ${role}. Use the provided context, vicinity information, allowed actions, and rules to guide ${role}'s behavior and interactions within the game world.
-Context:
-${DIRECTIVE_BY_ROLE[role]}
+  const context = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an enriched action using one of the ALLOWED ACTIONS.
+CHARACTER NAME:
+Emily
 
-What's in the vicinity:
-${JSON.stringify(vicinity)}
+CONTEXT:
+Emily Loves cats. She is a cat lover and she is always surrounded by cats.
 
-Actions allowed:
-${JSON.stringify(actionsAllowed)}
+VICINITY INFORMATION:
+${JSON.stringify([
+  {
+    type: "object",
+    name: "mysterious litter box",
+    description:
+      "A litter box that seems to be glowing with a mysterious light.",
+    position: "5 meters ahead",
+  },
+])}
 
-Rules:
-The character needs to be close to a person in order to talk to them.
-The character needs to be close to an object in order to inspect or perform actions on it.
-You can perform only one action at a time.
-Output your response in JSON format, adhering to the format defined in Actions allowed.
+ALLOWED ACTIONS:
+{"type": "walk", "destination": "[sample_destination]"}
+{"type": "talk", "message": "[sample_message]"}
+
+The above example would output the following json:
 [/INST]
 {
   "type": "walk",
-  "destination": "mysterious artifact",
-}</s>
-[INST] Your json response: [/INST]
+  "destination": "mysterious litter box"
+}
+</s>
+[INST]
+CHARACTER NAME:
+${role}
+
+CONTEXT:
+${DIRECTIVE_BY_ROLE[role]}
+
+VICINITY INFORMATION:
+${JSON.stringify(vicinity)}
+
+ALLOWED ACTIONS:
+{"type": "walk", "destination": "[sample_destination]"}
+{"type": "talk", "message": "[sample_message]"}
+{"type": "jump"}
+[/INST]
 `;
-  // backup
-  // const context = `<s>[INST]${DIRECTIVE_BY_ROLE[role]}
-
-  // ### INSTRUCTIONS
-  // - Keep the response in line with the PLOT SUMMARY provided and the CONVERSATION HISTORY.
-  // - DO NOT repeat what's already said in the CONVERSATION HISTORY.
-  // - This is real life conversation, so be colloquial and natural.
-  // - Write only the JSON and nothing else.
-  // - Avoid being too agreeable, predictable and repetitive. Insert drama, personality and conflict when appropriate.
-  // - Keep the response short, under 20 words.
-  // - Response with JSON { "speaker": "${role}", "nextMessage": "[character message]" }, replace [character message] with what the player should say next.
-
-  // For instance, the following:
-  // WORLD DEFINITION:
-  // ${JSON.stringify({
-  //   previous: {
-  //     summary:
-  //       "In a fantasy world, three warriors are about to face a dragon. They went out to find the dragon to save their village.",
-  //   },
-  //   current: {
-  //     summary:
-  //       "As they gather information about the dragon, they realize the dragon is not their immediate threat. They are about to face a group of bandits.",
-  //   },
-  //   sceneNumber: 5,
-  //   totalNumOfLines: 0,
-  //   recentHistory: [
-  //     {
-  //       speaker: `${role}`,
-  //       message:
-  //         "The bandit problem seems to be bigger than the dragon, for the moment.",
-  //     },
-  //     {
-  //       speaker: `${role === "morgan" ? "jeremy" : "morgan"}`,
-  //       message: "Well, that's unexpected.",
-  //     },
-  //   ],
-  // } as GameState)}
-  // Would have a response:[/INST]
-  // { "speaker": "${role}", "nextMessage": "The villagers told me that the bandits, who call themselves the 'Big Red', are a group of 20 people. They have been terrorizing the village for a while now." }</s>
-  // [INST]
-  // WORLD DEFINITION:
-  // ${JSON.stringify(state)}[/INST]
-  // `;
-  console.log("context", green`${context}`);
+  // console.log("context", green`${context}`);
   const response = await generateResponseOllama(context);
   return response;
 }

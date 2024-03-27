@@ -2308,6 +2308,7 @@ __metadata:
     "@livestack/vault-client": "npm:*"
     "@livestack/vault-dev-server": "npm:*"
     "@livestack/vault-interface": "npm:*"
+    "@ltd/j-toml": "npm:^1.38.0"
     "@preconstruct/cli": "npm:^2.8.3"
     "@types/lodash": "npm:^4.14.201"
     "@types/uuid": "npm:^9.0.7"
@@ -2451,6 +2452,13 @@ __metadata:
     "@livestack/core": "*"
   languageName: unknown
   linkType: soft
+
+"@ltd/j-toml@npm:^1.38.0":
+  version: 1.38.0
+  resolution: "@ltd/j-toml@npm:1.38.0"
+  checksum: 10c0/6db2b203e21c6bc2e781ad76f3e798ae9c4b9d83205070f482602a30f3d1c37dde8c8c72575bdc505c1b8c228c5e81171a4557f0d76b814da0fb91cdd21f6194
+  languageName: node
+  linkType: hard
 
 "@mediapipe/tasks-vision@npm:0.10.8":
   version: 0.10.8

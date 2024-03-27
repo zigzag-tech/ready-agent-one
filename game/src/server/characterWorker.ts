@@ -6,6 +6,10 @@ import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 
+// TODO: 
+// 1. let LLM generate actions (maybe from a set of basic actions)
+// 2. Try an entirely different scenario
+
 type Actions = z.infer<typeof actionSchema>;
 export const characterSpec = JobSpec.define({
   name: "CHARACTER_WORKER",
@@ -172,6 +176,7 @@ ${JSON.stringify(
         target: "cat",
       },
     ],
+    reason: "Emily responds to the cat's presence with a friendly greeting.",
   },
   null,
   2
@@ -231,6 +236,7 @@ ${JSON.stringify(
         message: "oh no! I'm in trouble!",
       },
     ],
+    reason: "Frodo is in trouble and he expresses his fear.",
   },
   null,
   2

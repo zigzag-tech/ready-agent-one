@@ -83,10 +83,10 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const context = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS. Use each ALLOWED ACTIONS at most once per response. Respond with only the JSON and nothing else.
+  const INST_AND_EXAMPLE_1 = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS. Use each ALLOWED ACTIONS at most once per response. Respond with only the JSON and nothing else.
 CHARACTER NAME:
 Emily
-
+  
 CHARACTER DESCRIPTION:
 Emily is a cat lover.
 
@@ -97,7 +97,7 @@ ${JSON.stringify({
       "Emily Loves cats. She is a cat lover and she is always surrounded by cats.",
   },
   recentHistory: [
-    { speaker: "cat", actions: [{ type: "walk", detination: "emily" }] },
+    { speaker: "cat", actions: [{ type: "walk", destination: "emily" }] },
   ],
 })}
 
@@ -125,20 +125,85 @@ ALLOWED ACTIONS:
 The above example would output the following json:
 [/INST]
 ${JSON.stringify(
-  [
-    {
-      type: "talk",
-      message: "oh hey there! What did you bring me today?",
-    },
-    {
-      type: "pet",
-      target: "cat",
-    },
-  ],
+  {
+    actions: [
+      {
+        type: "talk",
+        message: "oh hey there! What did you bring me today?",
+      },
+      {
+        type: "pet",
+        target: "cat",
+      },
+    ],
+  },
   null,
   2
-)}
-</s>
+)}</s>`;
+
+  const EXAMPLE_2 = `<s>CHARACTER NAME:
+Frodo
+
+CHARACTER DESCRIPTION:
+Frodo is a hobbit that loves adventures.
+
+CONTEXT:
+${JSON.stringify({
+  current: {
+    summary: "Frodo encounters a green bear on his way to the mountain.",
+  },
+  recentHistory: [
+    { speaker: "frodo", actions: [{ type: "shoot", target: "bear" }] },
+    {
+      speaker: "bear",
+      actions: [
+        { type: "talk", message: "yummy human!" },
+        { type: "attack", target: "frodo" },
+      ],
+    },
+  ],
+})}
+
+VICINITY INFORMATION:
+${JSON.stringify([
+  {
+    type: "person",
+    name: "frodo",
+    description: "Frodo the hobbit.",
+    position: "33 meters ahead",
+  },
+  {
+    type: "person",
+    name: "bear",
+    description: "A hungry green bear.",
+    position: "2 meters behind",
+  },
+])}
+  
+ALLOWED ACTIONS:
+{"type": "shoot", "target": "[sample_target]"}
+{"type": "attack", "target": "[sample_target]"}
+{"type": "talk", "message": "[sample_message]"}
+
+The above example would output the following json:
+[/INST]
+${JSON.stringify(
+  {
+    actions: [
+      {
+        type: "talk",
+        message: "oh no! I'm in trouble!",
+      },
+    ],
+  },
+  null,
+  2
+)}</s>`;
+
+  const prompt = `
+${INST_AND_EXAMPLE_1}
+
+${EXAMPLE_2}
 [INST]
 CHARACTER NAME:
 ${role}
@@ -158,8 +223,8 @@ ALLOWED ACTIONS:
 {"type": "jump" }
 [/INST]
 `;
-  // console.log("context", green`${context}`);
-  const response = await generateResponseOllama(context);
+  // console.log("prompt: ", green`${prompt}`);
+  const response = await generateResponseOllama(prompt);
   return response;
 }
 function genContext(state: GameState) {
@@ -189,8 +254,8 @@ function parseJSONResponse(raw: string | null) {
     // const start = raw.indexOf("{");
     // const end = raw.lastIndexOf("}") + 1;
     // const responseJsonString = raw.slice(start, end);
-    const responseJson = JSON.parse(raw.trim()) as Actions;
-    return responseJson;
+    const responseJson = JSON.parse(raw.trim()) as { actions: Actions };
+    return responseJson.actions;
   } catch (e) {
     console.log("Error parsing response", e, "raw:", raw);
     return [

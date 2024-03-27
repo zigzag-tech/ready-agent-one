@@ -59,48 +59,23 @@ const DIRECTIVE_BY_ROLE = {
 };
 
 const vicinity = [
+  ...Object.keys(DIRECTIVE_BY_ROLE).map((role, index) => ({
+    type: "person",
+    name: role,
+    description: DIRECTIVE_BY_ROLE[role],
+    position: `${index + 1} meters ahead`,
+  })),
   {
     type: "object",
-    name: "mysterious artifact",
-    description: "A glowing, ancient-looking artifact rests on a pedestal.",
+    name: "tree",
+    description: "A tall tree.",
+    position: "10 meters ahead",
+  },
+  {
+    type: "object",
+    name: "rock",
+    description: "A big rock.",
     position: "5 meters ahead",
-  },
-  {
-    type: "person",
-    name: "wise old man",
-    description:
-      "An elderly man with a long, white beard stands near the artifact.",
-    position: "6 meters ahead",
-  },
-];
-
-const actionsAllowed = [
-  {
-    name: "walk",
-    description: "This action will change the character's current position.",
-    parameters: [
-      {
-        name: "destination",
-        description: "The target location to move to.",
-        type: "string",
-      },
-    ],
-  },
-  {
-    name: "talk",
-    description:
-      "The character can engage in conversation with a nearby person.",
-    parameters: [
-      {
-        name: "message",
-        description: "The message to convey in the conversation.",
-        type: "string",
-      },
-    ],
-  },
-  {
-    name: "jump",
-    description: "The character can jump up in place.",
   },
 ];
 
@@ -108,7 +83,7 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const context = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an enriched action using one of the ALLOWED ACTIONS. Respond with only the JSON and nothing else.
+  const context = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS. Use each ALLOWED ACTIONS at most once per response. Respond with only the JSON and nothing else.
 CHARACTER NAME:
 Emily
 
@@ -145,13 +120,24 @@ ${JSON.stringify([
 ALLOWED ACTIONS:
 {"type": "walk", "destination": "[sample_destination]"}
 {"type": "talk", "message": "[sample_message]"}
+{"type": "pet", "target": "[sample_target]"}
 
 The above example would output the following json:
 [/INST]
-{
-  "type": "talk",
-  "message": "oh hey there! What did you bring me today?"
-}
+${JSON.stringify(
+  [
+    {
+      type: "talk",
+      message: "oh hey there! What did you bring me today?",
+    },
+    {
+      type: "pet",
+      target: "cat",
+    },
+  ],
+  null,
+  2
+)}
 </s>
 [INST]
 CHARACTER NAME:
@@ -169,7 +155,7 @@ ${JSON.stringify(vicinity)}
 ALLOWED ACTIONS:
 {"type": "walk", "destination": "[sample_destination]"}
 {"type": "talk", "message": "[sample_message]"}
-{"type": "jump"}
+{"type": "jump" }
 [/INST]
 `;
   // console.log("context", green`${context}`);
@@ -200,10 +186,10 @@ function parseJSONResponse(raw: string | null) {
   try {
     // heuristic to find the [] enclosure substring
     // note: 03-23 we tried to allow for multiple actions in json response
-    const start = raw.indexOf("{");
-    const end = raw.lastIndexOf("}") + 1;
-    const responseJsonString = raw.slice(start, end);
-    const responseJson = [JSON.parse(responseJsonString)] as Actions;
+    // const start = raw.indexOf("{");
+    // const end = raw.lastIndexOf("}") + 1;
+    // const responseJsonString = raw.slice(start, end);
+    const responseJson = JSON.parse(raw.trim()) as Actions;
     return responseJson;
   } catch (e) {
     console.log("Error parsing response", e, "raw:", raw);

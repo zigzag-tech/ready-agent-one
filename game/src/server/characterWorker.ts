@@ -123,7 +123,7 @@ async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const INST_AND_EXAMPLE_1 = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS. Use each ALLOWED ACTIONS at most once per response. Respond with only the JSON and nothing else.
+  const INST_AND_EXAMPLE_1 = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS. Use each ALLOWED ACTIONS at most once per response. Respond with only the JSON and do NOT justify your rationale.
 CHARACTER NAME:
 Emily
   
@@ -176,7 +176,7 @@ ${JSON.stringify(
         target: "cat",
       },
     ],
-    reason: "Emily responds to the cat's presence with a friendly greeting.",
+    // reason: "Emily responds to the cat's presence with a friendly greeting.",
   },
   null,
   2
@@ -236,7 +236,7 @@ ${JSON.stringify(
         message: "oh no! I'm in trouble!",
       },
     ],
-    reason: "Frodo is in trouble and he expresses his fear.",
+    // reason: "Frodo is in trouble and he expresses his fear.",
   },
   null,
   2

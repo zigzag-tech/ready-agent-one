@@ -6,7 +6,7 @@ import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 
-// TODO: 
+// TODO:
 // 1. let LLM generate actions (maybe from a set of basic actions)
 // 2. Try an entirely different scenario
 
@@ -48,76 +48,12 @@ export const characterWorker = characterSpec.defineWorker({
   },
 });
 
-// const DIRECTIVE_BY_ROLE = {
-//   morgan:
-//     "Your job is play the role of our main character, Morgan. Morgan is prudent, courageous but could slip into self doubt from time to time. ",
-//   jeremy:
-//     "Your job is play the role of a supporting character Jeremy. Jeremy has a sarcastic streak but deep down he's kind and helpful.",
-//   guy: "Your job is play the role of a supporting character Guy. Guy is tring to acting helpful but he always messes things up.",
-// };
-const DIRECTIVE_BY_ROLE = {
+export const DIRECTIVE_BY_ROLE = {
   morgan:
     "Morgan is prudent, courageous but could slip into self doubt from time to time. ",
   jeremy: "Jeremy has a sarcastic streak but deep down he's kind and helpful.",
   guy: "Guy is tring to acting helpful but he always messes things up.",
 };
-
-const vicinity = [
-  ...Object.keys(DIRECTIVE_BY_ROLE).map((role, index) => ({
-    type: "person",
-    name: role,
-    description: DIRECTIVE_BY_ROLE[role],
-    position: `${index + 1} meters ahead`,
-  })),
-  {
-    type: "object",
-    name: "wrench",
-    description: "A rusty wrench.",
-    position: "10 meters north",
-  },
-  {
-    type: "object",
-    name: "control panel",
-    description: "A control panel.",
-    position: "3 meters ahead",
-  },
-  {
-    type: "object",
-    name: "red button",
-    description: "A red button that says 'LAUNCH'",
-    position: "control panel",
-  },
-  {
-    type: "object",
-    name: "green button",
-    description: "A green button that says 'RELAX MAN'",
-    position: "control panel",
-  },
-  {
-    type: "object",
-    name: "yellow button",
-    description: "A yellow button that says 'BANANAS'",
-    position: "control panel",
-  },
-  {
-    type: "object",
-    name: "duct tape",
-    description: "roll of duct tape.",
-    position: "on the floor",
-  },
-  {
-    type: "object",
-    name: "exit sign",
-    description: "A sign that says 'EXIT' with an arrow pointing to the right.",
-    position: "5 meters south",
-  },
-  {
-    type: "object",
-    name: "oxygen tank",
-    description: "A large oxygen tank.",
-    position: "7 meters ahead",
-  },
-];
 
 async function genPrompt(
   role: z.infer<typeof charactersEnum>,
@@ -182,7 +118,7 @@ ${JSON.stringify(
   2
 )}</s>`;
 
-  const EXAMPLE_2 = `<s>CHARACTER NAME:
+  const EXAMPLE_2 = `<s>[INST]CHARACTER NAME:
 Frodo
 
 CHARACTER DESCRIPTION:
@@ -254,10 +190,10 @@ CHARACTER DESCRIPTION:
 ${DIRECTIVE_BY_ROLE[role]}
 
 CONTEXT:
-${JSON.stringify(state)}
+${JSON.stringify({ ...state, current: { summary: state.current.summary } })}
 
 VICINITY INFORMATION:
-${JSON.stringify(vicinity)}
+${JSON.stringify(state.current.props)}
 
 ALLOWED ACTIONS:
 {"type": "walk", "destination": "[sample_destination]"}

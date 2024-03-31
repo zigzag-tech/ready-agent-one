@@ -24,11 +24,9 @@ export const summarySpec = JobSpec.define({
 export const summaryWorker = summarySpec.defineWorker({
   processor: async ({ input, output }) => {
     let currentState: GameState = {
-      previous: {
-        summary: "",
-      },
       current: {
         summary: "",
+        props: [],
       },
       sceneNumber: 1,
       recentHistory: [],

@@ -13,6 +13,14 @@ export const actionSchema = z.array(
     message: z.string().optional(),
   })
 );
+export const scenePropsSchema = z.array(
+  z.object({
+    type: z.string(),
+    name: z.string(),
+    description: z.string(),
+    position: z.string(),
+  })
+);
 
 export const gameStateSchema = z.object({
   previous: z
@@ -23,6 +31,7 @@ export const gameStateSchema = z.object({
   sceneNumber: z.number(),
   current: z.object({
     summary: z.string(),
+    props: scenePropsSchema,
   }),
   recentHistory: z.array(
     z.object({

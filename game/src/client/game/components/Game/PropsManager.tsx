@@ -19,10 +19,14 @@ export function PropsManager() {
   return (
     <>
       {gameState?.data.current.props.map((prop) => (
-        <group position={convertPositionToVector3(prop)} key={prop.name}>
+        <group
+          scale={2}
+          position={convertPositionToVector3(prop)}
+          key={prop.name}
+        >
           <mesh>
             <tetrahedronGeometry args={[1, 0]} />
-            <meshBasicMaterial color="red" />
+            <meshBasicMaterial color="#333" />
           </mesh>
           <Html>{prop.name}</Html>
         </group>

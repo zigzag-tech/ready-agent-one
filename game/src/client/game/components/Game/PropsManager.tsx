@@ -1,9 +1,32 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Html } from "@react-three/drei";
 import { LiveJobContext } from "./LiveJob";
 import * as THREE from "three";
 import { useOutput } from "@livestack/client/src";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
+
+function PropRenderer({
+  prop,
+}: {
+  prop: {
+    name: string;
+    type: string;
+    description: string;
+    position: string;
+  };
+}) {
+  const pos = useMemo(() => convertPositionToVector3(prop), [prop]);
+
+  return (
+    <group scale={2} position={pos} key={prop.name}>
+      <mesh>
+        <tetrahedronGeometry args={[1, 0]} />
+        <meshBasicMaterial color="#333" />
+      </mesh>
+      <Html>{prop.name}</Html>
+    </group>
+  );
+}
 
 export function PropsManager() {
   const job = React.useContext(LiveJobContext).conersationJob;
@@ -19,17 +42,7 @@ export function PropsManager() {
   return (
     <>
       {gameState?.data.current.props.map((prop) => (
-        <group
-          scale={2}
-          position={convertPositionToVector3(prop)}
-          key={prop.name}
-        >
-          <mesh>
-            <tetrahedronGeometry args={[1, 0]} />
-            <meshBasicMaterial color="#333" />
-          </mesh>
-          <Html>{prop.name}</Html>
-        </group>
+        <PropRenderer prop={prop} />
       ))}
     </>
   );

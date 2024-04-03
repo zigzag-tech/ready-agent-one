@@ -100,48 +100,6 @@ const useStore = create((set, get) => ({
   BCam: null,
 }));
 
-function MyCamera({
-  animate,
-  label,
-  near = 5,
-  far = 14,
-  // position = [0, 10, 5] as const,
-}) {
-  const ref = React.useRef<THREE.PerspectiveCamera>();
-  const props = useControls(label, {
-    near,
-    far,
-    fov: 25,
-    zoom: -1,
-  });
-
-  const t = new THREE.Vector3(0, 0, 0);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.position.set(playerPosition.x, 0, playerPosition.y);
-      // ref.current.lookAt(t);
-      ref.current.rotation.y = playerPosition.angle + Math.PI;
-    }
-  });
-
-  useEffect(() => {
-    useStore.setState({
-      [`${label}Cam`]: ref,
-    });
-
-    // ref.current.lookAt(t);
-  }, [label]);
-
-  useHelper(ref, THREE.CameraHelper);
-
-  return (
-    <PerspectiveCamera {...props} ref={ref}>
-      <Html className="label">{label}</Html>
-    </PerspectiveCamera>
-  );
-}
-
 import { playerPosition } from "../../../state/positions";
 import { GUY } from "../../../3d/models/Knight/GUY";
 

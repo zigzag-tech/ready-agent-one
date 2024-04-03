@@ -20,7 +20,7 @@ const LiveJobUIStyled = styled.div`
 `;
 
 export function LiveJobUI() {
-  const job = React.useContext(LiveJobContext).mainJob;
+  const job = React.useContext(LiveJobContext).conersationJob;
   if (!job) {
     return <>Error: cannot connect to the game server</>;
   }

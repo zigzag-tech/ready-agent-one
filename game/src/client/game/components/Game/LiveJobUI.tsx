@@ -43,11 +43,11 @@ export function LiveJobUI() {
         Player Attack
       </button> */}
       <div>{gameState?.data.current.summary}</div>
-      <ul>
+      {/* <ul>
         {gameState?.data.current.props.map((prop) => (
           <li key={prop.name}>{prop.name}</li>
         ))}
-      </ul>
+      </ul> */}
     </LiveJobUIStyled>
   );
 }

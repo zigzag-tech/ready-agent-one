@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 import {
   Billboard,
-  Html,
   Hud,
   OrthographicCamera,
   PerspectiveCamera,
@@ -12,7 +11,6 @@ import {
   useFBO,
   useHelper,
 } from "@react-three/drei";
-import { LiveJobContext } from "./LiveJob";
 
 import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
@@ -105,8 +103,7 @@ const useStore = create((set, get) => ({
 
 import { playerPosition } from "../../../state/positions";
 import { GUY } from "../../../3d/models/Knight/GUY";
-import { useOutput } from "@livestack/client/src";
-import { gameStateSchema } from "../../../../common/gameStateSchema";
+import { PropsManager } from "./PropsManager";
 
 function Render() {
   const aTarget = useFBO(window.innerWidth / 4, window.innerHeight / 4);
@@ -178,22 +175,3 @@ function Render() {
   );
 }
 
-function PropsManager() {
-  const job = React.useContext(LiveJobContext).conersationJob;
-  if (!job) {
-    return <>Error: cannot connect to the game server</>;
-  }
-  const gameState = useOutput({
-    tag: "game-state",
-    def: gameStateSchema,
-    job,
-  });
-
-  return (
-    <>
-      {gameState?.data.current.props.map((prop) => (
-        <Html key={prop.name}>{prop.name}</Html>
-      ))}
-    </>
-  );
-}

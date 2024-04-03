@@ -45,5 +45,6 @@ export const workflow = Workflow.define({
     expose(characterSpec.output.default, "character-talk"),
     expose(characterSpec.output["user-signal"], "user-signal"),
     expose(summarySpec.input.supervision, "summary-supervision"),
+    expose(summarySpec.output["default"], "game-state"),
   ],
 });

@@ -59,7 +59,11 @@ export function NPC({ ...props }: GroupProps) {
     }
   });
 
-  const position = [0, 0, 3] as [number, number, number];
+  const position = [npcPosition.x, 0, npcPosition.y] as [
+    number,
+    number,
+    number
+  ];
   const job1 = React.useContext(LiveJobContext).conersationJob;
   if (!job1) return null;
 

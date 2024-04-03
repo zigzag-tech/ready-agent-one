@@ -4,7 +4,7 @@ import { workflow } from "./workflow.conversation";
 import { GameState } from "./summarySpec";
 import readline from "node:readline/promises";
 import { stdin, stdout } from "node:process";
-import { DIRECTIVE_BY_ROLE } from "./characterWorker";
+import { DIRECTIVE_BY_ROLE } from "./genPromptUtils";
 
 const vicinity = [
   ...Object.keys(DIRECTIVE_BY_ROLE).map((role, index) => ({
@@ -85,12 +85,8 @@ ZZEnv.setGlobal(
     recentHistory: [
       {
         speaker: "guy",
-        actions: [
-          {
-            type: "talk",
-            message: "What the hell is going on with the oxygen indicator?",
-          },
-        ],
+        message: "What the hell is going on with the oxygen indicator?",
+        actions: [],
       },
     ],
     totalNumOfLines: 1,

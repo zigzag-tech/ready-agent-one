@@ -1,16 +1,12 @@
 import { z } from "zod";
 export const charactersEnum = z.enum(["morgan", "jeremy", "guy"]);
 export const actionSchema = z.array(
-  // z.union([
-  //   z.object({ type: z.literal("talk"), message: z.string() }),
-  //   z.object({ type: z.literal("walk"), destination: z.string() }),
-  //   z.object({ type: z.literal("jump") }),
-  // ])
   z.object({
     type: z.string(),
     target: z.string().optional(),
     destination: z.string().optional(),
-    message: z.string().optional(),
+    // Apr-2 experiment - moving message to a separate attribute
+    // message: z.string().optional(),
   })
 );
 export const scenePropsSchema = z.array(
@@ -37,6 +33,7 @@ export const gameStateSchema = z.object({
     z.object({
       speaker: charactersEnum,
       actions: actionSchema,
+      message: z.string(),
     })
   ),
   totalNumOfLines: z.number(),

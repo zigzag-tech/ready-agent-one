@@ -1,22 +1,15 @@
 import { generateResponseOllama } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
-import {
-  actionSchema,
-  charactersEnum,
-  gameStateSchema,
-} from "../common/gameStateSchema";
+import { gameStateSchema } from "../common/gameStateSchema";
+import { characterInputSchema } from "./genPromptUtils";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: {
-    character: z.object({
-      from: charactersEnum,
-      // line: z.string(),
-      actions: actionSchema,
-    }),
+    character: characterInputSchema,
     supervision: gameStateSchema,
   },
   output: gameStateSchema,
@@ -40,11 +33,12 @@ export const summaryWorker = summarySpec.defineWorker({
           break;
         }
         case "character": {
-          const { actions, from } = data;
+          const { actions, from, message } = data;
           const label = from;
           currentState.recentHistory.push({
             speaker: label,
             actions,
+            message,
           });
           // keep accululating the history until it reaches 10
           // then take the oldest 5 and fold it into the summary
@@ -74,7 +68,7 @@ export const summaryWorker = summarySpec.defineWorker({
           console.log({
             ...currentState,
             recentHistory: currentState.recentHistory.map(
-              (h) => `${h.speaker}: ${JSON.stringify(h.actions)}`
+              (h) => `${h.speaker}: ${JSON.stringify(h.actions)}; message: ${h.message}`
             ),
           });
           await output.emit(currentState);

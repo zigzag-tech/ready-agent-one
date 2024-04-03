@@ -12,6 +12,8 @@ import {
   useFBO,
   useHelper,
 } from "@react-three/drei";
+import { LiveJobContext } from "./LiveJob";
+
 import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
 import Player from "../Player/Player";
@@ -78,6 +80,7 @@ const Game: React.FC = () => {
                 {/* <AttackColliders /> */}
                 {/* <Stats className={STATS_CSS_CLASS} /> */}
                 <Room />
+                <PropsManager />
                 {/* <PhysWall /> */}
                 {/*<TestBox/>*/}
               </Physics>
@@ -102,6 +105,8 @@ const useStore = create((set, get) => ({
 
 import { playerPosition } from "../../../state/positions";
 import { GUY } from "../../../3d/models/Knight/GUY";
+import { useOutput } from "@livestack/client/src";
+import { gameStateSchema } from "../../../../common/gameStateSchema";
 
 function Render() {
   const aTarget = useFBO(window.innerWidth / 4, window.innerHeight / 4);
@@ -170,5 +175,25 @@ function Render() {
       </Billboard> */}
     </>
     // guiScene
+  );
+}
+
+function PropsManager() {
+  const job = React.useContext(LiveJobContext).conersationJob;
+  if (!job) {
+    return <>Error: cannot connect to the game server</>;
+  }
+  const gameState = useOutput({
+    tag: "game-state",
+    def: gameStateSchema,
+    job,
+  });
+
+  return (
+    <>
+      {gameState?.data.current.props.map((prop) => (
+        <Html key={prop.name}>{prop.name}</Html>
+      ))}
+    </>
   );
 }

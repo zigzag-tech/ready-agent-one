@@ -483,11 +483,17 @@ const Player: React.FC = () => {
         current: {
           summary:
             "Before our story begins, rumor has it there was a meow meow land ruled by cats. Their archenemy is woof woof land ruled by dogs. The two lands are separated by a river. The cats and dogs have been fighting for centuries.",
+          props: [],
         },
         recentHistory: [
           {
             speaker: "jeremy",
-            message: "yello",
+            actions: [
+              {
+                type: "talk",
+                message: "Greetings, stranger.",
+              },
+            ],
           },
         ],
         sceneNumber: 1,

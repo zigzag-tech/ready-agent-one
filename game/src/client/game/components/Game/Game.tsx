@@ -74,9 +74,9 @@ const Game: React.FC = () => {
                 <NPC />
                 <GUY />
                 {/*<OldMob/>*/}
-                <MobsManager />
-                <AttackColliders />
-                <Stats className={STATS_CSS_CLASS} />
+                {/* <MobsManager /> */}
+                {/* <AttackColliders /> */}
+                {/* <Stats className={STATS_CSS_CLASS} /> */}
                 <Room />
                 {/* <PhysWall /> */}
                 {/*<TestBox/>*/}

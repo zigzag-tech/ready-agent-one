@@ -1,6 +1,6 @@
 export const playerPosition = {
-  x: 0,
-  y: 0,
+  x: 20,
+  y: 15,
   previousX: 0,
   previousY: 0,
   targetX: 0,

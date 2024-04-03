@@ -150,7 +150,9 @@ const tempVec2 = Vec2(0, 0);
 
 const Player: React.FC = () => {
   const nippleManager = useNippleManager();
-  const [ref, api, largeColliderRef, largeColliderApi] = usePlayerPhysics();
+  const [ref, api, largeColliderRef, largeColliderApi] = usePlayerPhysics({
+    initPosition: playerPosition,
+  });
 
   usePlayerCollisionsHandler(api);
   usePlayerControls();
@@ -216,7 +218,6 @@ const Player: React.FC = () => {
 
     playerPosition.previousX = playerPosition.x;
     playerPosition.previousY = playerPosition.y;
-    //largeColliderApi.setAngle(ref.current.rotation.y)
 
     const { x, z: y } = ref.current.position;
 
@@ -427,7 +428,6 @@ const Player: React.FC = () => {
     playerEnergy.energy = energy;
 
     // update player position
-
     playerPosition.x = x;
     playerPosition.y = y;
     playerPosition.angle = ref.current.rotation.y;

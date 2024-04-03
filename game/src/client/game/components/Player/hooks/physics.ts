@@ -15,6 +15,7 @@ import {
 } from "../../../../state/player";
 import { FixtureType } from "../../../../physics/collisions/types";
 import { MOB_VARIANT } from "../../Mob/data";
+import { playerPosition } from "../../../../state/positions";
 
 export const largeColliderRadius = 15;
 export const smallColliderRadius = 4.5;
@@ -24,9 +25,11 @@ export const boxSize = {
   offset: 1.1,
 };
 
-const tempVec2 = Vec2(0, 0);
-
-export const usePlayerPhysics = () => {
+export const usePlayerPhysics = ({
+  initPosition,
+}: {
+  initPosition: typeof playerPosition;
+}) => {
   const onCollideStart = useCallback(() => {
     // console.log('player collide start')
   }, []);
@@ -73,7 +76,7 @@ export const usePlayerPhysics = () => {
   const [ref, api] = useBody(
     () => ({
       type: BodyType.dynamic,
-      position: Vec2(0, 0),
+      position: Vec2(initPosition.x || 0, initPosition.y || 0),
       linearDamping: 4,
       fixtures: [
         {

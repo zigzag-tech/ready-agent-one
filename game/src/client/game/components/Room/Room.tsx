@@ -7,7 +7,7 @@ import { Vec2 } from "planck";
 import { COLLISION_FILTER_GROUPS } from "../../../physics/collisions/filters";
 
 const Room: React.FC = () => {
-  const [x, y] = [5, 5];
+  const [x, y] = [-15, -12];
 
   const walls = roomWalls;
 

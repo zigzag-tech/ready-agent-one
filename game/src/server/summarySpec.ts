@@ -1,17 +1,15 @@
 import { generateResponseOllama } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
-import { charactersEnum, gameStateSchema } from "../common/gameStateSchema";
+import { gameStateSchema } from "../common/gameStateSchema";
+import { characterInputSchema } from "./genPromptUtils";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: {
-    character: z.object({
-      from: charactersEnum,
-      line: z.string(),
-    }),
+    character: characterInputSchema,
     supervision: gameStateSchema,
   },
   output: gameStateSchema,
@@ -19,11 +17,9 @@ export const summarySpec = JobSpec.define({
 export const summaryWorker = summarySpec.defineWorker({
   processor: async ({ input, output }) => {
     let currentState: GameState = {
-      previous: {
-        summary: "",
-      },
       current: {
         summary: "",
+        props: [],
       },
       sceneNumber: 1,
       recentHistory: [],
@@ -37,11 +33,12 @@ export const summaryWorker = summarySpec.defineWorker({
           break;
         }
         case "character": {
-          const { line, from } = data;
+          const { actions, from, message } = data;
           const label = from;
           currentState.recentHistory.push({
             speaker: label,
-            message: line,
+            actions,
+            message,
           });
           // keep accululating the history until it reaches 10
           // then take the oldest 5 and fold it into the summary
@@ -67,11 +64,11 @@ export const summaryWorker = summarySpec.defineWorker({
           // );
 
           currentState.totalNumOfLines += 1;
-          console.clear();
+          // console.clear();
           console.log({
             ...currentState,
             recentHistory: currentState.recentHistory.map(
-              (h) => `${h.speaker}: ${h.message}`
+              (h) => `${h.speaker}: ${JSON.stringify(h.actions)}; message: ${h.message}`
             ),
           });
           await output.emit(currentState);

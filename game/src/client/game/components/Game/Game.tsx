@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 import {
   Billboard,
-  Html,
   Hud,
   OrthographicCamera,
   PerspectiveCamera,
@@ -12,6 +11,7 @@ import {
   useFBO,
   useHelper,
 } from "@react-three/drei";
+
 import Floor from "../../../3d/components/Floor/Floor";
 import styled from "styled-components";
 import Player from "../Player/Player";
@@ -71,13 +71,14 @@ const Game: React.FC = () => {
                 <Lights />
                 <Floor />
                 <Player />
-                <NPC />
-                <GUY />
+                {/* <NPC /> */}
+                {/* <GUY /> */}
                 {/*<OldMob/>*/}
-                <MobsManager />
-                <AttackColliders />
-                <Stats className={STATS_CSS_CLASS} />
+                {/* <MobsManager /> */}
+                {/* <AttackColliders /> */}
+                {/* <Stats className={STATS_CSS_CLASS} /> */}
                 <Room />
+                <PropsManager />
                 {/* <PhysWall /> */}
                 {/*<TestBox/>*/}
               </Physics>
@@ -100,50 +101,9 @@ const useStore = create((set, get) => ({
   BCam: null,
 }));
 
-function MyCamera({
-  animate,
-  label,
-  near = 5,
-  far = 14,
-  // position = [0, 10, 5] as const,
-}) {
-  const ref = React.useRef<THREE.PerspectiveCamera>();
-  const props = useControls(label, {
-    near,
-    far,
-    fov: 25,
-    zoom: -1,
-  });
-
-  const t = new THREE.Vector3(0, 0, 0);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.position.set(playerPosition.x, 0, playerPosition.y);
-      // ref.current.lookAt(t);
-      ref.current.rotation.y = playerPosition.angle + Math.PI;
-    }
-  });
-
-  useEffect(() => {
-    useStore.setState({
-      [`${label}Cam`]: ref,
-    });
-
-    // ref.current.lookAt(t);
-  }, [label]);
-
-  useHelper(ref, THREE.CameraHelper);
-
-  return (
-    <PerspectiveCamera {...props} ref={ref}>
-      <Html className="label">{label}</Html>
-    </PerspectiveCamera>
-  );
-}
-
 import { playerPosition } from "../../../state/positions";
 import { GUY } from "../../../3d/models/Knight/GUY";
+import { PropsManager } from "./PropsManager";
 
 function Render() {
   const aTarget = useFBO(window.innerWidth / 4, window.innerHeight / 4);
@@ -214,3 +174,4 @@ function Render() {
     // guiScene
   );
 }
+

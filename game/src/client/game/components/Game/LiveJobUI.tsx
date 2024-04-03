@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useInput, useOutput } from "@livestack/client/src";
-import { EventResponseZ, GameEventZ } from "../../../../common/game";
 import { LiveJobContext } from "./LiveJob";
 import styled from "styled-components";
-import { useSnapshot, subscribe } from "valtio";
-import { playerHealth } from "../../../state/player";
+
+import { gameStateSchema } from "../../../../common/gameStateSchema";
 
 const LiveJobUIStyled = styled.div`
   z-index: 100;
@@ -21,38 +20,15 @@ const LiveJobUIStyled = styled.div`
 `;
 
 export function LiveJobUI() {
-  const job = React.useContext(LiveJobContext).mainJob;
+  const job = React.useContext(LiveJobContext).conersationJob;
   if (!job) {
     return <>Error: cannot connect to the game server</>;
   }
-  const playerResponse = useOutput({
-    tag: "default",
-    def: EventResponseZ,
+  const gameState = useOutput({
+    tag: "game-state",
+    def: gameStateSchema,
     job,
   });
-  const { feed } = useInput({ tag: "default", def: GameEventZ, job });
-  useEffect(() => {
-    let prevHealth = playerHealth.health;
-    const sub = subscribe(playerHealth, async (messages) => {
-      if (feed) {
-        for (const [opKey, key, val] of messages) {
-          if (opKey === "set" && typeof key === "object") {
-            if (key[0] === "health") {
-              await feed({
-                eventType: "player-health",
-                health: Number(val),
-                prevHealth: prevHealth,
-              });
-              prevHealth = Number(val);
-            }
-          }
-        }
-      }
-    });
-    return () => {
-      sub();
-    };
-  }, [feed]);
 
   return (
     <LiveJobUIStyled>
@@ -66,7 +42,12 @@ export function LiveJobUI() {
       <button onClick={() => feed({ eventType: "player-attack" })}>
         Player Attack
       </button> */}
-      <div>{playerResponse?.data.response}</div>
+      <div>{gameState?.data.current.summary}</div>
+      {/* <ul>
+        {gameState?.data.current.props.map((prop) => (
+          <li key={prop.name}>{prop.name}</li>
+        ))}
+      </ul> */}
     </LiveJobUIStyled>
   );
 }

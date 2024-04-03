@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Workflow, conn, expose } from "@livestack/core";
 import { summarySpec } from "./summarySpec";
-import { characterSpec } from "./character-worker";
+import { characterSpec } from "./characterWorker";
 import { supervisorSpec } from "./supervisorSpec";
 import { turnControlSpec } from "./turnSpecAndWorker";
 
@@ -45,5 +45,6 @@ export const workflow = Workflow.define({
     expose(characterSpec.output.default, "character-talk"),
     expose(characterSpec.output["user-signal"], "user-signal"),
     expose(summarySpec.input.supervision, "summary-supervision"),
+    expose(summarySpec.output["default"], "game-state"),
   ],
 });

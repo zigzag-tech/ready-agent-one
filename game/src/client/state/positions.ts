@@ -9,8 +9,8 @@ export const playerPosition = {
 };
 
 export const npcPosition = {
-  x: 0,
-  y: 0,
+  x: 10,
+  y: 10,
   previousX: 0,
   previousY: 0,
   targetX: 0,

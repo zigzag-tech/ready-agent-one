@@ -1,4 +1,4 @@
-import { ZZEnv } from "@livestack/core";
+import { DefGraph, InstantiatedGraph, ZZEnv } from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
 import { workflow } from "./workflow.conversation";
 import { GameState } from "./summarySpec";
@@ -92,7 +92,8 @@ ZZEnv.setGlobal(
     totalNumOfLines: 1,
   };
 
-  const { input, output } = await workflow.enqueueJob({});
+  const { input, output, graph } = await workflow.enqueueJob({});
+  saveToJSON(graph);
   await input("summary-supervision").feed(initialInput);
   (async () => {
     for await (const data of output("character-talk")) {
@@ -118,3 +119,11 @@ ZZEnv.setGlobal(
   // process.exit(0);
 })();
 // }
+
+import fs from "fs";
+export function saveToJSON(g: InstantiatedGraph) {
+  fs.writeFileSync(
+    "workflow-converatio.graph.json",
+    JSON.stringify(g.toJSON(), null, 2)
+  );
+}

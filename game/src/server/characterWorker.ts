@@ -5,11 +5,12 @@ import { z } from "zod";
 import {
   Actions,
   genMessagePrompt,
-  genPrompt as genActionPrompt,
+  genActionPrompt as genActionPrompt,
   parseJSONResponse,
   characterInputSchema,
 } from "./genPromptUtils";
 import { actionSchema } from "../common/gameStateSchema";
+import { generateResponseOllama } from "./generateResponseOllama";
 
 // TODO:
 // 1. let LLM generate actions (maybe from a set of basic actions)
@@ -21,6 +22,7 @@ export const characterSpec = JobSpec.define({
   output: {
     default: characterInputSchema,
     "user-signal": z.enum(["ENABLE", "DISABLE"]),
+    "action-prompt": z.string(),
   },
 });
 
@@ -36,7 +38,10 @@ export const characterWorker = characterSpec.defineWorker({
       // }
 
       if (!actions) {
-        const response = await genActionPrompt(whoseTurn, state);
+        const actionPrompt = genActionPrompt(whoseTurn, state);
+        await output("action-prompt").emit(actionPrompt);
+        const response = await generateResponseOllama(actionPrompt);
+
         actions = parseJSONResponse(response) || "...";
       }
       const message =

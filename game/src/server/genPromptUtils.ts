@@ -136,7 +136,7 @@ ${JSON.stringify(actions)}
   return response;
 }
 
-export async function genPrompt(
+export function genActionPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
@@ -280,9 +280,7 @@ ALLOWED ACTIONS:
 
 [/INST]
 `;
-  // console.log("prompt: ", green`${prompt}`);
-  const response = await generateResponseOllama(prompt);
-  return response;
+  return prompt;
 }
 
 export function parseJSONResponse(raw: string | null) {

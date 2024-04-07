@@ -71,8 +71,8 @@ const Game: React.FC = () => {
                 <Lights />
                 <Floor />
                 <Player />
-                {/* <NPC /> */}
-                {/* <GUY /> */}
+                <NPC />
+                <GUY />
                 {/*<OldMob/>*/}
                 {/* <MobsManager /> */}
                 {/* <AttackColliders /> */}

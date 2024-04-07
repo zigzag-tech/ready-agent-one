@@ -21,6 +21,7 @@
     "groq-sdk": "^0.3.2",
     "hotkeys-js": "^3.13.7",
     "leva": "^0.9.35",
+    "modelfusion": "^0.137.0",
     "nipplejs": "^0.10.1",
     "ollama": "^0.4.9",
     "openai": "^4.33.0",

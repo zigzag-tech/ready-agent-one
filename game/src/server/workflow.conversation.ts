@@ -5,7 +5,7 @@ import { characterSpec } from "./characterWorker";
 import { supervisorSpec } from "./supervisorSpec";
 import { turnControlSpec } from "./turnSpecAndWorker";
 
-export const CONVO_MODEL = "mistral:instruct";
+export const CONVO_MODEL = "dolphin-mistral";
 // export const CONVO_MODEL = "mixtral";
 export const stringZ = z.string();
 

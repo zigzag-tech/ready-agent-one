@@ -24,7 +24,11 @@ export async function genMessagePrompt(
   actions: Actions
 ) {
   const INST_AND_EXAMPLE_1 = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, CHARACTER ACTIONS to return what the character would say.
-Respond with ONLY the character's speech and do NOT justify your rationale. Do not add any additional notes either.
+INSTRUCTIONS
+
+- Respond with ONLY the character's speech and do NOT justify your rationale. 
+- Do not add any additional notes either.
+- Respond with only the JSON and do NOT explain.
 
 CHARACTER NAME:
 Emily
@@ -55,7 +59,13 @@ ${JSON.stringify({
 
 The above example would output the following response:
 [/INST]
-Oh hey there, kitty! What did you bring me today?
+${JSON.stringify(
+  {
+    message: "Oh hey there, kitty! What did you bring me today?",
+  },
+  null,
+  2
+)}
 </s>`;
 
   const EXAMPLE_2 = `<s>[INST]CHARACTER NAME:
@@ -89,7 +99,13 @@ ${JSON.stringify({
 
 The above example would output the following response:
 [/INST]
-Oh no, I'm in trouble! I need to hide!
+${JSON.stringify(
+  {
+    message: "Oh no, I'm in trouble! I need to hide!",
+  },
+  null,
+  2
+)}
 </s>`;
 
   const prompt = `
@@ -109,7 +125,14 @@ ${JSON.stringify({ ...state, current: { summary: state.current.summary } })}
 CHARACTER ACTIONS:
 ${JSON.stringify(actions)}
 [/INST]`;
-  const response = await generateResponseOllama(prompt);
+  const responseRaw = await generateResponseOllama(prompt);
+  let response = "Sorry I don't know what to do.";
+  try {
+    const response = JSON.parse(responseRaw || "") as { message: string };
+    return response.message;
+  } catch (e) {
+    console.log("Error parsing response", e, "raw:", responseRaw);
+  }
   return response;
 }
 
@@ -117,7 +140,8 @@ export async function genPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const INST_AND_EXAMPLE_1 = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS.
+  const INST_AND_EXAMPLE_1 = `<s>[INST]
+You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS.
 Use each ALLOWED ACTIONS at most once per response. Respond with ONLY the JSON and do NOT add any notes or comments.
 CHARACTER NAME:
 Emily

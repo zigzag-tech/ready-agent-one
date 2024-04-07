@@ -5,7 +5,7 @@ import { z } from "zod";
 import {
   Actions,
   genMessagePrompt,
-  genPrompt,
+  genPrompt as genActionPrompt,
   parseJSONResponse,
   characterInputSchema,
 } from "./genPromptUtils";
@@ -36,7 +36,7 @@ export const characterWorker = characterSpec.defineWorker({
       // }
 
       if (!actions) {
-        const response = await genPrompt(whoseTurn, state);
+        const response = await genActionPrompt(whoseTurn, state);
         actions = parseJSONResponse(response) || "...";
       }
       const message =

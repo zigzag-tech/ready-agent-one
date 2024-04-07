@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { proxy, useSnapshot } from "valtio";
-import { npcPosition, playerPosition } from "../../../state/positions";
+import { guyPosition as npcPosition, playerPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Alien from "./Alien";
 

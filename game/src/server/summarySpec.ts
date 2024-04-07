@@ -40,10 +40,14 @@ export const summaryWorker = summarySpec.defineWorker({
             actions,
             message,
           });
+          const SUMMARIZE_THRESHOLD = 9;
           // keep accululating the history until it reaches 10
           // then take the oldest 5 and fold it into the summary
-          if (currentState.recentHistory.length > 40) {
-            const oldest = currentState.recentHistory.splice(0, 20);
+          if (currentState.recentHistory.length > SUMMARIZE_THRESHOLD * 2) {
+            const oldest = currentState.recentHistory.splice(
+              0,
+              Math.round(SUMMARIZE_THRESHOLD)
+            );
             const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
   SUMMARY OF PAST CONVERSATION:
   ${currentState.current.summary}

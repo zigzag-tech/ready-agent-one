@@ -10,6 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@instructor-ai/instructor": "^1.0.0",
     "@react-hook/window-size": "^3.1.1",
     "@react-three/drei": "^9.99.5",
     "@react-three/fiber": "^8.15.16",
@@ -22,6 +23,7 @@
     "leva": "^0.9.35",
     "nipplejs": "^0.10.1",
     "ollama": "^0.4.9",
+    "openai": "^4.33.0",
     "planck": "^1.0.0",
     "r3f-form": "^4.0.0",
     "react": "^18",

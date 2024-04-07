@@ -1933,6 +1933,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@instructor-ai/instructor@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@instructor-ai/instructor@npm:1.0.0"
+  dependencies:
+    zod-stream: "npm:1.0.1"
+    zod-validation-error: "npm:^2.1.0"
+  peerDependencies:
+    openai: ">=4.28.0"
+    zod: ">=3.22.4"
+  checksum: 10c0/375063b978257ac4d9a8f3588b65ca4bde6f3ba6f9526910834f0c4123bfc89ca64f0a0ed2b1071103afac2d39e8365c95254057b4d404b4dfc7fe12c38f618a
+  languageName: node
+  linkType: hard
+
 "@ioredis/commands@npm:^1.1.1":
   version: 1.2.0
   resolution: "@ioredis/commands@npm:1.2.0"
@@ -5454,6 +5467,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "echoes-of-sentience@workspace:game"
   dependencies:
+    "@instructor-ai/instructor": "npm:^1.0.0"
     "@react-hook/window-size": "npm:^3.1.1"
     "@react-three/drei": "npm:^9.99.5"
     "@react-three/fiber": "npm:^8.15.16"
@@ -5470,6 +5484,7 @@ __metadata:
     leva: "npm:^0.9.35"
     nipplejs: "npm:^0.10.1"
     ollama: "npm:^0.4.9"
+    openai: "npm:^4.33.0"
     planck: "npm:^1.0.0"
     r3f-form: "npm:^4.0.0"
     react: "npm:^18"
@@ -8910,6 +8925,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openai@npm:^4.33.0":
+  version: 4.33.0
+  resolution: "openai@npm:4.33.0"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+    web-streams-polyfill: "npm:^3.2.1"
+  bin:
+    openai: bin/cli
+  checksum: 10c0/cce43117a3a34a4a450689086b9b40765c6eb7934673a0fc89093e3ffa106b80822d259326b3e685eb2b463fd49c635bf850ee3d138e30dcb47132056e7d4e06
+  languageName: node
+  linkType: hard
+
 "optionator@npm:^0.9.3":
   version: 0.9.3
   resolution: "optionator@npm:0.9.3"
@@ -9323,6 +9356,13 @@ __metadata:
     three: ">=0.146.0"
     troika-three-text: ^0.49.0
   checksum: 10c0/88c3f7fba156ce9ae8eabe111faf1a36eaeeb596d8c20b0ad763e8f4744b8a6d1c92ee2ffc4241f7044b58a795b354bc4092c249ae0892b555b6a7d28e02bbff
+  languageName: node
+  linkType: hard
+
+"ramda@npm:^0.29.0":
+  version: 0.29.1
+  resolution: "ramda@npm:0.29.1"
+  checksum: 10c0/5de53a07400959c1a704c366ec52b1b8cd9a444dc1f9cdf17d607e0b9eeaa38cbaea309d43e59dbd7f36731ba977a64d40092555c0e7c2d4a41e8e922239c0ba
   languageName: node
   linkType: hard
 
@@ -9877,6 +9917,17 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/b777f7ca0115e6d93e126ac490dbd82642d14983b3079f58f35519d992fa46260be7d6e6cede433a92db70306310c6f5f06e144f0e40c484199e09c1f7be53dd
+  languageName: node
+  linkType: hard
+
+"schema-stream@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "schema-stream@npm:3.1.0"
+  dependencies:
+    ramda: "npm:^0.29.0"
+  peerDependencies:
+    zod: 3.22.4
+  checksum: 10c0/784405504c746a59c85bdb44d81215867a53517daf48ccbff59824d33983938828e79926e08b9f99197b777f861a693691f4e0f3d33d8fe2b751c3f81d4024d6
   languageName: node
   linkType: hard
 
@@ -11481,12 +11532,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-to-json-schema@npm:^3.22.4":
+"zod-stream@npm:1.0.1":
+  version: 1.0.1
+  resolution: "zod-stream@npm:1.0.1"
+  dependencies:
+    schema-stream: "npm:^3.1.0"
+    zod-to-json-schema: "npm:^3.22.3"
+  peerDependencies:
+    openai: ">=4.24.1"
+    zod: ">=3.22.4"
+  checksum: 10c0/138755d91e557794e546d6597476b50afd736f8f96d41bf4d0f367a86693eb9399bde9e05e09d3353ffee218ba4cf83e030fe5810bd497f994307590a98588a0
+  languageName: node
+  linkType: hard
+
+"zod-to-json-schema@npm:^3.22.3, zod-to-json-schema@npm:^3.22.4":
   version: 3.22.5
   resolution: "zod-to-json-schema@npm:3.22.5"
   peerDependencies:
     zod: ^3.22.4
   checksum: 10c0/f3c4038338af3c0268ced73edaa2eed12002d461ae181657547b0a4a296be4247edc3dcdd5bf14a4058426c1e0c3574407cb282f115249f0ec0fcbc82dcbdabd
+  languageName: node
+  linkType: hard
+
+"zod-validation-error@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "zod-validation-error@npm:2.1.0"
+  peerDependencies:
+    zod: ^3.18.0
+  checksum: 10c0/e8e8a0af64092dfb3388d759bf10fb7cf5358bc1bdb365771b8ac1944b1fb014ccbc8e60fbd69627961ea5873c5694e5c3fe730341c9842312fbb91661a1f451
   languageName: node
   linkType: hard
 

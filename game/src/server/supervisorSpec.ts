@@ -11,7 +11,11 @@ import { z } from "zod";
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
   input: gameStateSchema,
-  output: gameStateSchema,
+  output: {
+    default: gameStateSchema,
+    "new-chapter-prompt": z.string(),
+    "new-chapter-raw": z.string(),
+  },
 });
 
 export const supervisorWorker = supervisorSpec.defineWorker({
@@ -49,13 +53,15 @@ Keep the response under 200 words.`;
         // );
         const newSceneNumber = state.sceneNumber + 1;
         const newTopicPrompt = `You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
-### SUMMARY OF PAST PLOT (SCENES 1 - ${state.sceneNumber})
-${previousScenesSummary}
 
-### LAST FEW LINES OF CONVERSATION AT THE END OF SCENE ${state.sceneNumber}
+SUMMARY OF PAST PLOT (SCENES 1 - ${state.sceneNumber + 1})
+${previousScenesSummary}
+${state.current.summary}
+
+LAST FEW LINES OF CONVERSATION AT THE END OF SCENE ${state.sceneNumber}
 ${JSON.stringify(state.recentHistory)}
 
-### INSTRUCTIONS
+INSTRUCTIONS
 - Write the plot for new scene ${newSceneNumber}.
 - Do not introduce new characters. Limit the plot to only be about interactions and adventure among [${Object.keys(
           charactersEnum.Values
@@ -66,7 +72,9 @@ ${JSON.stringify(state.recentHistory)}
 `;
         // console.log("supervisorSpec newTopicPrompt", newTopicPrompt);
         // console.log("SUPERVISOR: GENERATING NEW SCENE");
+        await output("new-chapter-prompt").emit(newTopicPrompt);
         const newTopic = (await generateResponseOllama(newTopicPrompt)) || "";
+        await output("new-chapter-raw").emit(newTopic);
         // console.log("supervisorSpec newTopic", newTopic);
 
         const sceneGenPrompt = `${PROPS_INST_AND_EXAMPLE_1}
@@ -101,7 +109,7 @@ ${newTopic}
 });
 
 function conversationTooLong(state: GameState) {
-  return state.totalNumOfLines > 12;
+  return state.totalNumOfLines > 20;
 }
 
 function parseJSONResponse(raw: string | null) {

@@ -20,8 +20,16 @@ export const npcPlayerVisual = proxy({
 
 const FOLLOW_SPEED = 0.05; // Adjust this value to change how fast the NPC follows the player
 const MINIMAL_DISTANCE = 3; // The minimal distance the NPC should maintain from the player
-
-export function NPC({ ...props }: GroupProps) {
+interface NPCPosition{
+  x: number,
+  y: number,
+  previousX: number,
+  previousY: number,
+  targetX: number,
+  targetY: number,
+  angle: number,
+}
+export function NPC({npcPosition, ...props }: { npcPosition: NPCPosition }&GroupProps) {
   const npcRef = useRef<Group>(null);
   const groupRef = useRef<Group>(null);
   const localPlayerState = useSnapshot(npcPlayerVisual);

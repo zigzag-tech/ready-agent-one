@@ -7,10 +7,10 @@ import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { proxy, useSnapshot } from "valtio";
-import { npcPosition, playerPosition } from "../../../state/positions";
+import { npcPositions, playerPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Robot from "./Robot";
-
+const npcPosition = npcPositions[0];
 export const npcPlayerVisual = proxy({
   rollCooldown: false,
   rolling: false,

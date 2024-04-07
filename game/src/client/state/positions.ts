@@ -8,7 +8,7 @@ export const playerPosition = {
   angle: 0,
 };
 
-export const npcPosition = {
+export const npcPositions = [{
   x: 10,
   y: 10,
   previousX: 0,
@@ -16,8 +16,7 @@ export const npcPosition = {
   targetX: 0,
   targetY: 0,
   angle: 0,
-};
-export const guyPosition = {
+},{
   x: -10,
   y: -10,
   previousX: 0,
@@ -25,7 +24,8 @@ export const guyPosition = {
   targetX: 0,
   targetY: 0,
   angle: 0,
-};
+}]
+
 
 export const cameraPosition = {
   previousX: 0,

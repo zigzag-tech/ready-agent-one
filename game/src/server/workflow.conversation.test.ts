@@ -84,7 +84,7 @@ ZZEnv.setGlobal(
     sceneNumber: 1,
     recentHistory: [
       {
-        speaker: "guy",
+        character: "guy",
         message: "What the hell is going on with the oxygen indicator?",
         actions: [],
       },

@@ -39,7 +39,7 @@ ${JSON.stringify({
       "Emily Loves cats. She is a cat lover and she is always surrounded by cats.",
   },
   recentHistory: [
-    { speaker: "cat", actions: [{ type: "walk", destination: "emily" }] },
+    { character: "cat", actions: [{ type: "walk", destination: "emily" }] },
   ],
 })}
 
@@ -70,9 +70,9 @@ ${JSON.stringify({
     summary: "Frodo encounters a green bear on his way to the mountain.",
   },
   recentHistory: [
-    { speaker: "frodo", actions: [{ type: "shoot", target: "bear" }] },
+    { character: "frodo", actions: [{ type: "shoot", target: "bear" }] },
     {
-      speaker: "bear",
+      character: "bear",
       actions: [{ type: "attack", target: "frodo" }],
     },
   ],
@@ -132,7 +132,7 @@ ${JSON.stringify({
       "Emily Loves cats. She is a cat lover and she is always surrounded by cats.",
   },
   recentHistory: [
-    { speaker: "cat", actions: [{ type: "walk", destination: "emily" }] },
+    { character: "cat", actions: [{ type: "walk", destination: "emily" }] },
   ],
 })}
 
@@ -184,9 +184,9 @@ ${JSON.stringify({
     summary: "Frodo encounters a green bear on his way to the mountain.",
   },
   recentHistory: [
-    { speaker: "frodo", actions: [{ type: "shoot", target: "bear" }] },
+    { character: "frodo", actions: [{ type: "shoot", target: "bear" }] },
     {
-      speaker: "bear",
+      character: "bear",
       actions: [{ type: "attack", target: "frodo" }],
     },
   ],

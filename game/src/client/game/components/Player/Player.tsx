@@ -500,13 +500,9 @@ const Player: React.FC = () => {
         },
         recentHistory: [
           {
-            speaker: "jeremy",
-            actions: [
-              {
-                type: "talk",
-                message: "Greetings, stranger.",
-              },
-            ],
+            character: "jeremy",
+            actions: [],
+            message: "Greetings, stranger.",
           },
         ],
         sceneNumber: 1,

@@ -36,7 +36,7 @@ export const summaryWorker = summarySpec.defineWorker({
           const { actions, from, message } = data;
           const label = from;
           currentState.recentHistory.push({
-            speaker: label,
+            character: label,
             actions,
             message,
           });
@@ -68,7 +68,10 @@ export const summaryWorker = summarySpec.defineWorker({
           console.log({
             ...currentState,
             recentHistory: currentState.recentHistory.map(
-              (h) => `${h.speaker}: ${JSON.stringify(h.actions)}; message: ${h.message}`
+              (h) =>
+                `${h.character}: ${JSON.stringify(h.actions)}; message: ${
+                  h.message
+                }`
             ),
           });
           await output.emit(currentState);

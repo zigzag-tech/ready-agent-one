@@ -7,10 +7,10 @@ import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { proxy, useSnapshot } from "valtio";
-import { npcPositions, playerPosition } from "../../../state/positions";
+import { GameEntityProps, NPCPositions, playerPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Robot from "./Robot";
-const npcPosition = npcPositions[0];
+import Alien from "./Alien";
 export const npcPlayerVisual = proxy({
   rollCooldown: false,
   rolling: false,
@@ -18,18 +18,50 @@ export const npcPlayerVisual = proxy({
   running: false,
 });
 
+
+function GameEntity({ type, localPlayerState }:GameEntityProps) {
+  const npcRef = useRef(null);
+
+  // Render the appropriate entity based on the `type` prop
+  let EntityComponent;
+  switch (type) {
+    case 'robot':
+      EntityComponent = (
+        <Robot
+          ref={npcRef}
+          lastAttack={0}
+          lastDamaged={0}
+          moving={localPlayerState.moving}
+          recharging={false}
+          running={localPlayerState.rolling}
+        />
+      );
+      break;
+    case 'alien':
+      EntityComponent = (
+        <Alien
+          ref={npcRef}
+          lastAttack={0}
+          lastDamaged={0}
+          moving={localPlayerState.moving}
+          recharging={false}
+          running={localPlayerState.rolling}
+        />
+      );
+      break;
+    default:
+      EntityComponent = <div>Unknown entity type</div>;
+  }
+
+  return <>{EntityComponent}</>;
+}
+
+export default GameEntity;
+
 const FOLLOW_SPEED = 0.05; // Adjust this value to change how fast the NPC follows the player
 const MINIMAL_DISTANCE = 3; // The minimal distance the NPC should maintain from the player
-interface NPCPosition{
-  x: number,
-  y: number,
-  previousX: number,
-  previousY: number,
-  targetX: number,
-  targetY: number,
-  angle: number,
-}
-export function NPC({npcPosition, ...props }: { npcPosition: NPCPosition }&GroupProps) {
+
+export function NPC({npcPosition, ...props }: { npcPosition: NPCPositions }&GroupProps) {
   const npcRef = useRef<Group>(null);
   const groupRef = useRef<Group>(null);
   const localPlayerState = useSnapshot(npcPlayerVisual);
@@ -44,9 +76,9 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPosition }&Group
       );
       const distance = direction.length();
       // Normalize the direction vector and scale it by the follow speed
-      if (distance > MINIMAL_DISTANCE) {
+      if (distance > npcPosition.MINIMAL_DISTANCE) {
         npcPlayerVisual.moving = true;
-        direction.normalize().multiplyScalar(FOLLOW_SPEED);
+        direction.normalize().multiplyScalar(npcPosition.FOLLOW_SPEED);
         // Update the NPC's position
         npcPosition.x += direction.x;
         npcPosition.y += direction.z;
@@ -86,7 +118,7 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPosition }&Group
   return (
     <group ref={groupRef} position={position} {...props}>
       {/* <Hud> */}
-      {resp?.data.from === "jeremy" && (
+      {resp?.data.from === npcPosition.data && (
         <SpeechBubble
           content={resp?.data.line}
           position={[-1, 9, 0]}
@@ -102,14 +134,8 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPosition }&Group
         recharging={false}
         running={false}
       /> */}
-      <Robot
-        ref={npcRef}
-        lastAttack={0}
-        lastDamaged={0}
-        moving={localPlayerState.moving}
-        recharging={false}
-        running={localPlayerState.rolling}
-      />
+
+      <GameEntity type={npcPosition.type} localPlayerState={localPlayerState} />
     </group>
   );
 }

@@ -72,7 +72,8 @@ const Game: React.FC = () => {
                 <Floor />
                 <Player />
                 <NPC npcPosition = {npcPositions[0]}/>
-                <GUY />
+                <NPC npcPosition = {npcPositions[1]}/>
+                {/* <GUY /> */}
                 {/*<OldMob/>*/}
                 {/* <MobsManager /> */}
                 {/* <AttackColliders /> */}

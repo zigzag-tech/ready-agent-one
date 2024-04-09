@@ -9,7 +9,7 @@ export const playerPosition = {
 };
 export type EntityType = "robot" | "alien";
 export interface NPCConfig {
-  position:{
+  position: {
     x: number;
     y: number;
     previousX: number;
@@ -25,7 +25,7 @@ export interface NPCConfig {
 }
 export const npcConfigs: NPCConfig[] = [
   {
-    position:{
+    position: {
       x: 10,
       y: 10,
       previousX: 0,
@@ -40,7 +40,7 @@ export const npcConfigs: NPCConfig[] = [
     MINIMAL_DISTANCE: 3,
   },
   {
-    position:{
+    position: {
       x: -10,
       y: -10,
       previousX: 0,

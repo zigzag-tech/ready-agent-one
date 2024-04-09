@@ -71,8 +71,8 @@ const Game: React.FC = () => {
                 <Lights />
                 <Floor />
                 <Player />
-                <NPC npcConfig = {npcConfigs[0]}/>
-                <NPC npcConfig = {npcConfigs[1]}/>
+                <NPC npcConfig={npcConfigs[0]} />
+                <NPC npcConfig={npcConfigs[1]} />
                 {/* <GUY /> */}
                 {/*<OldMob/>*/}
                 {/* <MobsManager /> */}
@@ -175,4 +175,3 @@ function Render() {
     // guiScene
   );
 }
-

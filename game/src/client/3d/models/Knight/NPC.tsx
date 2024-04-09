@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { proxy, useSnapshot } from "valtio";
-import { GameEntityProps, NPCPositions, playerPosition } from "../../../state/positions";
+import { GameEntityProps, NPCConfig, playerPosition } from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Robot from "./Robot";
 import Alien from "./Alien";
@@ -19,7 +19,7 @@ export const npcPlayerVisual = proxy({
 });
 
 
-function GameEntity({ type, localPlayerState }:GameEntityProps) {
+function GameEntity({ type, localPlayerState }: GameEntityProps) {
   const npcRef = useRef(null);
 
   // Render the appropriate entity based on the `type` prop
@@ -61,7 +61,7 @@ export default GameEntity;
 const FOLLOW_SPEED = 0.05; // Adjust this value to change how fast the NPC follows the player
 const MINIMAL_DISTANCE = 3; // The minimal distance the NPC should maintain from the player
 
-export function NPC({npcPosition, ...props }: { npcPosition: NPCPositions }&GroupProps) {
+export function NPC({ npcConfig, ...props }: { npcConfig: NPCConfig } & GroupProps) {
   const npcRef = useRef<Group>(null);
   const groupRef = useRef<Group>(null);
   const localPlayerState = useSnapshot(npcPlayerVisual);
@@ -70,18 +70,18 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPositions }&Grou
     if (groupRef.current && playerPosition) {
       // Calculate the direction vector from the NPC to the player
       const direction = new Vector3(
-        playerPosition.x - npcPosition.x,
+        playerPosition.x - npcConfig.position.x,
         0,
-        playerPosition.y - npcPosition.y
+        playerPosition.y - npcConfig.position.y
       );
       const distance = direction.length();
       // Normalize the direction vector and scale it by the follow speed
-      if (distance > npcPosition.MINIMAL_DISTANCE) {
+      if (distance > npcConfig.MINIMAL_DISTANCE) {
         npcPlayerVisual.moving = true;
-        direction.normalize().multiplyScalar(npcPosition.FOLLOW_SPEED);
+        direction.normalize().multiplyScalar(npcConfig.FOLLOW_SPEED);
         // Update the NPC's position
-        npcPosition.x += direction.x;
-        npcPosition.y += direction.z;
+        npcConfig.position.x += direction.x;
+        npcConfig.position.y += direction.z;
         groupRef.current.position.x += direction.x;
         groupRef.current.position.z += direction.z;
       } else {
@@ -99,7 +99,7 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPositions }&Grou
     }
   });
 
-  const position = [npcPosition.x, 0, npcPosition.y] as [
+  const position = [npcConfig.position.x, 0, npcConfig.position.y] as [
     number,
     number,
     number
@@ -118,7 +118,7 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPositions }&Grou
   return (
     <group ref={groupRef} position={position} {...props}>
       {/* <Hud> */}
-      {resp?.data.from === npcPosition.data && (
+      {resp?.data.from === npcConfig.initialMessage && (
         <SpeechBubble
           content={resp?.data.line}
           position={[-1, 9, 0]}
@@ -135,7 +135,7 @@ export function NPC({npcPosition, ...props }: { npcPosition: NPCPositions }&Grou
         running={false}
       /> */}
 
-      <GameEntity type={npcPosition.type} localPlayerState={localPlayerState} />
+      <GameEntity type={npcConfig.type} localPlayerState={localPlayerState} />
     </group>
   );
 }

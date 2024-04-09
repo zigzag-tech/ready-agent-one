@@ -71,7 +71,8 @@ const Game: React.FC = () => {
                 <Lights />
                 <Floor />
                 <Player />
-                {/* <NPC /> */}
+                <NPC npcConfig={npcConfigs[0]} />
+                <NPC npcConfig={npcConfigs[1]} />
                 {/* <GUY /> */}
                 {/*<OldMob/>*/}
                 {/* <MobsManager /> */}
@@ -101,8 +102,8 @@ const useStore = create((set, get) => ({
   BCam: null,
 }));
 
-import { playerPosition } from "../../../state/positions";
-import { GUY } from "../../../3d/models/Knight/GUY";
+import { npcConfigs, playerPosition } from "../../../state/positions";
+
 import { PropsManager } from "./PropsManager";
 
 function Render() {
@@ -174,4 +175,3 @@ function Render() {
     // guiScene
   );
 }
-

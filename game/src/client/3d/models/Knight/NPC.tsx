@@ -7,10 +7,15 @@ import { z } from "zod";
 import { useFrame } from "@react-three/fiber";
 import { Group, Vector3 } from "three";
 import { proxy, useSnapshot } from "valtio";
-import { GameEntityProps, NPCConfig, playerPosition } from "../../../state/positions";
+import {
+  GameEntityProps,
+  NPCConfig,
+  playerPosition,
+} from "../../../state/positions";
 import { SpeechBubble } from "../../components/SpeechBubble";
 import Robot from "./Robot";
 import Alien from "./Alien";
+import { error } from "console";
 export const npcPlayerVisual = proxy({
   rollCooldown: false,
   rolling: false,
@@ -18,14 +23,13 @@ export const npcPlayerVisual = proxy({
   running: false,
 });
 
-
 function GameEntity({ type, localPlayerState }: GameEntityProps) {
   const npcRef = useRef(null);
 
   // Render the appropriate entity based on the `type` prop
   let EntityComponent;
   switch (type) {
-    case 'robot':
+    case "robot":
       EntityComponent = (
         <Robot
           ref={npcRef}
@@ -37,7 +41,7 @@ function GameEntity({ type, localPlayerState }: GameEntityProps) {
         />
       );
       break;
-    case 'alien':
+    case "alien":
       EntityComponent = (
         <Alien
           ref={npcRef}
@@ -50,7 +54,7 @@ function GameEntity({ type, localPlayerState }: GameEntityProps) {
       );
       break;
     default:
-      EntityComponent = <div>Unknown entity type</div>;
+      throw new Error("Unknown character type: " + type);
   }
 
   return <>{EntityComponent}</>;
@@ -61,7 +65,10 @@ export default GameEntity;
 const FOLLOW_SPEED = 0.05; // Adjust this value to change how fast the NPC follows the player
 const MINIMAL_DISTANCE = 3; // The minimal distance the NPC should maintain from the player
 
-export function NPC({ npcConfig, ...props }: { npcConfig: NPCConfig } & GroupProps) {
+export function NPC({
+  npcConfig,
+  ...props
+}: { npcConfig: NPCConfig } & GroupProps) {
   const npcRef = useRef<Group>(null);
   const groupRef = useRef<Group>(null);
   const localPlayerState = useSnapshot(npcPlayerVisual);
@@ -139,4 +146,3 @@ export function NPC({ npcConfig, ...props }: { npcConfig: NPCConfig } & GroupPro
     </group>
   );
 }
-

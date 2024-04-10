@@ -1,14 +1,14 @@
 import { Ollama } from 'ollama'
 const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434";
 const ollama = new Ollama({ host: OLLAMA_HOST });
+// export const CONVO_MODEL = "command-r";
 export const CONVO_MODEL = "starling-lm";
-// export const CONVO_MODEL = "mixtral";
 
 export async function generateResponseOllama(prompt: string) {
   try {
     const response = await ollama.chat({
       options: {
-        temperature: 0.8,
+        temperature: 1.2,
         num_predict: 1000,
       },
       stream: true,

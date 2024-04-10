@@ -1,81 +1,183 @@
 export const PROMPT = `<s>[INST]
-You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, VICINITY INFORMATION, ALLOWED ACTIONS to return an array of one or more enriched actions from the ALLOWED ACTIONS.
-Use each ALLOWED ACTIONS at most once per response. Respond with ONLY the JSON and do NOT add any notes or comments.
-CHARACTER NAME:
+You are a helpful assistant. Your job is to determine the next actions of the subject based on the context provided.
+
+INSTRUCTIONS:
+- Use each SUBJECT ALLOWED ACTIONS at most once per response. 
+- Always include a "talk" action with a message in the response.
+- Respond with ONLY the JSON and do NOT add any notes or comments.
+- Think step by step and provide the most logical action for the subject.
+
+CONTEXT:
+Emily Loves cats. She is a cat lover and she is always surrounded by cats. 
+Her cat is sick. 
+
+OBJECTIVE:
+Emily wants catch her cat and take it to the vet.
+
+OBJECTS IN SCENE:
+[
+    {"type":"person","name":"emily","description":"Emily the cat lover.","position":"5 meters ahead"},
+    {"type":"person","name":"cat","description":"A black cat.","position":"2 meters ahead"}
+]
+
+RECENT ACTIVITY LOG:
+[
+    {"subject: "cat", "action_type":"walk", "target":"emily"},
+    {"subject: "cat", "action_type":"talk", "message":"Meow."}
+]
+
+SUBJECT NAME:
 Emily
 
-CHARACTER DESCRIPTION:
-Emily is a cat lover.
+SUBJECT ALLOWED ACTIONS:
+[
+  {"action_type": "walk", "target": "[sample_destination]"},
+  {"action_type": "look_at", "target": "[sample_target]"},
+  {"action_type": "feed", "target": "[sample_target]"},
+  {"action_type": "talk", "message": "[sample_message]"}
+]
 
-CONTEXT:
-{"current":{"summary":"Emily Loves cats. She is a cat lover and she is always surrounded by cats."},"recentHistory":[{"character":"cat","actions":[{"type":"walk","destination":"emily"}]}]}
-
-VICINITY INFORMATION:
-[{"type":"person","name":"emily","description":"Emily the cat lover.","position":"5 meters ahead"},{"type":"person","name":"cat","description":"A black cat.","position":"2 meters ahead"}]
-
-ALLOWED ACTIONS:
-{"type": "walk", "destination": "[sample_destination]"}
-{"type": "pet", "target": "[sample_target]"}
-
-The above example would output the following json:
+SUBJECT NEXT ACTION(S):
 [/INST]
 {
+  "subject": "emily",
+  "reflection": "I am so worried about the cat. Must get her to the vet soon.",
+  "intent": "I must catch the cat and take her to the vet.",
   "actions": [
     {
-      "type": "pet",
+      "action_type": "look_at",
       "target": "cat"
+    },
+    {
+      "action_type": "talk",
+      "message": "Hey, kitty! You want some treats?"
     }
   ],
-  "reason": "Emily responds to the cat's presence with a friendly greeting."
+  "reason": "Emily wants to lure the cat with treats."
 }</s>
 
-<s>[INST]CHARACTER NAME:
+<s>
+[INST]
+CONTEXT:
+Frodo encounters a green bear on his way to the mountain.
+
+OBJECTIVE:
+Frodo tries to get treasure from a legendary mountain.
+
+OBJECTS IN SCENE:
+[
+    {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position":"33 meters ahead"},
+    {"type":"person","name":"bear","description":"A hungry green bear.","position":"2 meters behind"},
+]
+
+
+RECENT ACTIVITY LOG:
+[
+    {"subject":"frodo", "action_type":"shoot", "target":"bear"},
+    {"subject":"bear", "action_type":"talk", "message":"Growl!"},
+    {"subject":"bear", "action_type":"attack","target":"frodo"},
+]
+
+SUBJECT NAME:
 Frodo
 
-CHARACTER DESCRIPTION:
-Frodo is a hobbit that loves adventures.
+SUBJECT ALLOWED ACTIONS:
+[
+    {"action_type": "shoot", "target": "[some_target]"},
+    {"action_type": "attack", "target": "[some_target]"},
+    {"action_type": "hide", "target": null },
+    {"action_type": "talk", "message": "[sample_message]"}
+]
 
-CONTEXT:
-{"current":{"summary":"Frodo encounters a green bear on his way to the mountain."},"recentHistory":[{"character":"frodo","actions":[{"type":"shoot","target":"bear"}]},{"character":"bear","actions":[{"type":"attack","target":"frodo"}]}]}
-
-VICINITY INFORMATION:
-[{"type":"person","name":"frodo","description":"Frodo the hobbit.","position":"33 meters ahead"},{"type":"person","name":"bear","description":"A hungry green bear.","position":"2 meters behind"}]
-
-ALLOWED ACTIONS:
-{"type": "shoot", "target": "[sample_target]"}
-{"type": "attack", "target": "[sample_target]"}
-{"type": "hide"}
-
-The above example would output the following json:
+SUBJECT NEXT ACTION(S):
 [/INST]
 {
+"subject": "frodo",
+  "reflection": "Man that didn't work! This bear is distracting me from my goal.",
+    "intent": "I must hide from the bear.",
   "actions": [
     {
-      "type": "hide"
+        "action_type": "talk",
+        "message": "Oh no, the bear didn't die! I must hide!"
+    },
+    {
+      "action_type": "hide",
+      "target": null
     }
   ],
-  "reason": "Frodo is in trouble and he expresses his fear by hiding."
+  "reason": "Frodo doesn't want to get hurt so that he can continue on with his adventure."
 }</s>
+<s>
 [INST]
-CHARACTER NAME:
-guy
-
-CHARACTER DESCRIPTION:
-Guy is tring to acting helpful but he always messes things up.
 
 CONTEXT:
-{"current":{"summary":"It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave."},"sceneNumber":1,"recentHistory":[{"character":"guy","message":"Hey, what's that?","actions":[]},{"character":"jeremy","actions":[{"type":"operate","target":"lifeform detector"},{"type":"examine","target":"giant tree"}],"message":"Oh, a mysterious cave in the year 2300? Well, if I had a nickel for every alien jungle I've stumbled upon, I'd be richer than Croesus. Now, let me just operate this lifeform detector real quick and... hmm, nothing out of the ordinary here, folks! Oh, and that giant tree? It seems to be an ancient remnant from the dawn of time itself. Just goes to show you never know what secrets nature holds!"},{"character":"guy","actions":[{"type":"walk","destination":"morgan"},{"type":"examine","target":"giant tree"}],"message":"Oh wow, look at this giant tree! It's enormous and must be ancient. I wonder what secrets it holds? Let's explore the cave together, Morgan!"},{"character":"morgan","actions":[{"type":"walk","destination":"morgan"},{"type":"examine","target":"giant tree"},{"type":"run","destination":"cave"}],"message":"Wow, this jungle is fascinating! Let's not waste any time and dive into the cave. I wonder what secrets it holds! Also, that ancient tree has surely witnessed many incredible events over time."},{"character":"jeremy","actions":[{"type":"examine","target":"giant tree"},{"type":"operate","target":"lifeform detector"}],"message":"Well, this ancient tree has certainly seen some things! Let's keep exploring and see what other surprises the jungle holds for us. Oh, and watch out for any hidden dangers, guys!"},{"character":"guy","actions":[{"type":"examine","target":"giant tree"},{"type":"run","destination":"cave"}],"message":"Looking at this giant tree, I can't help but imagine all the stories it could tell if only it could speak. Let's run to that cave and discover its secrets together!"},{"character":"morgan","actions":[{"type":"examine","target":"giant tree"},{"type":"run","destination":"cave"}],"message":"The ancient tree does indeed evoke a sense of wonder and history. Let's run to the cave and uncover its secrets together, but be cautious as we never know what surprises lie ahead in this alien jungle."},{"character":"jeremy","actions":[{"type":"examine","target":"giant tree"},{"type":"operate","target":"lifeform detector"}],"message":"Ah, a mysterious cave and an ancient tree! I'm always up for exploring the unknown. Let's see what secrets this place holds. *examines the giant tree* This tree has been standing here for ages, it must have witnessed countless events over time. And speaking of events, let's see if our lifeform detector picks up anything interesting."},{"character":"guy","actions":[{"type":"examine","target":"giant tree"},{"type":"run","destination":"cave"}],"message":"Wow, this giant tree is incredible! It's so ancient and massive. I can't help but wonder about its stories and history. Let's head to the cave together and uncover more secrets!"},{"character":"morgan","actions":[{"type":"examine","target":"giant tree"},{"type":"run","destination":"cave"}],"message":"Oh, this ancient tree is simply breathtaking! It's hard not to imagine all the incredible stories it could tell if only it could speak. Let's run to that cave together and uncover its secrets, but let's also be cautious as we never know what surprises lie ahead in this alien jungle."},{"character":"jeremy","actions":[{"type":"examine","target":"giant tree"},{"type":"operate","target":"lifeform detector"}],"message":"Oh, this ancient tree is quite fascinating! It's a real testament to the resilience of nature and its capacity for standing the test of time. Let's keep exploring and see what else we can uncover."}],"totalNumOfLines":11}
+It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.
 
-VICINITY INFORMATION:
-[{"type":"person","name":"morgan","description":"Morgan is prudent, courageous but could slip into self doubt from time to time. ","position":"1 meters ahead"},{"type":"person","name":"jeremy","description":"Jeremy has a sarcastic streak but deep down he's kind and helpful.","position":"2 meters ahead"},{"type":"person","name":"guy","description":"Guy is tring to acting helpful but he always messes things up.","position":"3 meters ahead"},{"type":"object","name":"cave","description":"A mysterious cave","position":"north"},{"type":"object","name":"small rock","description":"A small rock","position":"east"},{"type":"object","name":"giant tree","description":"An alien looking tree that is 10 meters tall","position":"south"},{"type":"object","name":"lifeform detector","description":"A device that can detect lifeforms.","position":"west"}]
+OBJECTIVE:
+The group wants to find out the truth about the extinction of the Hulaloo species.
 
-ALLOWED ACTIONS:
-{"type": "walk", "destination": "[sample_destination]"}
-{"type": "jump" }
-{"type": "examine", "target": "[sample_target]" }
-{"type": "operate", "target": "[sample_target]" }
-{"type": "punch", "target": "[sample_target]" }
-{"type": "kick", "target": "[sample_target]" }
-{"type": "run", "destination": "[sample_destination]" }
+OBJECTS IN SCENE:
+[
+    {"type":"person","name":"morgan","description":"Morgan is prudent, courageous but could slip into self doubt from time to time. ","position":"1 meters ahead"},
+    {"type":"person","name":"jeremy","description":"Jeremy has a sarcastic streak but deep down he's kind and helpful. ","position":"2 meters ahead"},
+    {"type":"person","name":"guy","description":"Guy is tring to acting helpful but he always messes things up.","position":"3 meters ahead"},
+    {"type":"object","name":"cave","description":"A mysterious cave","position":"north"},
+    {"type":"object","name":"cave entrance","description": "A dark entrance to the cave.","position":"north"},
+    {"type":"object","name":"small rock","description":"A small rock","position":"east"},
+    {"type":"object","name":"giant tree","description":"An alien looking tree that is 10 meters tall","position":"south"},
+    
 
-[/INST]`;
+RECENT ACTIVITY LOG:
+[
+    {"subject": "morgan", "action_type": "talk", "message": "Hey, what's that?" },
+    {"subject": "jeremy", "action_type":"examine","target":"cave"},
+    {"subject": "jeremy", "action_type":"talk", "message":"Oh, a mysterious cave in the year 2300? Well, if I had a nickel for every alien jungle I've stumbled upon, I'd be richer than Croesus. Now, let me just operate this lifeform detector real quick and... hmm, nothing out of the ordinary here, folks! Oh, and that giant tree? It seems to be an ancient remnant from the dawn of time itself. Just goes to show you never know what secrets nature holds!"},
+    {"subject": "guy", "action_type":"walk","target":"morgan" },
+    {"subject": "guy": "action_type": "talk", "message":"Morgan, you're in the way! Move it!"},
+    {"subject":"morgan", "action_type": "examine", "target": "cave" },
+    {    "subject":"morgan",
+        "action_type": "talk",
+        "message": "Jeremy, could you please give me some space to examine the cave properly?"
+      },
+      {
+        "subject":"guy",
+        "action_type": "examine",
+        "target": "cave"
+      },
+      {
+        "subject":"guy",
+        "action_type": "talk",
+        "message": "Hey guys, I think I found something over here!"
+      }
+]
+
+SUBJECT NAME:
+jeremy
+
+SUBJECT ALLOWED ACTIONS:
+[
+    {"action_type": "walk", "target": "[sample_destination]"},
+    {"action_type": "jump" }
+    {"action_type": "examine", "target": "[sample_target]" }
+    {"action_type": "operate", "target": "[sample_target]" }
+    {"action_type": "punch", "target": "[sample_target]" }
+    {"action_type": "kick", "target": "[sample_target]" }
+    {"action_type": "run", "destination": "[sample_destination]" 
+}
+
+SUBJECT NEXT ACTION(S):
+[/INST]
+`;
+
+
+/**
+ subject: "jeremy",
+ action_type: "walk",
+ destination: "cave entrance",
+
+ subject: "jeremy",
+ action_type: "talk",
+ message: "Team, follow me. Let's go into the cave.",
+
+ Reason: Jeremy is the leader of the group and he is leading the team into the cave.
+ */

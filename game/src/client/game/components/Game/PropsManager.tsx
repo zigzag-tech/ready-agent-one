@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Html } from "@react-three/drei";
 import { LiveJobContext } from "./LiveJob";
 import * as THREE from "three";
@@ -16,6 +16,8 @@ function PropRenderer({
   };
 }) {
   const pos = useMemo(() => convertPositionToVector3(prop), [prop]);
+  // if type is person, render a random character
+  // TODO: render a character
 
   return (
     <group scale={2} position={pos} key={prop.name}>
@@ -38,6 +40,20 @@ export function PropsManager() {
     def: gameStateSchema,
     job,
   });
+
+  useEffect(() => {
+    if (gameState?.data.current.props.length || 0 > 1) {
+      (async () => {
+        // sleep 1000
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // TODO:
+        // 1. understand how player moves and how NPC follows player. Understand how valtio works.
+        // 2. If there are two characters, Move the first character towards the second character.
+        console.log("TODO");
+      })();
+    }
+  }, [gameState]);
 
   return (
     <>

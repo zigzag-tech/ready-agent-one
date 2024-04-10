@@ -15,51 +15,27 @@ const vicinity = [
   })),
   {
     type: "object",
-    name: "wrench",
-    description: "A rusty wrench.",
-    position: "10 meters north",
+    name: "cave",
+    description: "A mysterious cave",
+    position: "north",
   },
   {
     type: "object",
-    name: "control panel",
-    description: "A control panel.",
-    position: "3 meters ahead",
+    name: "small rock",
+    description: "A small rock",
+    position: "east",
   },
   {
     type: "object",
-    name: "red button",
-    description: "A red button that says 'LAUNCH'",
-    position: "control panel",
+    name: "giant tree",
+    description: "An alien looking tree that is 10 meters tall",
+    position: "south",
   },
   {
     type: "object",
-    name: "green button",
-    description: "A green button that says 'RELAX MAN'",
-    position: "control panel",
-  },
-  {
-    type: "object",
-    name: "yellow button",
-    description: "A yellow button that says 'BANANAS'",
-    position: "control panel",
-  },
-  {
-    type: "object",
-    name: "duct tape",
-    description: "roll of duct tape.",
-    position: "on the floor",
-  },
-  {
-    type: "object",
-    name: "exit sign",
-    description: "A sign that says 'EXIT' with an arrow pointing to the right.",
-    position: "5 meters south",
-  },
-  {
-    type: "object",
-    name: "oxygen tank",
-    description: "A large oxygen tank.",
-    position: "7 meters ahead",
+    name: "lifeform detector",
+    description: "A device that can detect lifeforms.",
+    position: "west",
   },
 ];
 
@@ -78,14 +54,14 @@ ZZEnv.setGlobal(
   const initialInput: GameState = {
     current: {
       summary:
-        "It is year 2300. In the outer space, three astronauts are about to run out of oxygen. They are trying to fix the oxygen tank.",
+        "It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.",
       props: vicinity,
     },
     sceneNumber: 1,
     recentHistory: [
       {
         character: "guy",
-        message: "What the hell is going on with the oxygen indicator?",
+        message: "Hey, what's that?",
         actions: [],
       },
     ],

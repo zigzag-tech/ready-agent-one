@@ -1,8 +1,8 @@
 import { Ollama } from 'ollama'
-import { CONVO_MODEL } from "./workflow.conversation";
-import { sleep } from "@livestack/core";
-const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434"
-const ollama = new Ollama({ host: OLLAMA_HOST })
+const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434";
+const ollama = new Ollama({ host: OLLAMA_HOST });
+export const CONVO_MODEL = "starling-lm";
+// export const CONVO_MODEL = "mixtral";
 
 export async function generateResponseOllama(prompt: string) {
   try {
@@ -39,7 +39,7 @@ export async function generateResponseOllama(prompt: string) {
     return message;
   } catch (e) {
     console.log(e);
-    await sleep(200);
+    // await sleep(200);
     return null;
   }
 }

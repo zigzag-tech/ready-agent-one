@@ -40,7 +40,7 @@ const vicinity = [
 ];
 
 ZZEnv.setGlobal(
-  new ZZEnv({
+  ZZEnv.create({
     projectId: GAME_SPEC_NAME + new Date().getTime(),
   })
 );

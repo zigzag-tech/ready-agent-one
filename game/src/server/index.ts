@@ -12,7 +12,7 @@ export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 ZZEnv.setGlobal(
-  new ZZEnv({
+  ZZEnv.create({
     projectId: GAME_SPEC_NAME + new Date().getTime(),
   })
 );

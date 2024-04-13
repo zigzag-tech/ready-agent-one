@@ -474,41 +474,41 @@ const Player: React.FC = () => {
     job: workflowJob,
   });
 
-  useEffect(() => {
-    feedInitState &&
-      feedInitState({
-        previous: {
-          summary: "",
-        },
-        current: {
-          summary:
-            "Before our story begins, rumor has it there was a meow meow land ruled by cats. Their archenemy is woof woof land ruled by dogs. The two lands are separated by a river. The cats and dogs have been fighting for centuries.",
-          props: [
-            {
-              name: "meow",
-              type: "cat",
-              description: "An aloof cat",
-              position: "north",
-            },
-            {
-              name: "woof",
-              type: "dog",
-              description: "A friendly dog",
-              position: "south",
-            },
-          ],
-        },
-        recentHistory: [
-          {
-            character: "jeremy",
-            actions: [],
-            message: "Greetings, stranger.",
-          },
-        ],
-        sceneNumber: 1,
-        totalNumOfLines: 1,
-      });
-  }, [feedInitState]);
+  // useEffect(() => {
+  //   feedInitState &&
+  //     feedInitState({
+  //       previous: {
+  //         summary: "",
+  //       },
+  //       current: {
+  //         summary:
+  //           "Before our story begins, rumor has it there was a meow meow land ruled by cats. Their archenemy is woof woof land ruled by dogs. The two lands are separated by a river. The cats and dogs have been fighting for centuries.",
+  //         props: [
+  //           {
+  //             name: "meow",
+  //             type: "cat",
+  //             description: "An aloof cat",
+  //             position: "north",
+  //           },
+  //           {
+  //             name: "woof",
+  //             type: "dog",
+  //             description: "A friendly dog",
+  //             position: "south",
+  //           },
+  //         ],
+  //       },
+  //       recentHistory: [
+  //         {
+  //           character: "jeremy",
+  //           actions: [],
+  //           message: "Greetings, stranger.",
+  //         },
+  //       ],
+  //       sceneNumber: 1,
+  //       totalNumOfLines: 1,
+  //     });
+  // }, [feedInitState]);
 
   const playerVIsualStateSnap = useSnapshot(playerVisualState);
 

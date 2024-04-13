@@ -31,7 +31,7 @@ export const gameStateSchema = z.object({
   }),
   recentHistory: z.array(
     z.object({
-      character: charactersEnum,
+      character: z.string(),
       actions: actionSchema,
       message: z.string(),
     })

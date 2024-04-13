@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Html } from "@react-three/drei";
 import { LiveJobContext } from "./LiveJob";
 import * as THREE from "three";
 import { useOutput } from "@livestack/client/src";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
-
+import { z } from "zod";
 function PropRenderer({
   prop,
 }: {
@@ -35,10 +35,49 @@ export function PropsManager() {
   if (!job) {
     return <>Error: cannot connect to the game server</>;
   }
-  const gameState = useOutput({
-    tag: "game-state",
-    def: gameStateSchema,
-    job,
+  // const gameState = useOutput({
+  //   tag: "game-state",
+  //   def: gameStateSchema,
+  //   job,
+  // });
+
+  // mock gameState
+  const [gameState, setGameState] = useState<{
+    data: z.infer<typeof gameStateSchema>;
+  }>({
+    data: {
+      current: {
+        summary: "a cat and a dog are in the room",
+        props: [
+          {
+            name: "cat",
+            type: "person",
+            description: "a cat",
+            position: "center",
+          },
+          {
+            name: "dog",
+            type: "person",
+            description: "a dog",
+            position: "north",
+          },
+        ],
+      },
+      sceneNumber: 1,
+      totalNumOfLines: 2,
+      recentHistory: [
+        {
+          character: "cat",
+          actions: [{ type: "move", destination: "center" }],
+          message: "meow",
+        },
+        {
+          character: "dog",
+          actions: [{ type: "move", destination: "north" }],
+          message: "woof",
+        },
+      ],
+    },
   });
 
   useEffect(() => {

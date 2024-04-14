@@ -44,14 +44,10 @@ export const characterWorker = characterSpec.defineWorker({
 
         actions = parseJSONResponse(response) || "...";
       }
-      const message =
-        (await genMessagePrompt(whoseTurn, state, actions)) ||
-        "Sorry I don't know what to do.";
 
       await output("default").emit({
         from: whoseTurn,
         actions,
-        message,
       });
     }
   },

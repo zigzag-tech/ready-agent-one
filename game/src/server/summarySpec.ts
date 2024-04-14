@@ -33,12 +33,13 @@ export const summaryWorker = summarySpec.defineWorker({
           break;
         }
         case "character": {
-          const { actions, from, message } = data;
+          const { actions, from } = data;
           const label = from;
           currentState.recentHistory.push({
-            character: label,
+            subject: label,
+            reflection: "", // TODO: add reflection
+            intent: "", // TODO: add intent
             actions,
-            message,
           });
           const SUMMARIZE_THRESHOLD = 9;
           // keep accululating the history until it reaches 10
@@ -72,10 +73,7 @@ export const summaryWorker = summarySpec.defineWorker({
           console.log({
             ...currentState,
             recentHistory: currentState.recentHistory.map(
-              (h) =>
-                `${h.character}: ${JSON.stringify(h.actions)}; message: ${
-                  h.message
-                }`
+              (h) => `${h.subject}: ${JSON.stringify(h.actions)};`
             ),
           });
           await output.emit(currentState);

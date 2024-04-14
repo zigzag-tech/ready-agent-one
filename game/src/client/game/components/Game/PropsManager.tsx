@@ -21,15 +21,15 @@ function PropRenderer({
     position: string;
     moving: boolean,
     rolling: boolean,
-    // curent_position: {
-    //   x: number;
-    //   y: number;
-    //   previousX: number;
-    //   previousY: number;
-    //   targetX: number;
-    //   targetY: number;
-    //   angle: number;
-    // };
+    current_position: {
+      x: number;
+      y: number;
+      previousX: number;
+      previousY: number;
+      targetX: number;
+      targetY: number;
+      angle: number;
+    };
   };
 }) {
   const pos = useMemo(() => convertPositionToVector3(prop), [prop]);
@@ -38,22 +38,22 @@ function PropRenderer({
     const types = [Robot, Alien, Knight];
     return types[Math.floor(Math.random() * types.length)];
   }, []);
-  if (prop.type == 'person') {
+  if(prop.type == 'person'){
     return (
       <group scale={1} position={pos} key={prop.name}>
         <CharacterComponent
-          ref={null}
-          lastAttack={0}
-          lastDamaged={0}
-          moving={prop.moving}
-          recharging={false}
-          running={prop.rolling}
-        />
+            ref={null}
+            lastAttack={0}
+            lastDamaged={0}
+            moving={prop.moving}
+            recharging={false}
+            running={prop.rolling}
+          />
       </group>
 
     );
   }
-
+  
 }
 
 export function PropsManager() {
@@ -82,6 +82,15 @@ export function PropsManager() {
             position: "center",
             moving: false,
             rolling: false,
+            current_position: {
+              x: 0,
+              y: 0,
+              previousX: 0,
+              previousY: 0,
+              targetX: 0,
+              targetY: 0,
+              angle: 0,
+            },
           },
           {
             name: "dog",
@@ -90,6 +99,15 @@ export function PropsManager() {
             position: "north",
             moving: false,
             rolling: false,
+            current_position: {
+              x: 0,
+              y: 0,
+              previousX: 0,
+              previousY: 0,
+              targetX: 0,
+              targetY: 0,
+              angle: 0,
+            },
           },
         ],
       },
@@ -109,23 +127,25 @@ export function PropsManager() {
       ],
     },
   });
-  const localPlayerState = useSnapshot(npcPlayerVisual);
-  useEffect(() => {
+  useFrame(() => {
     if (gameState?.data.current.props.length || 0 > 1) {
-      (async () => {
-        // sleep 1000
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-
-        //If there are two characters, Move the first character towards the second character.
-        const catProp = gameState?.data.current.props.find(prop => prop.name === 'cat');
-        const dogProp = gameState?.data.current.props.find(prop => prop.name === 'dog');
-        if (catProp && dogProp) {
-
-        }
-      })();
+      const [cat, dog] = gameState.data.current.props;
+      const catPos = new THREE.Vector3(cat.current_position.x, 0, cat.current_position.y);
+      const dogPos = new THREE.Vector3(dog.current_position.x, 0, dog.current_position.y);
+      const direction = new THREE.Vector3().subVectors(dogPos, catPos);
+      const distance = direction.length();
+      if (distance > 1) { // Move only if distance is greater than 1 unit
+        direction.normalize().multiplyScalar(0.05); // Adjust speed as necessary
+        catPos.add(direction);
+        cat.current_position.x = catPos.x;
+        cat.current_position.y = catPos.z;
+        cat.moving = true;
+      } else {
+        cat.moving = false;
+      }
+      setGameState({...gameState}); // Trigger re-render
     }
-  }, [gameState]);
+  });
 
   return (
     <>

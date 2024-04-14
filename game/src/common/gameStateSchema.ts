@@ -15,6 +15,8 @@ export const scenePropsSchema = z.array(
     name: z.string(),
     description: z.string(),
     position: z.string(),
+    moving: z.boolean(),
+    rolling: z.boolean(),
   })
 );
 

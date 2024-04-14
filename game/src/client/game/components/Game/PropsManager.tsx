@@ -5,6 +5,12 @@ import * as THREE from "three";
 import { useOutput } from "@livestack/client/src";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
 import { z } from "zod";
+import Robot from "../../../3d/models/Knight/Robot";
+import Alien from "../../../3d/models/Knight/Alien";
+import Knight from "../../../3d/models/Knight/Knight";
+import { useSnapshot } from "valtio";
+import { npcPlayerVisual } from "../../../3d/models/Knight/NPC";
+import { useFrame } from "@react-three/fiber";
 function PropRenderer({
   prop,
 }: {
@@ -13,21 +19,41 @@ function PropRenderer({
     type: string;
     description: string;
     position: string;
+    moving: boolean,
+    rolling: boolean,
+    // curent_position: {
+    //   x: number;
+    //   y: number;
+    //   previousX: number;
+    //   previousY: number;
+    //   targetX: number;
+    //   targetY: number;
+    //   angle: number;
+    // };
   };
 }) {
   const pos = useMemo(() => convertPositionToVector3(prop), [prop]);
-  // if type is person, render a random character
-  // TODO: render a character
+  const CharacterComponent = useMemo(() => {
+    // Randomly returns either <Robot /> or <Alien />
+    const types = [Robot, Alien, Knight];
+    return types[Math.floor(Math.random() * types.length)];
+  }, []);
+  if (prop.type == 'person') {
+    return (
+      <group scale={1} position={pos} key={prop.name}>
+        <CharacterComponent
+          ref={null}
+          lastAttack={0}
+          lastDamaged={0}
+          moving={prop.moving}
+          recharging={false}
+          running={prop.rolling}
+        />
+      </group>
 
-  return (
-    <group scale={2} position={pos} key={prop.name}>
-      <mesh>
-        <tetrahedronGeometry args={[1, 0]} />
-        <meshBasicMaterial color="#333" />
-      </mesh>
-      <Html>{prop.name}</Html>
-    </group>
-  );
+    );
+  }
+
 }
 
 export function PropsManager() {
@@ -54,12 +80,16 @@ export function PropsManager() {
             type: "person",
             description: "a cat",
             position: "center",
+            moving: false,
+            rolling: false,
           },
           {
             name: "dog",
             type: "person",
             description: "a dog",
             position: "north",
+            moving: false,
+            rolling: false,
           },
         ],
       },
@@ -79,17 +109,20 @@ export function PropsManager() {
       ],
     },
   });
-
+  const localPlayerState = useSnapshot(npcPlayerVisual);
   useEffect(() => {
     if (gameState?.data.current.props.length || 0 > 1) {
       (async () => {
         // sleep 1000
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // TODO:
-        // 1. understand how player moves and how NPC follows player. Understand how valtio works.
-        // 2. If there are two characters, Move the first character towards the second character.
-        console.log("TODO");
+
+        //If there are two characters, Move the first character towards the second character.
+        const catProp = gameState?.data.current.props.find(prop => prop.name === 'cat');
+        const dogProp = gameState?.data.current.props.find(prop => prop.name === 'dog');
+        if (catProp && dogProp) {
+
+        }
       })();
     }
   }, [gameState]);

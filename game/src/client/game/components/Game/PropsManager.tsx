@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Html } from "@react-three/drei";
 import { LiveJobContext } from "./LiveJob";
 import * as THREE from "three";
-import { useOutput } from "@livestack/client/src";
 import { gameStateSchema } from "../../../../common/gameStateSchema";
 import { z } from "zod";
 import Robot from "../../../3d/models/Knight/Robot";
@@ -23,8 +21,8 @@ function PropRenderer({
     type: string;
     description: string;
     position: string;
-    moving: boolean,
-    rolling: boolean,
+    moving: boolean;
+    rolling: boolean;
     current_position: {
       x: number;
       y: number;
@@ -51,7 +49,7 @@ function PropRenderer({
     return types[Math.floor(Math.random() * types.length)];
   }, []);
   const npcRef = useRef(null);
-  if (prop.type == 'person') {
+  if (prop.type == "person") {
     return (
       <group scale={1} position={pos} key={prop.name}>
         <CharacterComponent
@@ -63,15 +61,13 @@ function PropRenderer({
           running={prop.rolling}
         />
       </group>
-
     );
   }
-
 }
 export const currentPlayerState = {
   moving: false,
   rolling: false,
-}
+};
 export function PropsManager() {
   const job = React.useContext(LiveJobContext).conersationJob;
   if (!job) {

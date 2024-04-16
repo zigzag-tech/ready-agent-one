@@ -13,7 +13,7 @@ export const sleep = (ms: number) =>
 
 ZZEnv.setGlobal(
   ZZEnv.create({
-    projectId: GAME_SPEC_NAME + new Date().getTime(),
+    projectId: GAME_SPEC_NAME,
   })
 );
 

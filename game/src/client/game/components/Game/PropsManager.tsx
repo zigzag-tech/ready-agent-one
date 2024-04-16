@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Html } from "@react-three/drei";
 import { LiveJobContext } from "./LiveJob";
 import * as THREE from "three";
@@ -11,6 +11,10 @@ import Knight from "../../../3d/models/Knight/Knight";
 import { useSnapshot } from "valtio";
 import { npcPlayerVisual } from "../../../3d/models/Knight/NPC";
 import { useFrame } from "@react-three/fiber";
+interface localPlayerState {
+  moving: boolean;
+  rolling: boolean;
+}
 function PropRenderer({
   prop,
 }: {
@@ -32,30 +36,34 @@ function PropRenderer({
     };
   };
 }) {
-  const pos = useMemo(() => convertPositionToVector3(prop), [prop]);
+  const pos = useMemo(() => new THREE.Vector3(prop.current_position.x, 0, prop.current_position.y).multiplyScalar(MAGNITUDE), []);
   const CharacterComponent = useMemo(() => {
     // Randomly returns either <Robot /> or <Alien />
     const types = [Robot, Alien, Knight];
     return types[Math.floor(Math.random() * types.length)];
   }, []);
-  if(prop.type == 'person'){
+  const npcRef = useRef(null);
+  if (prop.type == 'person') {
     return (
       <group scale={1} position={pos} key={prop.name}>
         <CharacterComponent
-            ref={null}
-            lastAttack={0}
-            lastDamaged={0}
-            moving={prop.moving}
-            recharging={false}
-            running={prop.rolling}
-          />
+          ref={npcRef}
+          lastAttack={0}
+          lastDamaged={0}
+          moving={prop.moving}
+          recharging={false}
+          running={prop.rolling}
+        />
       </group>
 
     );
   }
-  
-}
 
+}
+export const currentPlayerState = {
+  moving: false,
+  rolling: false,
+}
 export function PropsManager() {
   const job = React.useContext(LiveJobContext).conersationJob;
   if (!job) {
@@ -79,11 +87,11 @@ export function PropsManager() {
             name: "cat",
             type: "person",
             description: "a cat",
-            position: "center",
-            moving: false,
-            rolling: false,
+            position: "east",
+            moving: currentPlayerState.moving,
+            rolling: currentPlayerState.rolling,
             current_position: {
-              x: 0,
+              x: 1,
               y: 0,
               previousX: 0,
               previousY: 0,
@@ -96,11 +104,11 @@ export function PropsManager() {
             name: "dog",
             type: "person",
             description: "a dog",
-            position: "north",
-            moving: false,
-            rolling: false,
+            position: "west",
+            moving: currentPlayerState.moving,
+            rolling: currentPlayerState.rolling,
             current_position: {
-              x: 0,
+              x: -1,
               y: 0,
               previousX: 0,
               previousY: 0,
@@ -127,23 +135,34 @@ export function PropsManager() {
       ],
     },
   });
+  const npcRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const localPlayerState = useSnapshot(npcPlayerVisual);
   useFrame(() => {
-    if (gameState?.data.current.props.length || 0 > 1) {
+    if (gameState?.data.current.props.length > 0) {
       const [cat, dog] = gameState.data.current.props;
-      const catPos = new THREE.Vector3(cat.current_position.x, 0, cat.current_position.y);
-      const dogPos = new THREE.Vector3(dog.current_position.x, 0, dog.current_position.y);
-      const direction = new THREE.Vector3().subVectors(dogPos, catPos);
+      const direction = new THREE.Vector3(
+        dog.current_position.x - cat.current_position.x,
+        0,
+        dog.current_position.y - cat.current_position.y,
+      );
       const distance = direction.length();
-      if (distance > 1) { // Move only if distance is greater than 1 unit
+      if (distance > 0.01 && groupRef.current) { // Move only if distance is greater than 0.01 unit
         direction.normalize().multiplyScalar(0.05); // Adjust speed as necessary
-        catPos.add(direction);
-        cat.current_position.x = catPos.x;
-        cat.current_position.y = catPos.z;
         cat.moving = true;
+        const cat_prop = gameState.data.current.props.find(prop => prop.name === 'cat');
+        if (cat_prop != null) {
+          cat_prop.current_position.x += direction.x;
+          cat_prop.current_position.y += direction.z;
+          console.log(cat_prop.current_position.x);
+          groupRef.current.position.x += direction.x;
+          groupRef.current.position.z += direction.z;
+        }
+
       } else {
         cat.moving = false;
       }
-      setGameState({...gameState}); // Trigger re-render
+      setGameState({ ...gameState }); // Trigger re-render
     }
   });
 

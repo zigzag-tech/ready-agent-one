@@ -14,7 +14,17 @@ export const scenePropsSchema = z.array(
     type: z.string(),
     name: z.string(),
     description: z.string(),
-    position: z.string(),
+    moving: z.boolean(),
+    rolling: z.boolean(),
+    current_position: z.object({
+      x: z.number(),
+      y: z.number(),
+    }),
+    target_position: z.object({
+      x: z.number(),
+      y: z.number(),
+    }),
+
   })
 );
 
@@ -31,7 +41,7 @@ export const gameStateSchema = z.object({
   }),
   recentHistory: z.array(
     z.object({
-      character: charactersEnum,
+      character: z.string(),
       actions: actionSchema,
       message: z.string(),
     })

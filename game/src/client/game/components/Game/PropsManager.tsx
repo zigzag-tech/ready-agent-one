@@ -20,17 +20,15 @@ function PropRenderer({
     name: string;
     type: string;
     description: string;
-    position: string;
     moving: boolean;
     rolling: boolean;
     current_position: {
       x: number;
       y: number;
-      previousX: number;
-      previousY: number;
-      targetX: number;
-      targetY: number;
-      angle: number;
+    };
+    target_position: {
+      x: number;
+      y: number;
     };
   };
 }) {
@@ -88,34 +86,30 @@ export function PropsManager() {
           name: "cat",
           type: "person",
           description: "a cat",
-          position: "east",
           moving: currentPlayerState.moving,
           rolling: currentPlayerState.rolling,
           current_position: {
-            x: 1,
+            x: 0,
             y: 0,
-            previousX: 0,
-            previousY: 0,
-            targetX: 0,
-            targetY: 0,
-            angle: 0,
+          },
+          target_position: {
+            x: -1,
+            y: -1,
           },
         },
         {
           name: "dog",
           type: "person",
           description: "a dog",
-          position: "west",
           moving: currentPlayerState.moving,
           rolling: currentPlayerState.rolling,
           current_position: {
             x: -1,
             y: 0,
-            previousX: 0,
-            previousY: 0,
-            targetX: 0,
-            targetY: 0,
-            angle: 0,
+          },
+          target_position: {
+            x: 1,
+            y: 1,
           },
         },
       ],
@@ -145,19 +139,38 @@ export function PropsManager() {
         current: {
           ...gameState.current,
           props: gameState.current.props.map((prop) => {
-            if (prop.type == "person") {
+            if(Math.abs(prop.target_position.x-prop.current_position.x)<0.03 && Math.abs(prop.target_position.y-prop.current_position.y)<0.03){
               return {
                 ...prop,
-                moving: localPlayerState.moving,
-                rolling: localPlayerState.rolling,
+                moving: false,
                 current_position: {
                   ...prop.current_position,
-                  x: prop.current_position.x + 0.01,
-                  y: prop.current_position.y + 0.01,
+                  x: prop.target_position.x,
+                  y: prop.target_position.y
                 },
               };
-            } else {
-              return prop;
+            }else if (prop.type == "person" && (prop.target_position.x != prop.current_position.x || prop.target_position.y != prop.current_position.y)) {
+              const direction = new THREE.Vector3(
+                prop.target_position.x - prop.current_position.x,
+                0,
+                prop.target_position.y - prop.current_position.y,
+              );
+              direction.normalize().multiplyScalar(0.01);
+              return {
+                ...prop,
+                moving: true,
+                current_position: {
+                  ...prop.current_position,
+                  x: prop.current_position.x + direction.x,
+                  y: prop.current_position.y + direction.z,
+                },
+              };
+            }
+            else {
+              return {
+                ...prop,
+                moving: false,
+              };
             }
           }),
         },

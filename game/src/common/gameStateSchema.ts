@@ -14,18 +14,17 @@ export const scenePropsSchema = z.array(
     type: z.string(),
     name: z.string(),
     description: z.string(),
-    position: z.string(),
     moving: z.boolean(),
     rolling: z.boolean(),
     current_position: z.object({
       x: z.number(),
       y: z.number(),
-      previousX: z.number(),
-      previousY: z.number(),
-      targetX: z.number(),
-      targetY: z.number(),
-      angle: z.number()
-    })
+    }),
+    target_position: z.object({
+      x: z.number(),
+      y: z.number(),
+    }),
+
   })
 );
 

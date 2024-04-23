@@ -60,9 +60,16 @@ ZZEnv.setGlobal(
     sceneNumber: 1,
     recentHistory: [
       {
-        character: "guy",
-        message: "Hey, what's that?",
-        actions: [],
+        subject: "guy",
+        intent: "Guy is looking for a place to take a selfie.",
+        reflection: "Guy is looking for a place to take a selfie.",
+        actions: [
+          {
+            action_type: "talk",
+            target: "morgan",
+            message: "Hey, Morgan, do you see that cave?",
+          },
+        ],
       },
     ],
     totalNumOfLines: 1,

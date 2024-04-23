@@ -2,14 +2,14 @@ import { generateResponseOllama } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import { gameStateSchema } from "../common/gameStateSchema";
-import { characterInputSchema } from "./genPromptUtils";
+import { characterOutputSchema } from "./genPromptUtils";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: {
-    character: characterInputSchema,
+    character: characterOutputSchema,
     supervision: gameStateSchema,
   },
   output: gameStateSchema,
@@ -33,12 +33,11 @@ export const summaryWorker = summarySpec.defineWorker({
           break;
         }
         case "character": {
-          const { actions, from } = data;
-          const label = from;
+          const { actions, subject, intent, reflection } = data;
           currentState.recentHistory.push({
-            subject: label,
-            reflection: "", // TODO: add reflection
-            intent: "", // TODO: add intent
+            subject,
+            reflection,
+            intent,
             actions,
           });
           const SUMMARIZE_THRESHOLD = 9;

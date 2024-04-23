@@ -3,11 +3,13 @@ import { generateResponseOllama } from "./generateResponseOllama";
 import { GameState } from "./summarySpec";
 import { actionSchema, charactersEnum } from "../common/gameStateSchema";
 
-export type Actions = z.infer<typeof actionSchema>;
+export type Action = z.infer<typeof actionSchema>;
 
-export const characterInputSchema = z.object({
-  from: charactersEnum,
-  actions: actionSchema,
+export const characterOutputSchema = z.object({
+  subject: charactersEnum,
+  reflection: z.string(),
+  intent: z.string(),
+  actions: z.array(actionSchema),
 });
 
 export const DIRECTIVE_BY_ROLE = {
@@ -20,7 +22,7 @@ export const DIRECTIVE_BY_ROLE = {
 export async function genMessagePrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState,
-  actions: Actions
+  actions: Action[]
 ) {
   const INST_AND_EXAMPLE_1 = `<s>[INST] You are a helpful assistant. Your job is to use the provided CHARACTER NAME, CHARACTER DESCRIPTION, CONTEXT, CHARACTER ACTIONS to return what the character would say.
 INSTRUCTIONS
@@ -302,18 +304,19 @@ SUBJECT NEXT ACTION(S):
   return prompt;
 }
 
-export function parseJSONResponse(raw: string | null) {
-  if (!raw) return [] as Actions;
+export function parseJSONResponse(raw: string) {
   try {
     // heuristic to find the [] enclosure substring
     // note: 03-23 we tried to allow for multiple actions in json response
     // const start = raw.indexOf("{");
     // const end = raw.lastIndexOf("}") + 1;
     // const responseJsonString = raw.slice(start, end);
-    const responseJson = JSON.parse(raw.trim()) as { actions: Actions };
-    return responseJson.actions;
+    const responseJson = JSON.parse(raw.trim()) as z.infer<
+      typeof characterOutputSchema
+    >;
+    return responseJson;
   } catch (e) {
     console.log("Error parsing response", e, "raw:", raw);
-    return [] as Actions;
+    throw e;
   }
 }

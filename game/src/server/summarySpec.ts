@@ -3,6 +3,7 @@ import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import { gameStateSchema } from "../common/gameStateSchema";
 import { characterOutputSchema } from "./genPromptUtils";
+import { genStateChangesByActions } from "./gameEngine";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
@@ -34,11 +35,13 @@ export const summaryWorker = summarySpec.defineWorker({
         }
         case "character": {
           const { actions, subject, intent, reflection } = data;
+          const stateChanges = genStateChangesByActions(data);
           currentState.recentHistory.push({
             subject,
             reflection,
             intent,
             actions,
+            stateChanges,
           });
           const SUMMARIZE_THRESHOLD = 9;
           // keep accululating the history until it reaches 10

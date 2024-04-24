@@ -70,6 +70,7 @@ ZZEnv.setGlobal(
             message: "Hey, Morgan, do you see that cave?",
           },
         ],
+        stateChanges: [],
       },
     ],
     totalNumOfLines: 1,

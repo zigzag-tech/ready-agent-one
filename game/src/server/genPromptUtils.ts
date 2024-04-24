@@ -269,8 +269,8 @@ ${state.current.props.map((prop) => JSON.stringify(prop)).join(",\n")}
 RECENT ACTIVITY LOG:
 [
 ${state.recentHistory
-  .flatMap((history) =>
-    history.actions.map((action) => {
+  .flatMap((history) => {
+    const actions = history.actions.map((action) => {
       const baseObj = {
         subject: history.subject,
         action_type: action.action_type,
@@ -278,8 +278,11 @@ ${state.recentHistory
       if (action.target) baseObj["target"] = action.target;
       if (action.message) baseObj["message"] = action.message;
       return baseObj;
-    })
-  )
+    });
+    return [...actions, ...history.stateChanges].map((obj) =>
+      JSON.stringify(obj)
+    );
+  })
   .join(",\n")}
 ]
 

@@ -138,7 +138,9 @@ export function PropsManager() {
       subject.subscribe(subscriber);
     });
 
-    // TODO: convert game state change events to incremental updates
+    // TODO:
+    // 1. transform the observable to incremental position changes every 50ms
+    // 2. Instead of useFrame, set the state by subscribing to the final outcome of the observable
 
     const sub = subject.subscribe({
       next: (v) => console.log(`observerA: ${JSON.stringify(v)}`),

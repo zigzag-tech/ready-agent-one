@@ -9,6 +9,8 @@ import Knight from "../../../3d/models/Knight/Knight";
 import { useSnapshot } from "valtio";
 import { npcPlayerVisual } from "../../../3d/models/Knight/NPC";
 import { useFrame } from "@react-three/fiber";
+import { Subject, Observable } from "rxjs";
+
 interface localPlayerState {
   moving: boolean;
   rolling: boolean;
@@ -129,9 +131,95 @@ export function PropsManager() {
       },
     ],
   });
-  const npcRef = useRef<THREE.Group>(null);
-  const groupRef = useRef<THREE.Group>(null);
-  const localPlayerState = useSnapshot(npcPlayerVisual);
+
+  useEffect(() => {
+    const subject = new Subject<StateChangeEvent>();
+    const obs = new Observable<StateChangeEvent>((subscriber) => {
+      subject.subscribe(subscriber);
+    });
+
+    // TODO: convert game state change events to incremental updates
+
+    const sub = subject.subscribe({
+      next: (v) => console.log(`observerA: ${JSON.stringify(v)}`),
+    });
+
+    (async () => {
+      await sleep(1000);
+      subject.next({
+        subject: "dog",
+        fromState: {
+          position: {
+            x: 0,
+            y: 0,
+          },
+        },
+        toState: {
+          position: {
+            x: 1,
+            y: 1,
+          },
+        },
+      });
+      await sleep(2000);
+      subject.next({
+        subject: "cat",
+        fromState: {
+          position: {
+            x: 1,
+            y: 1,
+          },
+        },
+        toState: {
+          position: {
+            x: 0,
+            y: 0,
+          },
+        },
+      });
+      await sleep(2000);
+      subject.next({
+        subject: "remote",
+        fromState: {
+          status: "off",
+        },
+        toState: {
+          status: "on",
+        },
+      });
+      await sleep(2000);
+      subject.next({
+        subject: "cat",
+        fromState: {
+          position: {
+            x: 1,
+            y: 1,
+          },
+        },
+        toState: {
+          position: {
+            x: 1,
+            y: 0,
+          },
+        },
+      });
+      await sleep(2000);
+      subject.next({
+        subject: "remote",
+        fromState: {
+          status: "on",
+        },
+        toState: {
+          status: "off",
+        },
+      });
+    })();
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
   useFrame(() => {
     if (gameState.current.props.length > 0) {
       const newGameState = {
@@ -139,21 +227,29 @@ export function PropsManager() {
         current: {
           ...gameState.current,
           props: gameState.current.props.map((prop) => {
-            if(Math.abs(prop.target_position.x-prop.current_position.x)<0.03 && Math.abs(prop.target_position.y-prop.current_position.y)<0.03){
+            if (
+              Math.abs(prop.target_position.x - prop.current_position.x) <
+                0.03 &&
+              Math.abs(prop.target_position.y - prop.current_position.y) < 0.03
+            ) {
               return {
                 ...prop,
                 moving: false,
                 current_position: {
                   ...prop.current_position,
                   x: prop.target_position.x,
-                  y: prop.target_position.y
+                  y: prop.target_position.y,
                 },
               };
-            }else if (prop.type == "person" && (prop.target_position.x != prop.current_position.x || prop.target_position.y != prop.current_position.y)) {
+            } else if (
+              prop.type == "person" &&
+              (prop.target_position.x != prop.current_position.x ||
+                prop.target_position.y != prop.current_position.y)
+            ) {
               const direction = new THREE.Vector3(
                 prop.target_position.x - prop.current_position.x,
                 0,
-                prop.target_position.y - prop.current_position.y,
+                prop.target_position.y - prop.current_position.y
               );
               direction.normalize().multiplyScalar(0.01);
               return {
@@ -165,8 +261,7 @@ export function PropsManager() {
                   y: prop.current_position.y + direction.z,
                 },
               };
-            }
-            else {
+            } else {
               return {
                 ...prop,
                 moving: false,
@@ -190,3 +285,21 @@ export function PropsManager() {
 }
 
 const MAGNITUDE = 5;
+
+type SubjectState = {
+  position: {
+    x: number;
+    y: number;
+  };
+  status: string;
+};
+
+type StateChangeEvent = {
+  subject: string;
+  fromState: Partial<SubjectState>;
+  toState: Partial<SubjectState>;
+};
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

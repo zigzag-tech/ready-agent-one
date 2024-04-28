@@ -149,8 +149,12 @@ export function PropsManager() {
   useEffect(() => {
     const subject = new Subject<StateChangeEvent>();
     const obs = subject.pipe(
-      filter(event => event.fromState.position !== undefined && event.toState.position !== undefined), // Ensure positions are defined
-      switchMap(event => {
+      filter(
+        (event) =>
+          event.fromState.position !== undefined &&
+          event.toState.position !== undefined
+      ), // Ensure positions are defined
+      switchMap((event) => {
         const fromPosition = event.fromState.position!;
         const toPosition = event.toState.position!;
         const duration = 2000; // Duration of the transition
@@ -159,27 +163,31 @@ export function PropsManager() {
         const positions = interpolatePositions(fromPosition, toPosition, steps);
         return interval(intervalTime).pipe(
           take(positions.length),
-          map(i => ({
+          map((i) => ({
             subject: event.subject,
-            position: positions[i]
+            position: positions[i],
+            isFinal: i === positions.length - 1, // Check if it's the final step
           }))
         );
       })
     );
 
-    // TODO:
-    // 1. transform the observable to incremental position changes every 50ms
-    // 2. Instead of useFrame, set the state by subscribing to the final outcome of the observable
-
-    const sub = obs.subscribe(update => {
-      setGameState(prevState => ({
+    const sub = obs.subscribe((update) => {
+      setGameState((prevState) => ({
         ...prevState,
         current: {
           ...prevState.current,
-          props: prevState.current.props.map(prop => 
-            prop.name === update.subject ? { ...prop, current_position: update.position, moving : true } : prop
-          )
-        }
+          props: prevState.current.props.map(
+            (prop) =>
+              prop.name === update.subject
+                ? {
+                    ...prop,
+                    current_position: update.position,
+                    moving: !update.isFinal,
+                  }
+                : prop // Set moving to false if it's the final update
+          ),
+        },
       }));
     });
 
@@ -259,60 +267,6 @@ export function PropsManager() {
     };
   }, []);
 
-  // useFrame(() => {
-  //   if (gameState.current.props.length > 0) {
-  //     const newGameState = {
-  //       ...gameState,
-  //       current: {
-  //         ...gameState.current,
-  //         props: gameState.current.props.map((prop) => {
-  //           if (
-  //             Math.abs(prop.target_position.x - prop.current_position.x) <
-  //               0.03 &&
-  //             Math.abs(prop.target_position.y - prop.current_position.y) < 0.03
-  //           ) {
-  //             return {
-  //               ...prop,
-  //               moving: false,
-  //               current_position: {
-  //                 ...prop.current_position,
-  //                 x: prop.target_position.x,
-  //                 y: prop.target_position.y,
-  //               },
-  //             };
-  //           } else if (
-  //             prop.type == "person" &&
-  //             (prop.target_position.x != prop.current_position.x ||
-  //               prop.target_position.y != prop.current_position.y)
-  //           ) {
-  //             const direction = new THREE.Vector3(
-  //               prop.target_position.x - prop.current_position.x,
-  //               0,
-  //               prop.target_position.y - prop.current_position.y
-  //             );
-  //             direction.normalize().multiplyScalar(0.01);
-  //             return {
-  //               ...prop,
-  //               moving: true,
-  //               current_position: {
-  //                 ...prop.current_position,
-  //                 x: prop.current_position.x + direction.x,
-  //                 y: prop.current_position.y + direction.z,
-  //               },
-  //             };
-  //           } else {
-  //             return {
-  //               ...prop,
-  //               moving: false,
-  //             };
-  //           }
-  //         }),
-  //       },
-  //     };
-
-  //     setGameState({ ...newGameState });
-  //   }
-  // });
 
   return (
     <>

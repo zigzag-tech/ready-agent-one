@@ -9,11 +9,25 @@ import Knight from "../../../3d/models/Knight/Knight";
 import { useSnapshot } from "valtio";
 import { npcPlayerVisual } from "../../../3d/models/Knight/NPC";
 import { useFrame } from "@react-three/fiber";
-import { Subject, Observable } from "rxjs";
-
+import { Subject, Observable, interval } from "rxjs";
+import { switchMap, take, map, filter } from "rxjs/operators";
 interface localPlayerState {
   moving: boolean;
   rolling: boolean;
+}
+type StateChangeEvent = {
+  subject: string;
+  fromState: Partial<SubjectState>;
+  toState: Partial<SubjectState>;
+};
+
+function interpolatePositions(from: { x: number; y: number; }, to: { x: number; y: number; }, steps: number) {
+  const dx = (to.x - from.x) / steps;
+  const dy = (to.y - from.y) / steps;
+  return Array.from({ length: steps }, (_, i) => ({
+    x: from.x + dx * i,
+    y: from.y + dy * i
+  }));
 }
 function PropRenderer({
   prop,
@@ -91,8 +105,8 @@ export function PropsManager() {
           moving: currentPlayerState.moving,
           rolling: currentPlayerState.rolling,
           current_position: {
-            x: 0,
-            y: 0,
+            x: 1,
+            y: 1,
           },
           target_position: {
             x: -1,
@@ -106,7 +120,7 @@ export function PropsManager() {
           moving: currentPlayerState.moving,
           rolling: currentPlayerState.rolling,
           current_position: {
-            x: -1,
+            x: 0,
             y: 0,
           },
           target_position: {
@@ -134,16 +148,39 @@ export function PropsManager() {
 
   useEffect(() => {
     const subject = new Subject<StateChangeEvent>();
-    const obs = new Observable<StateChangeEvent>((subscriber) => {
-      subject.subscribe(subscriber);
-    });
+    const obs = subject.pipe(
+      filter(event => event.fromState.position !== undefined && event.toState.position !== undefined), // Ensure positions are defined
+      switchMap(event => {
+        const fromPosition = event.fromState.position!;
+        const toPosition = event.toState.position!;
+        const duration = 2000; // Duration of the transition
+        const intervalTime = 50; // Interval time for updates
+        const steps = duration / intervalTime;
+        const positions = interpolatePositions(fromPosition, toPosition, steps);
+        return interval(intervalTime).pipe(
+          take(positions.length),
+          map(i => ({
+            subject: event.subject,
+            position: positions[i]
+          }))
+        );
+      })
+    );
 
     // TODO:
     // 1. transform the observable to incremental position changes every 50ms
     // 2. Instead of useFrame, set the state by subscribing to the final outcome of the observable
 
-    const sub = subject.subscribe({
-      next: (v) => console.log(`observerA: ${JSON.stringify(v)}`),
+    const sub = obs.subscribe(update => {
+      setGameState(prevState => ({
+        ...prevState,
+        current: {
+          ...prevState.current,
+          props: prevState.current.props.map(prop => 
+            prop.name === update.subject ? { ...prop, current_position: update.position, moving : true } : prop
+          )
+        }
+      }));
     });
 
     (async () => {
@@ -194,8 +231,8 @@ export function PropsManager() {
         subject: "cat",
         fromState: {
           position: {
-            x: 1,
-            y: 1,
+            x: 0,
+            y: 0,
           },
         },
         toState: {
@@ -222,60 +259,60 @@ export function PropsManager() {
     };
   }, []);
 
-  useFrame(() => {
-    if (gameState.current.props.length > 0) {
-      const newGameState = {
-        ...gameState,
-        current: {
-          ...gameState.current,
-          props: gameState.current.props.map((prop) => {
-            if (
-              Math.abs(prop.target_position.x - prop.current_position.x) <
-                0.03 &&
-              Math.abs(prop.target_position.y - prop.current_position.y) < 0.03
-            ) {
-              return {
-                ...prop,
-                moving: false,
-                current_position: {
-                  ...prop.current_position,
-                  x: prop.target_position.x,
-                  y: prop.target_position.y,
-                },
-              };
-            } else if (
-              prop.type == "person" &&
-              (prop.target_position.x != prop.current_position.x ||
-                prop.target_position.y != prop.current_position.y)
-            ) {
-              const direction = new THREE.Vector3(
-                prop.target_position.x - prop.current_position.x,
-                0,
-                prop.target_position.y - prop.current_position.y
-              );
-              direction.normalize().multiplyScalar(0.01);
-              return {
-                ...prop,
-                moving: true,
-                current_position: {
-                  ...prop.current_position,
-                  x: prop.current_position.x + direction.x,
-                  y: prop.current_position.y + direction.z,
-                },
-              };
-            } else {
-              return {
-                ...prop,
-                moving: false,
-              };
-            }
-          }),
-        },
-      };
+  // useFrame(() => {
+  //   if (gameState.current.props.length > 0) {
+  //     const newGameState = {
+  //       ...gameState,
+  //       current: {
+  //         ...gameState.current,
+  //         props: gameState.current.props.map((prop) => {
+  //           if (
+  //             Math.abs(prop.target_position.x - prop.current_position.x) <
+  //               0.03 &&
+  //             Math.abs(prop.target_position.y - prop.current_position.y) < 0.03
+  //           ) {
+  //             return {
+  //               ...prop,
+  //               moving: false,
+  //               current_position: {
+  //                 ...prop.current_position,
+  //                 x: prop.target_position.x,
+  //                 y: prop.target_position.y,
+  //               },
+  //             };
+  //           } else if (
+  //             prop.type == "person" &&
+  //             (prop.target_position.x != prop.current_position.x ||
+  //               prop.target_position.y != prop.current_position.y)
+  //           ) {
+  //             const direction = new THREE.Vector3(
+  //               prop.target_position.x - prop.current_position.x,
+  //               0,
+  //               prop.target_position.y - prop.current_position.y
+  //             );
+  //             direction.normalize().multiplyScalar(0.01);
+  //             return {
+  //               ...prop,
+  //               moving: true,
+  //               current_position: {
+  //                 ...prop.current_position,
+  //                 x: prop.current_position.x + direction.x,
+  //                 y: prop.current_position.y + direction.z,
+  //               },
+  //             };
+  //           } else {
+  //             return {
+  //               ...prop,
+  //               moving: false,
+  //             };
+  //           }
+  //         }),
+  //       },
+  //     };
 
-      setGameState({ ...newGameState });
-    }
-  });
+  //     setGameState({ ...newGameState });
+  //   }
+  // });
 
   return (
     <>
@@ -296,11 +333,7 @@ type SubjectState = {
   status: string;
 };
 
-type StateChangeEvent = {
-  subject: string;
-  fromState: Partial<SubjectState>;
-  toState: Partial<SubjectState>;
-};
+
 
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

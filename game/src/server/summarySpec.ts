@@ -1,8 +1,9 @@
-import { generateResponseOllama } from "./generateResponseOllama";
+import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import { gameStateSchema } from "../common/gameStateSchema";
 import { characterInputSchema } from "./genPromptUtils";
+import { Message } from "ollama";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
@@ -48,6 +49,21 @@ export const summaryWorker = summarySpec.defineWorker({
               0,
               Math.round(SUMMARIZE_THRESHOLD)
             );
+            const messages: Message[] = [
+              {
+                role: "system",
+                content: `Summarize the previous summary and the recent conversation history into a single summary.`,
+              },
+              // 1-shot example
+              {
+                role: "user",
+                content: `
+SUMMARY OF PAST CONVERSATION:
+
+`,
+              },
+            ];
+
             const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
   SUMMARY OF PAST CONVERSATION:
   ${currentState.current.summary}
@@ -59,7 +75,7 @@ export const summaryWorker = summarySpec.defineWorker({
 `;
 
             currentState.current.summary =
-              (await generateResponseOllama(prompt)) || "";
+              (await generateResponseOllamaByMessages(messages)) || "";
           }
           // console.log(
           //   "SUMMARY WORKER OUTPUT",

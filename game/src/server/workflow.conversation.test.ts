@@ -66,7 +66,6 @@ ZZEnv.setGlobal(
         actions: [
           {
             action_type: "talk",
-            target: "morgan",
             message: "Hey, Morgan, do you see that cave?",
           },
         ],

@@ -42,10 +42,6 @@ function PropRenderer({
       x: number;
       y: number;
     };
-    target_position: {
-      x: number;
-      y: number;
-    };
   };
 }) {
   const pos = useMemo(
@@ -108,10 +104,6 @@ export function PropsManager() {
             x: 1,
             y: 1,
           },
-          target_position: {
-            x: -1,
-            y: -1,
-          },
         },
         {
           name: "dog",
@@ -122,10 +114,6 @@ export function PropsManager() {
           current_position: {
             x: 0,
             y: 0,
-          },
-          target_position: {
-            x: 1,
-            y: 1,
           },
         },
       ],

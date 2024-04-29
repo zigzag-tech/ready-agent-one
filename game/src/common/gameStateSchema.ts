@@ -22,6 +22,7 @@ export const actionSchema = z.object({
   action_type: z.string(),
   target: z.string().optional().nullable(),
   message: z.string().optional(),
+  destination: z.union([locationSchema, z.string()]).optional(),
 });
 
 export const thoughtSchema = z.object({
@@ -34,18 +35,16 @@ export const scenePropsSchema = z.array(
     type: z.string(),
     name: z.string(),
     description: z.string(),
-    position: z.string(),
+    position: z.union([locationSchema, z.string()]),
     // front-end only:
     moving: z.boolean().optional(),
     rolling: z.boolean().optional(),
-    current_position: z.object({
-      x: z.number(),
-      y: z.number(),
-    }).optional(),
-    target_position: z.object({
-      x: z.number(),
-      y: z.number(),
-    }).optional(),
+    current_position: z
+      .object({
+        x: z.number(),
+        y: z.number(),
+      })
+      .optional(),
   })
 );
 

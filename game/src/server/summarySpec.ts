@@ -52,30 +52,124 @@ export const summaryWorker = summarySpec.defineWorker({
               0,
               Math.round(SUMMARIZE_THRESHOLD)
             );
+            const dummyState: GameState = {
+              current: {
+                summary:
+                  "The world has been in chaos for a long time. Lizard war has been going on for centuries. Now only two lizards remain.",
+                props: [
+                  {
+                    name: "lizard-warrior",
+                    type: "person",
+                    description: "a lizard warrior",
+                    position: {
+                      x: 0,
+                      y: 0,
+                    },
+                  },
+                  {
+                    name: "lizard-nihilist",
+                    type: "person",
+                    description: "a lizard nihilist",
+                    position: {
+                      x: 1,
+                      y: 1,
+                    },
+                  },
+                  {
+                    name: "flames",
+                    type: "object",
+                    description: "The fire of doom",
+                    position: {
+                      x: 2,
+                      y: 2,
+                    },
+                  },
+                ],
+              },
+              sceneNumber: 1,
+              recentHistory: [
+                {
+                  subject: "lizard-warrior",
+                  reflection:
+                    "I am the last of my kind. I must fight to survive.",
+                  intent: "fight",
+                  actions: [
+                    {
+                      action_type: "message",
+                      message: "I must fight to survive.",
+                    },
+                  ],
+                  stateChanges: [],
+                },
+                {
+                  subject: "lizard-nihilist",
+                  reflection:
+                    "There is no point for us lizard to exist. I must stop lizard-one.",
+                  intent: "stop existing",
+                  actions: [
+                    {
+                      action_type: "message",
+                      message: "I must stop lizard-one.",
+                    },
+                    {
+                      action_type: "move",
+                      destination: {
+                        x: 0,
+                        y: 0,
+                      },
+                    },
+                  ],
+                  stateChanges: [
+                    {
+                      subject: "lizard-nihilist",
+                      fromLocation: {
+                        x: 0,
+                        y: 0,
+                      },
+                      toLocation: {
+                        x: 1,
+                        y: 1,
+                      },
+                    },
+                  ],
+                },
+              ],
+              totalNumOfLines: 0,
+            };
             const messages: Message[] = [
               {
                 role: "system",
-                content: `Summarize the previous summary and the recent conversation history into a single summary.`,
+                content: `
+Summarize the previous summary and the recent conversation history into a single summary.
+  
+INSTRUCTIONS
+- Keep the response under 50 words.
+- Return the JSON object and nothing else.
+`,
               },
               // 1-shot example
               {
                 role: "user",
                 content: `
 SUMMARY OF PAST CONVERSATION:
+${dummyState.current.summary}
+RECENT CONVERSATION HISTORY:
+[
+${dummyState.recentHistory.map((h) => `${JSON.stringify(h)}`).join("\n")}
+]
 
+UPDATED SUMMARY:
+`,
+              },
+              {
+                role: "assistant",
+                content: `
+{ 
+  "summary": "After a long-drawn-out war among lizards the world has only two lizards left in the fames of doom. Lizard the warrior wants to survive, while lizard the nihilist wants their species to stop existing. Lizard the nihilist is charging towards lizard the warrior." 
+}
 `,
               },
             ];
-
-            const prompt = `Summarize the previous summary and the recent conversation history into a single summary.
-  SUMMARY OF PAST CONVERSATION:
-  ${currentState.current.summary}
-  RECENT CONVERSATION HISTORY:
-  ${oldest.join("\n")}
-  
-  ### INSTRUCTIONS
-  - Keep the response under 50 words.
-`;
 
             currentState.current.summary =
               (await generateResponseOllamaByMessages(messages)) || "";

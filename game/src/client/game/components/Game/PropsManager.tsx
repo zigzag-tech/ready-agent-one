@@ -83,7 +83,7 @@ export function PropsManager() {
   if (!job) {
     return <>Error: cannot connect to the game server</>;
   }
-  // const gameState = useOutput({
+  // const {last: gameState} = useOutput({
   //   tag: "game-state",
   //   def: gameStateSchema,
   //   job,
@@ -254,7 +254,6 @@ export function PropsManager() {
       sub.unsubscribe();
     };
   }, []);
-
 
   return (
     <>

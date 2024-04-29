@@ -114,7 +114,7 @@ export function NPC({
   const job1 = React.useContext(LiveJobContext).conersationJob;
   if (!job1) return null;
 
-  const resp = useOutput({
+  const { last: resp } = useOutput({
     tag: "character-talk",
     job: job1,
     def: z.object({

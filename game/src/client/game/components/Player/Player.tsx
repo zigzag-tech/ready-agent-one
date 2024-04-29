@@ -439,7 +439,7 @@ const Player: React.FC = () => {
   const workflowJob = React.useContext(LiveJobContext).conersationJob;
   if (!workflowJob) return null;
 
-  const resp = useOutput({
+  const { last: resp } = useOutput({
     tag: "character-talk",
     job: workflowJob,
     def: z.object({
@@ -448,7 +448,7 @@ const Player: React.FC = () => {
     }),
   });
 
-  const userSignalResp = useOutput({
+  const { last: userSignalResp } = useOutput({
     tag: "user-signal",
     job: workflowJob,
     def: z.enum(["ENABLE", "DISABLE"]),

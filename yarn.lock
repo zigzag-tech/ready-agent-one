@@ -2294,7 +2294,7 @@ __metadata:
     "@preconstruct/cli": "npm:^2.8.3"
     "@types/react": "npm:^18"
     rxjs: "npm:^7"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
     uuid: "npm:^9"
   peerDependencies:
     react: ^18
@@ -2321,8 +2321,7 @@ __metadata:
     lru-cache: "npm:^10.2.0"
     p-limit: "npm:^3"
     rxjs: "npm:^7"
-    typescript: "npm:5.4.2"
-    uuid: "npm:^9"
+    typescript: "npm:5.4.4"
     winston: "npm:^3.12.0"
     zod: "npm:^3.22.4"
     zod-to-json-schema: "npm:^3.22.4"
@@ -2343,7 +2342,7 @@ __metadata:
     "@types/jsonwebtoken": "npm:^9.0.6"
     jsonwebtoken: "npm:^9.0.2"
     socket.io: "npm:^4"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
   languageName: unknown
   linkType: soft
 
@@ -2353,7 +2352,7 @@ __metadata:
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
     replicate: "npm:^0.21"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
   peerDependencies:
     "@livestack/core": "*"
   languageName: unknown
@@ -2364,7 +2363,7 @@ __metadata:
   resolution: "@livestack/runpod@workspace:livestack/runpod"
   dependencies:
     "@preconstruct/cli": "npm:^2.8.3"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
   peerDependencies:
     "@livestack/core": "*"
     zod: ^3
@@ -2391,7 +2390,7 @@ __metadata:
     jest: "npm:^29.7.0"
     ts-jest: "npm:^29.1.2"
     ts-node: "npm:^10.9.1"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
     zod: "npm:^3.22.4"
   languageName: unknown
   linkType: soft
@@ -2405,7 +2404,7 @@ __metadata:
     "@types/node": "npm:^20.11.0"
     nice-grpc: "npm:^2.1.7"
     nice-grpc-client-middleware-retry: "npm:^3.1.7"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
   languageName: unknown
   linkType: soft
 
@@ -2427,7 +2426,7 @@ __metadata:
     nice-grpc: "npm:^2.1"
     redis: "npm:^4"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
     uuid: "npm:^9"
   languageName: unknown
   linkType: soft
@@ -2445,7 +2444,7 @@ __metadata:
     long: "npm:^5.2.3"
     protobufjs: "npm:^7.2.6"
     ts-proto: "npm:^1.169.1"
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
   languageName: unknown
   linkType: soft
 
@@ -2453,7 +2452,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@livestack/viz@workspace:livestack/viz"
   dependencies:
-    typescript: "npm:5.4.2"
+    typescript: "npm:5.4.4"
   peerDependencies:
     "@livestack/core": "*"
   languageName: unknown
@@ -11063,6 +11062,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:5.4.4":
+  version: 5.4.4
+  resolution: "typescript@npm:5.4.4"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/4d8de0291204ed61ca97ad0cba2ce064e09c4988ca1c451c787e4653ba76296ba35177a52694e8a00cf4ef899d0ee83338663b926d8b7d55167ff0ba81549999
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>":
   version: 5.4.2
   resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=d69c25"
@@ -11070,6 +11079,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/22e2f213c3ffe5960c5eaec6c95c04e01858fed57a94be250746f540b935b2c18c3c3fc80d3ab65d28c0aba1eb76284557ba3bf521d28caee811c44ba2b648f9
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A5.4.4#optional!builtin<compat/typescript>":
+  version: 5.4.4
+  resolution: "typescript@patch:typescript@npm%3A5.4.4#optional!builtin<compat/typescript>::version=5.4.4&hash=d69c25"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/413a0714a2b554bef8d39a386e5d25df22c625dd677d7260c1a08625016e46ce5f79dae0812641a22ab37c905370b407dc6838e11d4f10845821127d42221876
   languageName: node
   linkType: hard
 

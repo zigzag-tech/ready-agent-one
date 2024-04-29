@@ -2,15 +2,16 @@ import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import { gameStateSchema } from "../common/gameStateSchema";
-import { characterInputSchema } from "./genPromptUtils";
 import { Message } from "ollama";
+import { characterOutputSchema } from "./genPromptUtils";
+import { genStateChangesByActions } from "./gameEngine";
 
 export type GameState = z.infer<typeof gameStateSchema>;
 
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: {
-    character: characterInputSchema,
+    character: characterOutputSchema,
     supervision: gameStateSchema,
   },
   output: gameStateSchema,
@@ -34,12 +35,14 @@ export const summaryWorker = summarySpec.defineWorker({
           break;
         }
         case "character": {
-          const { actions, from, message } = data;
-          const label = from;
+          const { actions, subject, intent, reflection } = data;
+          const stateChanges = genStateChangesByActions(data);
           currentState.recentHistory.push({
-            character: label,
+            subject,
+            reflection,
+            intent,
             actions,
-            message,
+            stateChanges,
           });
           const SUMMARIZE_THRESHOLD = 9;
           // keep accululating the history until it reaches 10
@@ -88,10 +91,7 @@ SUMMARY OF PAST CONVERSATION:
           console.log({
             ...currentState,
             recentHistory: currentState.recentHistory.map(
-              (h) =>
-                `${h.character}: ${JSON.stringify(h.actions)}; message: ${
-                  h.message
-                }`
+              (h) => `${h.subject}: ${JSON.stringify(h.actions)};`
             ),
           });
           await output.emit(currentState);

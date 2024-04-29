@@ -1,30 +1,51 @@
 import { z } from "zod";
+const objectState = z.union([z.literal("occupied"), z.literal("idle")]);
+const locationSchema = z.object({ x: z.number(), y: z.number() });
+const objectStateChangeSchema = z.object({
+  subject: z.string(),
+  fromState: objectState,
+  toState: objectState,
+});
+const objectLocationChangeSchema = z.object({
+  subject: z.string(),
+  fromLocation: locationSchema,
+  toLocation: locationSchema,
+});
+
+export const changeSchema = z.union([
+  objectStateChangeSchema,
+  objectLocationChangeSchema,
+]);
+
 export const charactersEnum = z.enum(["morgan", "jeremy", "guy"]);
-export const actionSchema = z.array(
-  z.object({
-    type: z.string(),
-    target: z.string().optional(),
-    destination: z.string().optional(),
-    // Apr-2 experiment - moving message to a separate attribute
-    // message: z.string().optional(),
-  })
-);
+export const actionSchema = z.object({
+  action_type: z.string(),
+  target: z.string().optional().nullable(),
+  message: z.string().optional(),
+});
+
+export const thoughtSchema = z.object({
+  thought: z.string(),
+  intent: z.string(),
+});
+
 export const scenePropsSchema = z.array(
   z.object({
     type: z.string(),
     name: z.string(),
     description: z.string(),
-    moving: z.boolean(),
-    rolling: z.boolean(),
+    position: z.string(),
+    // front-end only:
+    moving: z.boolean().optional(),
+    rolling: z.boolean().optional(),
     current_position: z.object({
       x: z.number(),
       y: z.number(),
-    }),
+    }).optional(),
     target_position: z.object({
       x: z.number(),
       y: z.number(),
-    }),
-
+    }).optional(),
   })
 );
 
@@ -41,9 +62,11 @@ export const gameStateSchema = z.object({
   }),
   recentHistory: z.array(
     z.object({
-      character: z.string(),
-      actions: actionSchema,
-      message: z.string(),
+      subject: z.string(),
+      reflection: z.string(),
+      intent: z.string(),
+      actions: z.array(actionSchema),
+      stateChanges: z.array(changeSchema),
     })
   ),
   totalNumOfLines: z.number(),

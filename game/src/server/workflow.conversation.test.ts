@@ -11,31 +11,51 @@ const vicinity = [
     type: "person",
     name: role,
     description: DIRECTIVE_BY_ROLE[role],
-    position: `${index + 1} meters ahead`,
+    // position: `${index + 1} meters ahead`,
+    position: {
+      x: index + 1,
+      y: 0,
+    },
   })),
   {
     type: "object",
     name: "cave",
     description: "A mysterious cave",
-    position: "north",
+    // position: "north",
+    position: {
+      x: 0,
+      y: 5,
+    },
   },
   {
     type: "object",
     name: "small rock",
     description: "A small rock",
-    position: "east",
+    // position: "east",
+    position: {
+      x: 5,
+      y: 0,
+    },
   },
   {
     type: "object",
     name: "giant tree",
     description: "An alien looking tree that is 10 meters tall",
-    position: "south",
+    // position: "south",
+    position: {
+      x: 0,
+      y: -10,
+    },
   },
   {
     type: "object",
     name: "lifeform detector",
     description: "A device that can detect lifeforms.",
-    position: "west",
+    // position: "west",
+    position: {
+      x: -5,
+      y: 0,
+    },
   },
 ];
 

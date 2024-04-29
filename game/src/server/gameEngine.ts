@@ -11,8 +11,11 @@ export const genStateChangesByActions = (
     if (action_type === "walk_to" || action_type === "run_to") {
       outputs.push({
         subject,
-        fromLocation: { x: 0, y: 0 },
-        toLocation: { x: 1, y: 1 },
+        fromLocation: {
+          x: -5 + Math.random() * 10,
+          y: -5 + Math.random() * 10,
+        },
+        toLocation: { x: -5 + Math.random() * 10, y: -5 + Math.random() * 10 },
       });
     } else if (
       action_type === "examine" ||

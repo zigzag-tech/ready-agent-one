@@ -23,7 +23,7 @@
     "leva": "^0.9.35",
     "modelfusion": "^0.137.0",
     "nipplejs": "^0.10.1",
-    "ollama": "^0.4.9",
+    "ollama": "^0.5",
     "openai": "^4.33.0",
     "planck": "^1.0.0",
     "r3f-form": "^4.0.0",

@@ -6089,7 +6089,7 @@ __metadata:
     leva: "npm:^0.9.35"
     modelfusion: "npm:^0.137.0"
     nipplejs: "npm:^0.10.1"
-    ollama: "npm:^0.4.9"
+    ollama: "npm:^0.5"
     openai: "npm:^4.33.0"
     planck: "npm:^1.0.0"
     r3f-form: "npm:^4.0.0"
@@ -10154,12 +10154,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ollama@npm:^0.4.9":
-  version: 0.4.9
-  resolution: "ollama@npm:0.4.9"
+"ollama@npm:^0.5":
+  version: 0.5.0
+  resolution: "ollama@npm:0.5.0"
   dependencies:
     whatwg-fetch: "npm:^3.6.20"
-  checksum: 10c0/8a056fe5c4fc825b5ea6f9214e70e04d0abfcc607d54a1603e095d7d94878b2e42aa90c28b29af780db04d91e1de6a19ba315d6aad970480465efcd9ce9b053d
+  checksum: 10c0/8e3f5f8eecb4bf302f4467a5e35ff569da48554e4d4069a51e0361474b6beff43565264edf429f65ecb3e71a4e583cda35472cca511cdd8dc42d3323639f54a8
   languageName: node
   linkType: hard
 

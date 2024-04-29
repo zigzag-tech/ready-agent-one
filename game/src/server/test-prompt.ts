@@ -1,4 +1,9 @@
-export const PROMPT = `<s>[INST]
+import { Message } from "ollama";
+
+export const MESSAGES: Message[] = [
+  {
+    role: "system",
+    content: `
 You are a helpful assistant. Your job is to determine the next actions of the subject based on the context provided.
 
 INSTRUCTIONS:
@@ -6,7 +11,11 @@ INSTRUCTIONS:
 - Always include a "talk" action with a message in the response.
 - Respond with ONLY the JSON and do NOT add any notes or comments.
 - Think step by step and provide the most logical action for the subject.
-
+`,
+  },
+  {
+    role: "user",
+    content: `
 CONTEXT:
 Emily Loves cats. She is a cat lover and she is always surrounded by cats. 
 Her cat is sick. 
@@ -38,7 +47,11 @@ SUBJECT ALLOWED ACTIONS:
 ]
 
 SUBJECT NEXT ACTION(S):
-[/INST]
+`,
+  },
+  {
+    role: "assistant",
+    content: `
 {
   "subject": "emily",
   "reflection": "I am so worried about the cat. Must get her to the vet soon.",
@@ -52,12 +65,13 @@ SUBJECT NEXT ACTION(S):
       "action_type": "talk",
       "message": "Hey, kitty! You want some treats?"
     }
-  ],
-  "reason": "Emily wants to lure the cat with treats."
-}</s>
-
-<s>
-[INST]
+  ]
+}
+`,
+  },
+  {
+    role: "user",
+    content: `
 CONTEXT:
 Frodo encounters a green bear on his way to the mountain.
 
@@ -90,25 +104,31 @@ SUBJECT ALLOWED ACTIONS:
 ]
 
 SUBJECT NEXT ACTION(S):
-[/INST]
+`,
+  },
+  {
+    role: "assistant",
+    content: `
 {
-"subject": "frodo",
-  "reflection": "Man that didn't work! This bear is distracting me from my goal.",
-    "intent": "I must hide from the bear.",
-  "actions": [
-    {
-        "action_type": "talk",
-        "message": "Oh no, the bear didn't die! I must hide!"
-    },
-    {
-      "action_type": "hide",
-      "target": null
-    }
-  ],
-  "reason": "Frodo doesn't want to get hurt so that he can continue on with his adventure."
-}</s>
-<s>
-[INST]
+  "subject": "frodo",
+    "reflection": "Man that didn't work! This bear is distracting me from my goal.",
+      "intent": "I must hide from the bear.",
+    "actions": [
+      {
+          "action_type": "talk",
+          "message": "Oh no, the bear didn't die! I must hide!"
+      },
+      {
+        "action_type": "hide",
+        "target": null
+      }
+    ]
+  }
+    `,
+  },
+  {
+    role: "user",
+    content: `
 
 CONTEXT:
 It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.
@@ -166,9 +186,9 @@ SUBJECT ALLOWED ACTIONS:
 }
 
 SUBJECT NEXT ACTION(S):
-[/INST]
-`;
-
+    `,
+  },
+];
 
 /**
  subject: "jeremy",

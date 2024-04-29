@@ -5,7 +5,7 @@ import { z } from "zod";
 import {
   Actions,
   genMessagePrompt,
-  genActionPrompt as genActionPrompt,
+  genActionPrompt,
   parseJSONResponse,
   characterInputSchema,
 } from "./genPromptUtils";

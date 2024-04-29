@@ -49,6 +49,7 @@ export async function generateResponseOllamaByMessages(messages: Message[]) {
     const response = await ollama.chat({
       options: {
         temperature: 1.2,
+        num_predict: 3000,
       },
       stream: true,
       model: CONVO_MODEL_LLAMA3,

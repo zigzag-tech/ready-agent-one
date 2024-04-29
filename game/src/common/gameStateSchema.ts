@@ -1,5 +1,5 @@
 import { z } from "zod";
-const objectState = z.union([z.literal("occupied"), z.literal("idle")]);
+const objectState = z.string();
 const locationSchema = z.object({ x: z.number(), y: z.number() });
 const objectStateChangeSchema = z.object({
   subject: z.string(),

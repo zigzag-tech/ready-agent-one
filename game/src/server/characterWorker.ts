@@ -3,13 +3,12 @@ import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import {
-  genMessagePrompt,
   genActionPrompt,
   parseJSONResponse,
   characterOutputSchema,
 } from "./genPromptUtils";
 import { actionSchema } from "../common/gameStateSchema";
-import { generateResponseOllama } from "./generateResponseOllama";
+import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import _ from "lodash";
 
 // TODO:
@@ -22,7 +21,7 @@ export const characterSpec = JobSpec.define({
   output: {
     default: characterOutputSchema,
     "user-signal": z.enum(["ENABLE", "DISABLE"]),
-    "action-prompt": z.string(),
+    "action-prompt": z.any(),
   },
 });
 
@@ -38,14 +37,14 @@ export const characterWorker = characterSpec.defineWorker({
 
       const actionPrompt = genActionPrompt(whoseTurn, state);
       await output("action-prompt").emit(actionPrompt);
-      const response = await generateResponseOllama(actionPrompt);
+      const response = await generateResponseOllamaByMessages(actionPrompt);
       if (!response) {
         throw new Error("No response from LLM");
       }
       const r = parseJSONResponse(response);
-      const withoutReason = _.omit(r, "reason");
+      // const withoutReason = _.omit(r, "reason");
 
-      await output("default").emit(withoutReason);
+      await output("default").emit(r);
     }
   },
 });

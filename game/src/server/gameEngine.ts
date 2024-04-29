@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { characterOutputSchema } from "./genPromptUtils";
 import { actionSchema, changeSchema } from "../common/gameStateSchema";
-
+import _ from "lodash";
 export const genStateChangesByActions = (
   characterActions: z.infer<typeof characterOutputSchema>
 ) => {
@@ -16,14 +16,14 @@ export const genStateChangesByActions = (
       });
     } else if (
       action_type === "examine" ||
-      action_type === "operate" ||
       action_type === "punch" ||
-      action_type === "kick"
+      action_type === "kick" ||
+      action_type === "operate"
     ) {
       outputs.push({
         subject: target || "unknown_target",
         fromState: "idle",
-        toState: "occupied",
+        toState: _.sample(["beeping", "silent", "on", "exploding", "flashing"]),
       });
     }
   });

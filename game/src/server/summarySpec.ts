@@ -171,8 +171,10 @@ UPDATED SUMMARY:
               },
             ];
 
-            currentState.current.summary =
-              (await generateResponseOllamaByMessages(messages)) || "";
+            const { summary: newSummary } = JSON.parse(
+              (await generateResponseOllamaByMessages(messages))!
+            ) as { summary: string };
+            currentState.current.summary = newSummary;
           }
           // console.log(
           //   "SUMMARY WORKER OUTPUT",

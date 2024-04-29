@@ -1,4 +1,4 @@
-import { generateResponseOllama } from "./generateResponseOllama";
+import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import { GameState } from "./summarySpec";
 import {
@@ -7,6 +7,7 @@ import {
   scenePropsSchema,
 } from "../common/gameStateSchema";
 import { z } from "zod";
+import { Message } from "ollama";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -25,7 +26,16 @@ export const supervisorWorker = supervisorSpec.defineWorker({
       if (!conversationTooLong(state)) {
         await output.emit(state);
       } else {
-        const previousScenesPrompt = `Write a summary of everything listed below.
+        const messages: Message[] = [
+          {
+            role: "system",
+            content: `
+You are a helpful assistant. Write a summary of everything listed by the user.
+`,
+          },
+          {
+            role: "user",
+            content: `
 ${
   state.previous
     ? `\n### SUMMARY FOR PAST PLOT (SCENES 1 - ${state.sceneNumber - 1})\n${
@@ -40,20 +50,16 @@ ${state.current.summary}
 ${JSON.stringify(state.recentHistory)}
 
 Instructions:
-Keep the response under 200 words.`;
-        // console.log(
-        //   "supervisorSpec previousScenesPrompt",
-        //   previousScenesPrompt
-        // );
-        const previousScenesSummary =
-          (await generateResponseOllama(previousScenesPrompt)) || "";
-        // console.log(
-        //   "supervisorSpec previousScenesSummary",
-        //   previousScenesSummary
-        // );
-        const newSceneNumber = state.sceneNumber + 1;
-        const newTopicPrompt = `You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
+Keep the response under 200 words.
+`,
+          },
+        ];
 
+        const previousScenesSummary =
+          (await generateResponseOllamaByMessages(messages)) || "";
+
+        const newSceneNumber = state.sceneNumber + 1;
+        const newTopicPrompt = `
 SUMMARY OF PAST PLOT (SCENES 1 - ${state.sceneNumber + 1})
 ${previousScenesSummary}
 ${state.current.summary}
@@ -72,18 +78,157 @@ INSTRUCTIONS
 `;
         // console.log("supervisorSpec newTopicPrompt", newTopicPrompt);
         // console.log("SUPERVISOR: GENERATING NEW SCENE");
+
+        const newTopicMessages: Message[] = [
+          {
+            role: "system",
+            content: `
+            You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
+`,
+          },
+          {
+            role: "user",
+            content: newTopicPrompt,
+          },
+        ];
         await output("new-chapter-prompt").emit(newTopicPrompt);
-        const newTopic = (await generateResponseOllama(newTopicPrompt)) || "";
+        const newTopic =
+          (await generateResponseOllamaByMessages(newTopicMessages)) || "";
         await output("new-chapter-raw").emit(newTopic);
         // console.log("supervisorSpec newTopic", newTopic);
 
-        const sceneGenPrompt = `${PROPS_INST_AND_EXAMPLE_1}
-${PROPS_EXAMPLE_2}
-[INST]
+        const sceneGenMessages: Message[] = [
+          {
+            role: "system",
+            content: `
+You are a scene writing assistant. Your job is to write the type, name, description, and position of objects mentioned in the SCENE PROVIDED.
+
+Instructions:
+- position should be only one of "north", "west", "south", "east".
+- type should be only one of the "person" or "object".
+- name and description should be a string.
+- Respond with only the JSON and do NOT explain.
+`,
+          },
+          {
+            role: "user",
+            content: `
 SCENE PROVIDED:
-${newTopic}
-[/INST]`;
-        const scene = (await generateResponseOllama(sceneGenPrompt)) || "";
+In a cozy room, Emily sits, a black cat curled at her feet. She tries to get the cat's attention with a toy.
+
+JSON OBJECTS:
+`,
+          },
+          {
+            role: "assistant",
+            content: `
+${JSON.stringify(
+  {
+    props: [
+      {
+        type: "person",
+        name: "emily",
+        description: "emily the cat lover.",
+        position: {
+          x: 0,
+          y: 0,
+        },
+      },
+      {
+        type: "object",
+        name: "cat",
+        description: "A black cat.",
+        position: {
+          x: 0,
+          y: 5,
+        },
+      },
+      {
+        type: "object",
+        name: "cat toy",
+        description: "A round toy with a bell inside.",
+        position: {
+          x: 5,
+          y: 5,
+        },
+      },
+    ],
+  },
+  null,
+  2
+)}
+`,
+          },
+          {
+            role: "user",
+            content: `
+SCENE PROVIDED:
+In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a treasure chest and a skeleton.
+
+JSON OBJECTS:
+`,
+          },
+          {
+            role: "assistant",
+            content: `
+${JSON.stringify(
+  {
+    props: [
+      {
+        type: "person",
+        name: "jack",
+        description: "Jack the adventurer.",
+        position: {
+          x: 0,
+          y: 0,
+        },
+      },
+      {
+        type: "person",
+        name: "tracy",
+        description: "Tracy the adventurer.",
+        position: {
+          x: 5,
+          y: 0,
+        },
+      },
+      {
+        type: "person",
+        name: "indiana",
+        description: "Indiana the adventurer.",
+        position: {
+          x: 5,
+          y: 5,
+        },
+      },
+      {
+        type: "object",
+        name: "treasure chest",
+        description: "A large treasure chest.",
+        position: {
+          x: 2,
+          y: 2,
+        },
+      },
+      {
+        type: "object",
+        name: "skeleton",
+        description: "A human skeleton.",
+        position: {
+          x: 3,
+          y: 3,
+        },
+      },
+    ],
+  },
+  null,
+  2
+)}
+            `,
+          },
+        ];
+        const scene =
+          (await generateResponseOllamaByMessages(sceneGenMessages)) || "";
         const props = parseJSONResponse(scene);
         console.log("supervisorSpec props", scene);
 
@@ -123,88 +268,3 @@ function parseJSONResponse(raw: string | null) {
     return [] as Props;
   }
 }
-
-const PROPS_INST_AND_EXAMPLE_1 = `<s>[INST]You are a scene writing assistant.
-Instructions:
-Your job is to write the type, name, description, and position of objects mentioned in the SCENE PROVIDED.
-- position should be only one of "north", "west", "south", "east".
-- type should be only one of the "person" or "object".
-- name and description should be a string.
-Respond with only the JSON and do NOT explain.
-
-SCENE PROVIDED:
-In a cozy room, Emily sits, a black cat curled at her feet. She tries to get the cat's attention with a toy.
-
-The above example would output the following json:
-[/INST]
-${JSON.stringify(
-  {
-    props: [
-      {
-        type: "person",
-        name: "emily",
-        description: "emily the cat lover.",
-        position: "north",
-      },
-      {
-        type: "object",
-        name: "cat",
-        description: "A black cat.",
-        position: "west",
-      },
-      {
-        type: "object",
-        name: "cat toy",
-        description: "A round toy with a bell inside.",
-        position: "north",
-      },
-    ],
-  },
-  null,
-  2
-)}
-</s>`;
-
-const PROPS_EXAMPLE_2 = `<s>[INST]
-SCENE PROVIDED:
-In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a treasure chest and a skeleton.
-[/INST]
-${JSON.stringify(
-  {
-    props: [
-      {
-        type: "person",
-        name: "jack",
-        description: "Jack the adventurer.",
-        position: "north",
-      },
-      {
-        type: "person",
-        name: "tracy",
-        description: "Tracy the adventurer.",
-        position: "south",
-      },
-      {
-        type: "person",
-        name: "indiana",
-        description: "Indiana the adventurer.",
-        position: "east",
-      },
-      {
-        type: "object",
-        name: "treasure chest",
-        description: "A large treasure chest.",
-        position: "east",
-      },
-      {
-        type: "object",
-        name: "skeleton",
-        description: "A human skeleton.",
-        position: "north",
-      },
-    ],
-  },
-  null,
-  2
-)}
-</s>`;

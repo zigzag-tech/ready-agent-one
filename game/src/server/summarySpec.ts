@@ -36,7 +36,7 @@ export const summaryWorker = summarySpec.defineWorker({
         }
         case "character": {
           const { actions, subject, intent, reflection } = data;
-          const stateChanges = genStateChangesByActions(data);
+          const stateChanges = genStateChangesByActions(data,currentState);
           currentState.recentHistory.push({
             subject,
             reflection,

@@ -13,7 +13,7 @@ export const genStateChangesByActions = (
   }
   // const outputs = [] as z.infer<typeof changeSchema>[];
   
-  const outputs :z.infer<typeof changeSchema>[]= actions.map(({ destination, action_type, target }) => {
+  const outputs= actions.map(({ destination, action_type, target }) => {
     
     if (action_type === "walk_to" || action_type === "run_to") {
       if(!destination) {
@@ -40,9 +40,9 @@ export const genStateChangesByActions = (
         toState: _.sample(["beeping", "silent", "on", "exploding", "flashing"]),
       };
     } else {
-      throw new Error("Do not know how to handle action_type " + action_type);
+      return null;
     }
-  });
+  }).filter(o => !!o) as z.infer<typeof changeSchema>[];
   return outputs;
 };
 

@@ -187,14 +187,17 @@ ${role}
 
 SUBJECT ALLOWED ACTIONS:
 [
-  {"action_type": "talk", "message": "[sample_message]"},
-  {"action_type": "walk_to", "target": "[sample_destination]"},
-  {"action_type": "jump", "target": null },
-  {"action_type": "examine", "target": "[sample_target]" },
-  {"action_type": "operate", "target": "[sample_target]" },
-  {"action_type": "punch", "target": "[sample_target]" },
-  {"action_type": "kick", "target": "[sample_target]" },
-  {"action_type": "run_to", "target": "[sample_destination]" }
+${
+  [ {"action_type": "talk", "message": "[sample_message]", target: null },
+  {"action_type": "walk_to", "message": null,"destination": {x: 1, y: 1 }, target: null },
+  {"action_type": "run_to", "message": null,"destination": {x: 2, y: 1 }, target: null },
+  {"action_type": "jump", "message": null, "target": null, destination: null },
+  {"action_type": "examine", "message": null, "target": "[sample_target]", destination: null  },
+  {"action_type": "operate", "message": null, "target": "[sample_target]", destination: null  },
+  {"action_type": "punch", "message": null, "target": "[sample_target]", destination: null  },
+  {"action_type": "kick", "message": null, "target": "[sample_target]", destination: null  },
+  {"action_type": "run_to", "message": null, "target": "[sample_destination]", destination: null  }].map(d => JSON.stringify(d)).join("\n")
+}
 ]
 
 SUBJECT NEXT ACTION(S):

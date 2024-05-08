@@ -7,8 +7,8 @@ export const DIRECTIVE_BY_ROLE = {
   guy: "Guy is tring to acting helpful but he always messes things up.",
 };
 
-const vicinity = [
-  ...Object.entries(DIRECTIVE_BY_ROLE).map(([role, description], index) => ({
+export const characterProps = Object.entries(DIRECTIVE_BY_ROLE).map(
+  ([role, description], index) => ({
     type: "person",
     name: role,
     description: description,
@@ -17,7 +17,11 @@ const vicinity = [
       x: index + 1,
       y: 0,
     },
-  })),
+  })
+);
+
+const vicinity = [
+  ...characterProps,
   {
     type: "object",
     name: "cave",
@@ -73,7 +77,7 @@ export const alienCaveInitialInput: GameState = {
       reflection: "Guy is looking for a place to take a selfie.",
       actions: [
         {
-          action_type: "talk",
+          action: "talk",
           message: "Hey, Morgan, do you see that cave?",
         },
       ],

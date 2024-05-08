@@ -93,7 +93,7 @@ export const summaryWorker = summarySpec.defineWorker({
                   intent: "fight",
                   actions: [
                     {
-                      action_type: "message",
+                      action: "message",
                       message: "I must fight to survive.",
                     },
                   ],
@@ -106,11 +106,11 @@ export const summaryWorker = summarySpec.defineWorker({
                   intent: "stop existing",
                   actions: [
                     {
-                      action_type: "message",
+                      action: "message",
                       message: "I must stop lizard-one.",
                     },
                     {
-                      action_type: "move",
+                      action: "move",
                       destination: {
                         x: 0,
                         y: 0,

@@ -15,16 +15,20 @@ export const genStateChangesByActions = (
     (p) => p.name === subject
   );
   if (!subjectProp) {
+    console.error(
+      "Props: ",
+      currentState.current.props.map((p) => p.name)
+    );
     throw new Error("Subject of name " + subject + " not found in props. ");
   }
   // const outputs = [] as z.infer<typeof changeSchema>[];
 
   const outputs = actions
-    .map(({ destination, action_type, target }) => {
-      if (action_type === "walk_to" || action_type === "run_to") {
+    .map(({ destination, action, target }) => {
+      if (action === "walk_to" || action === "run_to") {
         if (!destination) {
           throw new Error(
-            "Destination not set while the action type is " + action_type
+            "Destination not set while the action type is " + action
           );
         }
 
@@ -36,10 +40,10 @@ export const genStateChangesByActions = (
           toLocation: { ...destination },
         };
       } else if (
-        action_type === "examine" ||
-        action_type === "punch" ||
-        action_type === "kick" ||
-        action_type === "operate"
+        action === "examine" ||
+        action === "punch" ||
+        action === "kick" ||
+        action === "operate"
       ) {
         return {
           subject: target || "unknown_target",
@@ -61,12 +65,12 @@ export const genStateChangesByActions = (
 };
 
 // [
-//     {"action_type": "talk", "message": "[sample_message]"},
-//     {"action_type": "walk_to", "target": "[sample_destination]"},
-//     {"action_type": "jump", "target": null },
-//     {"action_type": "examine", "target": "[sample_target]" },
-//     {"action_type": "operate", "target": "[sample_target]" },
-//     {"action_type": "punch", "target": "[sample_target]" },
-//     {"action_type": "kick", "target": "[sample_target]" },
-//     {"action_type": "run_to", "target": "[sample_destination]" }
+//     {"action": "talk", "message": "[sample_message]"},
+//     {"action": "walk_to", "target": "[sample_destination]"},
+//     {"action": "jump", "target": null },
+//     {"action": "examine", "target": "[sample_target]" },
+//     {"action": "operate", "target": "[sample_target]" },
+//     {"action": "punch", "target": "[sample_target]" },
+//     {"action": "kick", "target": "[sample_target]" },
+//     {"action": "run_to", "target": "[sample_destination]" }
 //   ]

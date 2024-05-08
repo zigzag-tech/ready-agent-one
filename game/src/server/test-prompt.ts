@@ -31,8 +31,8 @@ OBJECTS IN SCENE:
 
 RECENT ACTIVITY LOG:
 [
-    {"subject: "cat", "action_type":"walk", "target":"emily"},
-    {"subject: "cat", "action_type":"talk", "message":"Meow."}
+    {"subject: "cat", "action":"walk", "target":"emily"},
+    {"subject: "cat", "action":"talk", "message":"Meow."}
 ]
 
 SUBJECT NAME:
@@ -40,10 +40,10 @@ Emily
 
 SUBJECT ALLOWED ACTIONS:
 [
-  {"action_type": "walk", "target": "[sample_destination]"},
-  {"action_type": "look_at", "target": "[sample_target]"},
-  {"action_type": "feed", "target": "[sample_target]"},
-  {"action_type": "talk", "message": "[sample_message]"}
+  {"action": "walk", "target": "[sample_destination]"},
+  {"action": "look_at", "target": "[sample_target]"},
+  {"action": "feed", "target": "[sample_target]"},
+  {"action": "talk", "message": "[sample_message]"}
 ]
 
 SUBJECT NEXT ACTION(S):
@@ -58,11 +58,11 @@ SUBJECT NEXT ACTION(S):
   "intent": "I must catch the cat and take her to the vet.",
   "actions": [
     {
-      "action_type": "look_at",
+      "action": "look_at",
       "target": "cat"
     },
     {
-      "action_type": "talk",
+      "action": "talk",
       "message": "Hey, kitty! You want some treats?"
     }
   ]
@@ -87,9 +87,9 @@ OBJECTS IN SCENE:
 
 RECENT ACTIVITY LOG:
 [
-    {"subject":"frodo", "action_type":"shoot", "target":"bear"},
-    {"subject":"bear", "action_type":"talk", "message":"Growl!"},
-    {"subject":"bear", "action_type":"attack","target":"frodo"},
+    {"subject":"frodo", "action":"shoot", "target":"bear"},
+    {"subject":"bear", "action":"talk", "message":"Growl!"},
+    {"subject":"bear", "action":"attack","target":"frodo"},
 ]
 
 SUBJECT NAME:
@@ -97,10 +97,10 @@ Frodo
 
 SUBJECT ALLOWED ACTIONS:
 [
-    {"action_type": "shoot", "target": "[some_target]"},
-    {"action_type": "attack", "target": "[some_target]"},
-    {"action_type": "hide", "target": null },
-    {"action_type": "talk", "message": "[sample_message]"}
+    {"action": "shoot", "target": "[some_target]"},
+    {"action": "attack", "target": "[some_target]"},
+    {"action": "hide", "target": null },
+    {"action": "talk", "message": "[sample_message]"}
 ]
 
 SUBJECT NEXT ACTION(S):
@@ -115,11 +115,11 @@ SUBJECT NEXT ACTION(S):
       "intent": "I must hide from the bear.",
     "actions": [
       {
-          "action_type": "talk",
+          "action": "talk",
           "message": "Oh no, the bear didn't die! I must hide!"
       },
       {
-        "action_type": "hide",
+        "action": "hide",
         "target": null
       }
     ]
@@ -149,24 +149,24 @@ OBJECTS IN SCENE:
 
 RECENT ACTIVITY LOG:
 [
-    {"subject": "morgan", "action_type": "talk", "message": "Hey, what's that?" },
-    {"subject": "jeremy", "action_type":"examine","target":"cave"},
-    {"subject": "jeremy", "action_type":"talk", "message":"Oh, a mysterious cave in the year 2300? Well, if I had a nickel for every alien jungle I've stumbled upon, I'd be richer than Croesus. Now, let me just operate this lifeform detector real quick and... hmm, nothing out of the ordinary here, folks! Oh, and that giant tree? It seems to be an ancient remnant from the dawn of time itself. Just goes to show you never know what secrets nature holds!"},
-    {"subject": "guy", "action_type":"walk","target":"morgan" },
-    {"subject": "guy": "action_type": "talk", "message":"Morgan, you're in the way! Move it!"},
-    {"subject":"morgan", "action_type": "examine", "target": "cave" },
+    {"subject": "morgan", "action": "talk", "message": "Hey, what's that?" },
+    {"subject": "jeremy", "action":"examine","target":"cave"},
+    {"subject": "jeremy", "action":"talk", "message":"Oh, a mysterious cave in the year 2300? Well, if I had a nickel for every alien jungle I've stumbled upon, I'd be richer than Croesus. Now, let me just operate this lifeform detector real quick and... hmm, nothing out of the ordinary here, folks! Oh, and that giant tree? It seems to be an ancient remnant from the dawn of time itself. Just goes to show you never know what secrets nature holds!"},
+    {"subject": "guy", "action":"walk","target":"morgan" },
+    {"subject": "guy": "action": "talk", "message":"Morgan, you're in the way! Move it!"},
+    {"subject":"morgan", "action": "examine", "target": "cave" },
     {    "subject":"morgan",
-        "action_type": "talk",
+        "action": "talk",
         "message": "Jeremy, could you please give me some space to examine the cave properly?"
       },
       {
         "subject":"guy",
-        "action_type": "examine",
+        "action": "examine",
         "target": "cave"
       },
       {
         "subject":"guy",
-        "action_type": "talk",
+        "action": "talk",
         "message": "Hey guys, I think I found something over here!"
       }
 ]
@@ -176,13 +176,13 @@ jeremy
 
 SUBJECT ALLOWED ACTIONS:
 [
-    {"action_type": "walk", "target": "[sample_destination]"},
-    {"action_type": "jump" }
-    {"action_type": "examine", "target": "[sample_target]" }
-    {"action_type": "operate", "target": "[sample_target]" }
-    {"action_type": "punch", "target": "[sample_target]" }
-    {"action_type": "kick", "target": "[sample_target]" }
-    {"action_type": "run", "destination": "[sample_destination]" 
+    {"action": "walk", "target": "[sample_destination]"},
+    {"action": "jump" }
+    {"action": "examine", "target": "[sample_target]" }
+    {"action": "operate", "target": "[sample_target]" }
+    {"action": "punch", "target": "[sample_target]" }
+    {"action": "kick", "target": "[sample_target]" }
+    {"action": "run", "destination": "[sample_destination]" 
 }
 
 SUBJECT NEXT ACTION(S):
@@ -192,11 +192,11 @@ SUBJECT NEXT ACTION(S):
 
 /**
  subject: "jeremy",
- action_type: "walk",
+ action: "walk",
  destination: "cave entrance",
 
  subject: "jeremy",
- action_type: "talk",
+ action: "talk",
  message: "Team, follow me. Let's go into the cave.",
 
  Reason: Jeremy is the leader of the group and he is leading the team into the cave.

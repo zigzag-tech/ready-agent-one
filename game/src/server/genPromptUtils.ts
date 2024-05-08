@@ -47,8 +47,8 @@ OBJECTS IN SCENE:
 
 RECENT ACTIVITY LOG:
 [
-    {"subject: "cat", "action_type":"walk", "target":"emily"},
-    {"subject: "cat", "action_type":"talk", "message":"Meow."}
+    {"subject: "cat", "action":"walk", "target":"emily"},
+    {"subject: "cat", "action":"talk", "message":"Meow."}
 ]
 
 SUBJECT NAME:
@@ -56,10 +56,10 @@ Emily
 
 SUBJECT ALLOWED ACTIONS:
 [
-  {"action_type": "walk", "target": "[sample_destination]"},
-  {"action_type": "look_at", "target": "[sample_target]"},
-  {"action_type": "feed", "target": "[sample_target]"},
-  {"action_type": "talk", "message": "[sample_message]"}
+  {"action": "walk", "target": "[sample_destination]"},
+  {"action": "look_at", "target": "[sample_target]"},
+  {"action": "feed", "target": "[sample_target]"},
+  {"action": "talk", "message": "[sample_message]"}
 ]
 
 SUBJECT NEXT ACTION(S):
@@ -74,11 +74,11 @@ SUBJECT NEXT ACTION(S):
   "intent": "I must catch the cat and take her to the vet.",
   "actions": [
     {
-      "action_type": "look_at",
+      "action": "look_at",
       "target": "cat"
     },
     {
-      "action_type": "talk",
+      "action": "talk",
       "message": "Hey, kitty! You want some treats?"
     }
   ]
@@ -103,9 +103,9 @@ OBJECTS IN SCENE:
 
 RECENT ACTIVITY LOG:
 [
-    {"subject":"frodo", "action_type":"shoot", "target":"bear"},
-    {"subject":"bear", "action_type":"talk", "message":"Growl!"},
-    {"subject":"bear", "action_type":"attack","target":"frodo"},
+    {"subject":"frodo", "action":"shoot", "target":"bear"},
+    {"subject":"bear", "action":"talk", "message":"Growl!"},
+    {"subject":"bear", "action":"attack","target":"frodo"},
 ]
 
 SUBJECT NAME:
@@ -113,10 +113,10 @@ Frodo
 
 SUBJECT ALLOWED ACTIONS:
 [
-    {"action_type": "shoot", "target": "[some_target]"},
-    {"action_type": "attack", "target": "[some_target]"},
-    {"action_type": "hide", "target": null },
-    {"action_type": "talk", "message": "[sample_message]"}
+    {"action": "shoot", "target": "[some_target]"},
+    {"action": "attack", "target": "[some_target]"},
+    {"action": "hide", "target": null },
+    {"action": "talk", "message": "[sample_message]"}
 ]
 
 SUBJECT NEXT ACTION(S):
@@ -131,11 +131,11 @@ SUBJECT NEXT ACTION(S):
     "intent": "I must hide from the bear.",
   "actions": [
     {
-        "action_type": "talk",
+        "action": "talk",
         "message": "Oh no, the bear didn't die! I must hide!"
     },
     {
-      "action_type": "hide",
+      "action": "hide",
       "target": null
     }
   ]
@@ -162,7 +162,7 @@ ${state.recentHistory
     const actions = history.actions.map((action) => {
       const baseObj = {
         subject: history.subject,
-        action_type: action.action_type,
+        action: action.action,
       };
       if (action.target) baseObj["target"] = action.target;
       if (action.message) baseObj["message"] = action.message;
@@ -181,46 +181,46 @@ ${role}
 SUBJECT ALLOWED ACTIONS:
 [
 ${[
-  { action_type: "talk", message: "[sample_message]", target: null },
+  { action: "talk", message: "[sample_message]", target: null },
   {
-    action_type: "walk_to",
+    action: "walk_to",
     message: null,
     destination: { x: 1, y: 1 },
     target: null,
   },
   {
-    action_type: "run_to",
+    action: "run_to",
     message: null,
     destination: { x: 2, y: 1 },
     target: null,
   },
-  { action_type: "jump", message: null, target: null, destination: null },
+  { action: "jump", message: null, target: null, destination: null },
   {
-    action_type: "examine",
+    action: "examine",
     message: null,
     target: "[sample_target]",
     destination: null,
   },
   {
-    action_type: "operate",
+    action: "operate",
     message: null,
     target: "[sample_target]",
     destination: null,
   },
   {
-    action_type: "punch",
+    action: "punch",
     message: null,
     target: "[sample_target]",
     destination: null,
   },
   {
-    action_type: "kick",
+    action: "kick",
     message: null,
     target: "[sample_target]",
     destination: null,
   },
   {
-    action_type: "run_to",
+    action: "run_to",
     message: null,
     target: "[sample_destination]",
     destination: null,

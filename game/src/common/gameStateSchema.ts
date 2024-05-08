@@ -19,7 +19,7 @@ export const changeSchema = z.union([
 
 export const charactersEnum = z.enum(["morgan", "jeremy", "guy"]);
 export const actionSchema = z.object({
-  action_type: z.string(),
+  action: z.string(),
   target: z.string().optional().nullable(),
   message: z.string().optional().nullable(),
   destination: locationSchema.optional().nullable(),

@@ -8,6 +8,7 @@ import {
 } from "../common/gameStateSchema";
 import { z } from "zod";
 import { Message } from "ollama";
+import { characterProps } from "../common/alien-cave";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -84,6 +85,9 @@ INSTRUCTIONS
             role: "system",
             content: `
             You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
+Instructions:
+- Make a detailed plot, around 200 words.
+- Respone with only the plot and do NOT explain.
 `,
           },
           {
@@ -224,13 +228,34 @@ ${JSON.stringify(
   null,
   2
 )}
-            `,
+`,
+          },
+          {
+            role: "user",
+            content: `
+SCENE PROVIDED:
+${newTopic}
+
+JSON OBJECTS:
+`,
           },
         ];
         const scene =
           (await generateResponseOllamaByMessages(sceneGenMessages)) || "";
-        const props = parseJSONResponse(scene);
-        console.log("supervisorSpec props", scene);
+        const propsMaybeMissingPeople = parseJSONResponse(scene);
+        console.error("supervisorSpec props", scene);
+
+        const existingCharacters = propsMaybeMissingPeople.filter(
+          (prop) =>
+            prop.type === "person" &&
+            characterProps.map((p) => p.name).includes(prop.name)
+        );
+
+        // add any missing characters
+        const missingCharacters = characterProps.filter(
+          (p) => !existingCharacters.find((c) => c.name === p.name)
+        );
+        const newProps = [...propsMaybeMissingPeople, ...missingCharacters];
 
         const newState: GameState = {
           previous: {
@@ -238,7 +263,7 @@ ${JSON.stringify(
           },
           current: {
             summary: newTopic,
-            props,
+            props: newProps,
           },
           sceneNumber: newSceneNumber,
           totalNumOfLines: 0,

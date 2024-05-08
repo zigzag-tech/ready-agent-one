@@ -1,7 +1,7 @@
 import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
-import { GameState } from "./summarySpec";
 import {
+  GameState,
   charactersEnum,
   gameStateSchema,
   scenePropsSchema,
@@ -254,7 +254,7 @@ ${JSON.stringify(
 });
 
 function conversationTooLong(state: GameState) {
-  return state.totalNumOfLines > 20;
+  return state.totalNumOfLines > 8;
 }
 
 function parseJSONResponse(raw: string | null) {

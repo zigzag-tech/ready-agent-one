@@ -12,6 +12,8 @@ import { useFrame } from "@react-three/fiber";
 import { Subject, Observable, interval } from "rxjs";
 import { switchMap, take, map, filter } from "rxjs/operators";
 import { alienCaveInitialInput } from "../../../../common/alien-cave";
+import { useInput, useOutput } from "@livestack/client/src";
+import { characterOutputSchema } from "../../../../common/characterOutputSchema";
 interface localPlayerState {
   moving: boolean;
   rolling: boolean;
@@ -86,11 +88,23 @@ export function PropsManager() {
   if (!job) {
     return <>Error: cannot connect to the game server</>;
   }
-  // const {last: gameState} = useOutput({
-  //   tag: "game-state",
-  //   def: gameStateSchema,
-  //   job,
-  // });
+  const { feed } = useInput({
+    job,
+    tag: "summary-supervision",
+    def: gameStateSchema,
+  });
+
+  useEffect(() => {
+    feed && feed(alienCaveInitialInput);
+  }, [feed]);
+
+  const { last: lastCharacterAction } = useOutput({
+    tag: "character-talk",
+    def: characterOutputSchema,
+    job,
+  });
+
+  console.log(lastCharacterAction?.data);
 
   // mock gameState
   const [gameState, setGameState] = useState<z.infer<typeof gameStateSchema>>(

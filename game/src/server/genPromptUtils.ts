@@ -6,15 +6,10 @@ import {
   charactersEnum,
 } from "../common/gameStateSchema";
 import { Message } from "ollama";
+import { characterOutputSchema } from "../common/characterOutputSchema";
 
 export type Action = z.infer<typeof actionSchema>;
 
-export const characterOutputSchema = z.object({
-  subject: charactersEnum,
-  reflection: z.string(),
-  intent: z.string(),
-  actions: z.array(actionSchema),
-});
 
 
 export function genActionPrompt(
@@ -185,17 +180,54 @@ ${role}
 
 SUBJECT ALLOWED ACTIONS:
 [
-${
-  [ {"action_type": "talk", "message": "[sample_message]", target: null },
-  {"action_type": "walk_to", "message": null,"destination": {x: 1, y: 1 }, target: null },
-  {"action_type": "run_to", "message": null,"destination": {x: 2, y: 1 }, target: null },
-  {"action_type": "jump", "message": null, "target": null, destination: null },
-  {"action_type": "examine", "message": null, "target": "[sample_target]", destination: null  },
-  {"action_type": "operate", "message": null, "target": "[sample_target]", destination: null  },
-  {"action_type": "punch", "message": null, "target": "[sample_target]", destination: null  },
-  {"action_type": "kick", "message": null, "target": "[sample_target]", destination: null  },
-  {"action_type": "run_to", "message": null, "target": "[sample_destination]", destination: null  }].map(d => JSON.stringify(d)).join("\n")
-}
+${[
+  { action_type: "talk", message: "[sample_message]", target: null },
+  {
+    action_type: "walk_to",
+    message: null,
+    destination: { x: 1, y: 1 },
+    target: null,
+  },
+  {
+    action_type: "run_to",
+    message: null,
+    destination: { x: 2, y: 1 },
+    target: null,
+  },
+  { action_type: "jump", message: null, target: null, destination: null },
+  {
+    action_type: "examine",
+    message: null,
+    target: "[sample_target]",
+    destination: null,
+  },
+  {
+    action_type: "operate",
+    message: null,
+    target: "[sample_target]",
+    destination: null,
+  },
+  {
+    action_type: "punch",
+    message: null,
+    target: "[sample_target]",
+    destination: null,
+  },
+  {
+    action_type: "kick",
+    message: null,
+    target: "[sample_target]",
+    destination: null,
+  },
+  {
+    action_type: "run_to",
+    message: null,
+    target: "[sample_destination]",
+    destination: null,
+  },
+]
+  .map((d) => JSON.stringify(d))
+  .join("\n")}
 ]
 
 SUBJECT NEXT ACTION(S):

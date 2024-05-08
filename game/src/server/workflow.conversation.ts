@@ -24,7 +24,7 @@ export const workflow = Workflow.define({
     }),
     conn({
       from: turnControlSpec,
-      to: { spec: characterSpec, input: "default" },
+      to: characterSpec,
     }),
     conn({
       from: summarySpec,
@@ -32,10 +32,7 @@ export const workflow = Workflow.define({
     }),
     conn({
       from: supervisorSpec,
-      to: {
-        spec: summarySpec,
-        input: "supervision",
-      },
+      to: summarySpec.input["supervision"],
     }),
   ],
   exposures: [

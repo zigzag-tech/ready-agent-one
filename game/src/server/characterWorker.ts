@@ -2,14 +2,10 @@ import { green } from "ansis";
 import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
-import {
-  genActionPrompt,
-  parseJSONResponse,
-  characterOutputSchema,
-} from "./genPromptUtils";
-import { actionSchema } from "../common/gameStateSchema";
+import { genActionPrompt, parseJSONResponse } from "./genPromptUtils";
 import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import _ from "lodash";
+import { characterOutputSchema } from "../common/characterOutputSchema";
 
 // TODO:
 // 1. let LLM generate actions (maybe from a set of basic actions)

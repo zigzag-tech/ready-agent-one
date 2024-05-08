@@ -11,6 +11,7 @@ import { npcPlayerVisual } from "../../../3d/models/Knight/NPC";
 import { useFrame } from "@react-three/fiber";
 import { Subject, Observable, interval } from "rxjs";
 import { switchMap, take, map, filter } from "rxjs/operators";
+import { alienCaveInitialInput } from "../../../../common/alien-cave";
 interface localPlayerState {
   moving: boolean;
   rolling: boolean;
@@ -21,12 +22,16 @@ type StateChangeEvent = {
   toState: Partial<SubjectState>;
 };
 
-function interpolatePositions(from: { x: number; y: number; }, to: { x: number; y: number; }, steps: number) {
+function interpolatePositions(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  steps: number
+) {
   const dx = (to.x - from.x) / steps;
   const dy = (to.y - from.y) / steps;
   return Array.from({ length: steps }, (_, i) => ({
     x: from.x + dx * i,
-    y: from.y + dy * i
+    y: from.y + dy * i,
   }));
 }
 function PropRenderer({
@@ -36,22 +41,20 @@ function PropRenderer({
     name: string;
     type: string;
     description: string;
-    moving: boolean;
-    rolling: boolean;
-    current_position: {
-      x: number;
-      y: number;
-    };
   };
 }) {
+  const [moving, setMoving] = useState(false);
+  const [rolling, setRolling] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState({
+    x: 0,
+    y: 0,
+  });
   const pos = useMemo(
     () =>
-      new THREE.Vector3(
-        prop.current_position.x,
-        0,
-        prop.current_position.y
-      ).multiplyScalar(MAGNITUDE),
-    [prop]
+      new THREE.Vector3(currentPosition.x, 0, currentPosition.y).multiplyScalar(
+        MAGNITUDE
+      ),
+    [currentPosition]
   );
   const CharacterComponent = useMemo(() => {
     // Randomly returns either <Robot /> or <Alien />
@@ -66,9 +69,9 @@ function PropRenderer({
           ref={npcRef}
           lastAttack={0}
           lastDamaged={0}
-          moving={prop.moving}
+          moving={moving}
           recharging={false}
-          running={prop.rolling}
+          running={rolling}
         />
       </group>
     );
@@ -90,49 +93,9 @@ export function PropsManager() {
   // });
 
   // mock gameState
-  const [gameState, setGameState] = useState<z.infer<typeof gameStateSchema>>({
-    current: {
-      summary: "a cat and a dog are in the room",
-      props: [
-        {
-          name: "cat",
-          type: "person",
-          description: "a cat",
-          moving: currentPlayerState.moving,
-          rolling: currentPlayerState.rolling,
-          current_position: {
-            x: 1,
-            y: 1,
-          },
-        },
-        {
-          name: "dog",
-          type: "person",
-          description: "a dog",
-          moving: currentPlayerState.moving,
-          rolling: currentPlayerState.rolling,
-          current_position: {
-            x: 0,
-            y: 0,
-          },
-        },
-      ],
-    },
-    sceneNumber: 1,
-    totalNumOfLines: 2,
-    recentHistory: [
-      {
-        character: "cat",
-        actions: [{ type: "move", destination: "center" }],
-        message: "meow",
-      },
-      {
-        character: "dog",
-        actions: [{ type: "move", destination: "north" }],
-        message: "woof",
-      },
-    ],
-  });
+  const [gameState, setGameState] = useState<z.infer<typeof gameStateSchema>>(
+    alienCaveInitialInput
+  );
 
   useEffect(() => {
     const subject = new Subject<StateChangeEvent>();

@@ -1,6 +1,10 @@
 import { z } from "zod";
-import { GameState } from "./summarySpec";
-import { actionSchema, charactersEnum } from "../common/gameStateSchema";
+
+import {
+  GameState,
+  actionSchema,
+  charactersEnum,
+} from "../common/gameStateSchema";
 import { Message } from "ollama";
 
 export type Action = z.infer<typeof actionSchema>;
@@ -12,12 +16,6 @@ export const characterOutputSchema = z.object({
   actions: z.array(actionSchema),
 });
 
-export const DIRECTIVE_BY_ROLE = {
-  morgan:
-    "Morgan is prudent, courageous but could slip into self doubt from time to time. ",
-  jeremy: "Jeremy has a sarcastic streak but deep down he's kind and helpful.",
-  guy: "Guy is tring to acting helpful but he always messes things up.",
-};
 
 export function genActionPrompt(
   role: z.infer<typeof charactersEnum>,

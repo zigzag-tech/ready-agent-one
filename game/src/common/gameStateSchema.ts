@@ -70,3 +70,5 @@ export const gameStateSchema = z.object({
   ),
   totalNumOfLines: z.number(),
 });
+
+export type GameState = z.infer<typeof gameStateSchema>;

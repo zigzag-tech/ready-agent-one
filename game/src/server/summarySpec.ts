@@ -1,12 +1,10 @@
 import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
-import { z } from "zod";
-import { gameStateSchema } from "../common/gameStateSchema";
+import { GameState, gameStateSchema } from "../common/gameStateSchema";
 import { Message } from "ollama";
 import { characterOutputSchema } from "./genPromptUtils";
 import { genStateChangesByActions } from "./gameEngine";
 
-export type GameState = z.infer<typeof gameStateSchema>;
 
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",

@@ -61,7 +61,7 @@ const vicinity = [
 
 ZZEnv.setGlobal(
   ZZEnv.create({
-    projectId: GAME_SPEC_NAME + new Date().toISOString(),
+    projectId: GAME_SPEC_NAME + "-workflow-test",
   })
 );
 

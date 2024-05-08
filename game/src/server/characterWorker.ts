@@ -38,6 +38,7 @@ export const characterWorker = characterSpec.defineWorker({
         throw new Error("No response from LLM");
       }
       const r = parseJSONResponse(response);
+      r.subject = whoseTurn;
       // const withoutReason = _.omit(r, "reason");
 
       await output("default").emit(r);

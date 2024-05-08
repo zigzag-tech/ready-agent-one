@@ -73,7 +73,7 @@ export const alienCaveInitialInput: GameState = {
   recentHistory: [
     {
       subject: "guy",
-      intent: "Guy is looking for a place to take a selfie.",
+      // intent: "Guy is looking for a place to take a selfie.",
       reflection: "Guy is looking for a place to take a selfie.",
       actions: [
         {

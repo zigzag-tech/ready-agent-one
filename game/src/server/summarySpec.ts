@@ -38,7 +38,7 @@ export const summaryWorker = summarySpec.defineWorker({
           currentState.recentHistory.push({
             subject,
             reflection,
-            intent,
+            // intent,
             actions,
             stateChanges,
           });
@@ -90,7 +90,7 @@ export const summaryWorker = summarySpec.defineWorker({
                   subject: "lizard-warrior",
                   reflection:
                     "I am the last of my kind. I must fight to survive.",
-                  intent: "fight",
+                  // intent: "fight",
                   actions: [
                     {
                       action: "message",
@@ -103,7 +103,7 @@ export const summaryWorker = summarySpec.defineWorker({
                   subject: "lizard-nihilist",
                   reflection:
                     "There is no point for us lizard to exist. I must stop lizard-one.",
-                  intent: "stop existing",
+                  // intent: "stop existing",
                   actions: [
                     {
                       action: "message",

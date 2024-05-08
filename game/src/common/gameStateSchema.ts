@@ -27,7 +27,7 @@ export const actionSchema = z.object({
 
 export const thoughtSchema = z.object({
   thought: z.string(),
-  intent: z.string().nullable().optional(),
+  // intent: z.string().nullable().optional(),
 });
 
 export const scenePropsSchema = z.array(
@@ -63,7 +63,7 @@ export const gameStateSchema = z.object({
     z.object({
       subject: z.string(),
       reflection: z.string(),
-      intent: z.string().nullable().optional(),
+      // intent: z.string().nullable().optional(),
       actions: z.array(actionSchema),
       stateChanges: z.array(changeSchema),
     })

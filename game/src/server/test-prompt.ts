@@ -52,21 +52,25 @@ SUBJECT NEXT ACTION(S):
   {
     role: "assistant",
     content: `
-{
-  "subject": "emily",
-  "reflection": "I am so worried about the cat. Must get her to the vet soon.",
-  "intent": "I must catch the cat and take her to the vet.",
-  "actions": [
-    {
-      "action": "look_at",
-      "target": "cat"
-    },
-    {
-      "action": "talk",
-      "message": "Hey, kitty! You want some treats?"
-    }
-  ]
-}
+${JSON.stringify(
+  {
+    subject: "emily",
+    reflection: "I am so worried about the cat. Must get her to the vet soon.",
+    // intent: "I must catch the cat and take her to the vet.",
+    actions: [
+      {
+        action: "look_at",
+        target: "cat",
+      },
+      {
+        action: "talk",
+        message: "Hey, kitty! You want some treats?",
+      },
+    ],
+  },
+  null,
+  2
+)}
 `,
   },
   {
@@ -109,21 +113,26 @@ SUBJECT NEXT ACTION(S):
   {
     role: "assistant",
     content: `
-{
-  "subject": "frodo",
-    "reflection": "Man that didn't work! This bear is distracting me from my goal.",
-      "intent": "I must hide from the bear.",
-    "actions": [
+${JSON.stringify(
+  {
+    subject: "frodo",
+    reflection:
+      "Man that didn't work! This bear is distracting me from my goal.",
+    // intent: "I must hide from the bear.",
+    actions: [
       {
-          "action": "talk",
-          "message": "Oh no, the bear didn't die! I must hide!"
+        action: "talk",
+        message: "Oh no, the bear didn't die! I must hide!",
       },
       {
-        "action": "hide",
-        "target": null
-      }
-    ]
-  }
+        action: "hide",
+        target: null,
+      },
+    ],
+  },
+  null,
+  2
+)}
     `,
   },
   {

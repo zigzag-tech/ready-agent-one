@@ -2,8 +2,8 @@ import { Message, Ollama } from "ollama";
 const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434";
 const ollama = new Ollama({ host: OLLAMA_HOST });
 // export const CONVO_MODEL = "command-r";
+// export const CONVO_MODEL_LLAMA3 = "command-r";
 export const CONVO_MODEL_LLAMA3 = "llama3";
-// export const CONVO_MODEL = "starling-lm";
 
 export async function generateResponseOllamaByMessages(messages: Message[]) {
   try {

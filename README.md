@@ -1,4 +1,4 @@
-<h1 align="center"> Ｅｃｈｏｅｓ　ｏｆ　Ｓｅｎｔｉｅｎｃｅ </h1>
+<h1 align="center"> Ｒｅａｄｙ　Ａｇｅｎｔ　Ｏｎｅ </h1>
 <p align="center">AN LLM-powered multiplayer game.</p>
 
 ## Project Status

@@ -6057,9 +6057,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"echoes-of-sentience-root@workspace:.":
+"ready-agent-one-root@workspace:.":
   version: 0.0.0-use.local
-  resolution: "echoes-of-sentience-root@workspace:."
+  resolution: "ready-agent-one-root@workspace:."
   dependencies:
     "@babel/core": "npm:^7.23.9"
     "@babel/preset-env": "npm:^7.23.6"
@@ -6068,9 +6068,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"echoes-of-sentience@workspace:game":
+"ready-agent-one@workspace:game":
   version: 0.0.0-use.local
-  resolution: "echoes-of-sentience@workspace:game"
+  resolution: "ready-agent-one@workspace:game"
   dependencies:
     "@instructor-ai/instructor": "npm:^1.0.0"
     "@react-hook/window-size": "npm:^3.1.1"

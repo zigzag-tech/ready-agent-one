@@ -1,9 +1,9 @@
-import { DefGraph, InstantiatedGraph, ZZEnv } from "@livestack/core";
+import { DefGraph, InstantiatedGraph, LiveEnv } from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
 import { workflow } from "./workflow.conversation";
 
-ZZEnv.setGlobal(
-  ZZEnv.create({
+LiveEnv.setGlobal(
+  LiveEnv.create({
     projectId: GAME_SPEC_NAME + "-workflow-test",
   })
 );

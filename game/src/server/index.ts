@@ -1,4 +1,4 @@
-import { ZZEnv, JobSpec } from "@livestack/core";
+import { LiveEnv, JobSpec } from "@livestack/core";
 import express from "express";
 import ViteExpress from "vite-express";
 import { initJobBinding } from "@livestack/gateway";
@@ -11,8 +11,8 @@ const app = express();
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-ZZEnv.setGlobal(
-  ZZEnv.create({
+LiveEnv.setGlobal(
+  LiveEnv.create({
     projectId: `${GAME_SPEC_NAME}-test1`,
   })
 );

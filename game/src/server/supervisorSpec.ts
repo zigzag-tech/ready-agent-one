@@ -1,4 +1,7 @@
-import { generateResponseOllamaByMessages } from "./generateResponseOllama";
+import {
+  generateJSONResponseOllamaByMessages,
+  generateResponseOllamaByMessages,
+} from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import {
   GameState,
@@ -9,6 +12,7 @@ import {
 import { z } from "zod";
 import { Message } from "ollama";
 import { characterProps } from "../common/alien-cave";
+import { genPropsPrompt } from "./genPromptUtils";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -101,151 +105,19 @@ Instructions:
         await output("new-chapter-raw").emit(newTopic);
         // console.log("supervisorSpec newTopic", newTopic);
 
-        const sceneGenMessages: Message[] = [
-          {
-            role: "system",
-            content: `
-You are a scene writing assistant. Your job is to write the type, name, description, and position of objects mentioned in the SCENE PROVIDED.
+        const propsGenMessages = genPropsPrompt(newTopic);
+        // const scene =
+        //   (await generateResponseOllamaByMessages(sceneGenMessages)) || "";
+        // const propsMaybeMissingPeople = parseJSONResponse(scene);
+        // console.error("supervisorSpec props", scene);
+        const propsMaybeMissingPeople =
+          (await generateJSONResponseOllamaByMessages({
+            messages: propsGenMessages,
+            schema: z.object({ props: scenePropsSchema }),
+            schemaName: "scenePropsSchema",
+          })) as { props: z.infer<typeof scenePropsSchema> };
 
-Instructions:
-- position should be only one of "north", "west", "south", "east".
-- type should be only one of the "person" or "object".
-- name and description should be a string.
-- Respond with only the JSON and do NOT explain.
-`,
-          },
-          {
-            role: "user",
-            content: `
-SCENE PROVIDED:
-In a cozy room, Emily sits, a black cat curled at her feet. She tries to get the cat's attention with a toy.
-
-JSON OBJECTS:
-`,
-          },
-          {
-            role: "assistant",
-            content: `
-${JSON.stringify(
-  {
-    props: [
-      {
-        type: "person",
-        name: "emily",
-        description: "emily the cat lover.",
-        position: {
-          x: 0,
-          y: 0,
-        },
-      },
-      {
-        type: "object",
-        name: "cat",
-        description: "A black cat.",
-        position: {
-          x: 0,
-          y: 5,
-        },
-      },
-      {
-        type: "object",
-        name: "cat toy",
-        description: "A round toy with a bell inside.",
-        position: {
-          x: 5,
-          y: 5,
-        },
-      },
-    ],
-  },
-  null,
-  2
-)}
-`,
-          },
-          {
-            role: "user",
-            content: `
-SCENE PROVIDED:
-In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a treasure chest and a skeleton.
-
-JSON OBJECTS:
-`,
-          },
-          {
-            role: "assistant",
-            content: `
-${JSON.stringify(
-  {
-    props: [
-      {
-        type: "person",
-        name: "jack",
-        description: "Jack the adventurer.",
-        position: {
-          x: 0,
-          y: 0,
-        },
-      },
-      {
-        type: "person",
-        name: "tracy",
-        description: "Tracy the adventurer.",
-        position: {
-          x: 5,
-          y: 0,
-        },
-      },
-      {
-        type: "person",
-        name: "indiana",
-        description: "Indiana the adventurer.",
-        position: {
-          x: 5,
-          y: 5,
-        },
-      },
-      {
-        type: "object",
-        name: "treasure chest",
-        description: "A large treasure chest.",
-        position: {
-          x: 2,
-          y: 2,
-        },
-      },
-      {
-        type: "object",
-        name: "skeleton",
-        description: "A human skeleton.",
-        position: {
-          x: 3,
-          y: 3,
-        },
-      },
-    ],
-  },
-  null,
-  2
-)}
-`,
-          },
-          {
-            role: "user",
-            content: `
-SCENE PROVIDED:
-${newTopic}
-
-JSON OBJECTS:
-`,
-          },
-        ];
-        const scene =
-          (await generateResponseOllamaByMessages(sceneGenMessages)) || "";
-        const propsMaybeMissingPeople = parseJSONResponse(scene);
-        console.error("supervisorSpec props", scene);
-
-        const existingCharacters = propsMaybeMissingPeople.filter(
+        const existingCharacters = propsMaybeMissingPeople.props.filter(
           (prop) =>
             prop.type === "person" &&
             characterProps.map((p) => p.name).includes(prop.name)
@@ -255,7 +127,10 @@ JSON OBJECTS:
         const missingCharacters = characterProps.filter(
           (p) => !existingCharacters.find((c) => c.name === p.name)
         );
-        const newProps = [...propsMaybeMissingPeople, ...missingCharacters];
+        const newProps = [
+          ...propsMaybeMissingPeople.props,
+          ...missingCharacters,
+        ];
 
         const newState: GameState = {
           previous: {

@@ -1,4 +1,9 @@
 import { Message, Ollama } from "ollama";
+import Instructor from "@instructor-ai/instructor";
+import OpenAI from "openai";
+import { z } from "zod";
+import _ from "lodash";
+
 const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434";
 const ollama = new Ollama({ host: OLLAMA_HOST });
 // export const CONVO_MODEL = "command-r";
@@ -33,6 +38,54 @@ export async function generateResponseOllamaByMessages(messages: Message[]) {
     // Clear the entire line
     process.stdout.write("\x1b[2K");
     return message;
+  } catch (e) {
+    console.log(e);
+    // await sleep(200);
+    return null;
+  }
+}
+
+const oai = new OpenAI({
+  apiKey: "ollama", // required, but unused
+  baseURL: `${OLLAMA_HOST}/v1`, // updated API URL
+});
+const client = Instructor({
+  client: oai,
+  mode: "JSON",
+});
+
+export async function generateJSONResponseOllamaByMessages({
+  messages,
+  schema,
+  schemaName,
+}: {
+  messages: any;
+  schema: z.ZodObject<any>;
+  schemaName: string;
+}) {
+  try {
+    const output = await client.chat.completions.create({
+      model: CONVO_MODEL_LLAMA3,
+      messages,
+      response_model: {
+        schema,
+        name: schemaName,
+      },
+      stream: true,
+    });
+    let jsonOutput = {};
+    process.stdout.write("Response:  ");
+    // console.log("Response:  ");
+    for await (const part of output) {
+      jsonOutput = part;
+      // console.log(jsonOutput);
+    }
+    console.log(jsonOutput);
+    if (!jsonOutput) {
+      throw new Error("No response from LLM");
+    }
+    const cleanJsonOutput = _.omit(jsonOutput, "_meta");
+    return cleanJsonOutput;
   } catch (e) {
     console.log(e);
     // await sleep(200);

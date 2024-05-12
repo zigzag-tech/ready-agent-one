@@ -3,7 +3,10 @@ import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import { genActionPrompt, parseJSONResponse } from "./genPromptUtils";
-import { generateResponseOllamaByMessages } from "./generateResponseOllama";
+import {
+  generateJSONResponseOllamaByMessages,
+  generateResponseOllamaByMessages,
+} from "./generateResponseOllama";
 import _ from "lodash";
 import { characterOutputSchema } from "../common/characterOutputSchema";
 
@@ -33,11 +36,16 @@ export const characterWorker = characterSpec.defineWorker({
 
       const actionPrompt = genActionPrompt(whoseTurn, state);
       await output("action-prompt").emit(actionPrompt);
-      const response = await generateResponseOllamaByMessages(actionPrompt);
-      if (!response) {
-        throw new Error("No response from LLM");
-      }
-      const r = parseJSONResponse(response);
+      // const response = await generateResponseOllamaByMessages(actionPrompt);
+      // if (!response) {
+      //   throw new Error("No response from LLM");
+      // }
+      // const r = parseJSONResponse(response);
+      const r = (await generateJSONResponseOllamaByMessages({
+        messages: actionPrompt,
+        schema: characterOutputSchema,
+        schemaName: "characterOutputSchema",
+      })) as z.infer<typeof characterOutputSchema>;
       r.subject = whoseTurn;
       // const withoutReason = _.omit(r, "reason");
 

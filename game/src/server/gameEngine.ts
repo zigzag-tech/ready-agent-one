@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
   actionSchema,
-  changeSchema,
+  stateEventSchema,
   gameStateSchema,
 } from "../common/gameStateSchema";
 import _ from "lodash";
@@ -60,7 +60,7 @@ export const genStateChangesByActions = (
         return null;
       }
     })
-    .filter((o) => !!o) as z.infer<typeof changeSchema>[];
+    .filter((o) => !!o) as z.infer<typeof stateEventSchema>[];
   return outputs;
 };
 

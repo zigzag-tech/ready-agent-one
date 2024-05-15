@@ -4,7 +4,7 @@ import { summarySpec } from "./summarySpec";
 import { characterSpec } from "./characterWorker";
 import { supervisorSpec } from "./supervisorSpec";
 import { turnControlSpec } from "./turnSpecAndWorker";
-
+import { gameEngineSpec } from "./gameEngineSpec";
 
 export const stringZ = z.string();
 
@@ -12,11 +12,8 @@ export const workflow = Workflow.define({
   name: "CONVERSATION_WORKFLOW",
   connections: [
     conn({
-      from: { spec: characterSpec, output: "default" },
-      to: {
-        spec: summarySpec,
-        input: "character",
-      },
+      from: characterSpec,
+      to: gameEngineSpec.input["character"],
     }),
     conn({
       from: supervisorSpec,
@@ -32,7 +29,11 @@ export const workflow = Workflow.define({
     }),
     conn({
       from: supervisorSpec,
-      to: summarySpec.input["supervision"],
+      to: gameEngineSpec.input["supervision"],
+    }),
+    conn({
+      from: gameEngineSpec,
+      to: summarySpec,
     }),
   ],
   exposures: [
@@ -40,7 +41,8 @@ export const workflow = Workflow.define({
     expose(characterSpec.input["user-input"], "user-provided-input"),
     expose(characterSpec.output.default, "character-talk"),
     expose(characterSpec.output["user-signal"], "user-signal"),
-    expose(summarySpec.input.supervision, "summary-supervision"),
+    expose(summarySpec.input.default, "summary-supervision"),
     expose(summarySpec.output["default"], "game-state"),
+    expose(gameEngineSpec.output["history-entries"], "history-entries"),
   ],
 });

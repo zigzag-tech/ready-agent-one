@@ -12,10 +12,11 @@ const objectLocationChangeSchema = z.object({
   toLocation: locationSchema,
 });
 
-export const changeSchema = z.union([
+export const stateEventSchema = z.union([
   objectStateChangeSchema,
   objectLocationChangeSchema,
 ]);
+
 
 export const charactersEnum = z.enum(["morgan", "jeremy", "guy"]);
 export const actionSchema = z.object({
@@ -23,6 +24,14 @@ export const actionSchema = z.object({
   target: z.string().optional().nullable(),
   message: z.string().optional().nullable(),
   destination: locationSchema.optional().nullable(),
+});
+
+export const historyEntrySchema = z.object({
+  subject: z.string(),
+  reflection: z.string(),
+  // intent: z.string().nullable().optional(),
+  actions: z.array(actionSchema),
+  stateChanges: z.array(stateEventSchema),
 });
 
 export const thoughtSchema = z.object({
@@ -59,15 +68,7 @@ export const gameStateSchema = z.object({
     summary: z.string(),
     props: scenePropsSchema,
   }),
-  recentHistory: z.array(
-    z.object({
-      subject: z.string(),
-      reflection: z.string(),
-      // intent: z.string().nullable().optional(),
-      actions: z.array(actionSchema),
-      stateChanges: z.array(changeSchema),
-    })
-  ),
+  recentHistory: z.array(historyEntrySchema),
   totalNumOfLines: z.number(),
 });
 

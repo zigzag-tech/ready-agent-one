@@ -1,10 +1,10 @@
 import React from "react";
-import { JobInfo, useJobBinding } from "@livestack/client/src";
-import { GAME_SPEC_NAME, POEM_SPEC_NAME } from "../../../../common/game";
+import { type JobInfo, useJobBinding } from "@livestack/client";
+import { GAME_SPEC_NAME } from "../../../../common/game";
 
 export const LiveJobContext = React.createContext<{
-  mainJob: JobInfo | null;
-  conersationJob: JobInfo | null;
+  mainJob: JobInfo<any> | null;
+  conersationJob: JobInfo<any> | null;
 }>({
   mainJob: null,
   conersationJob: null,

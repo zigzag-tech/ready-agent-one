@@ -132,7 +132,7 @@ Instructions:
           ...missingCharacters,
         ];
 
-        const newState: GameState = {
+        const nextSceneState: GameState = {
           previous: {
             summary: previousScenesSummary,
           },
@@ -147,7 +147,7 @@ Instructions:
           recentHistory: [],
         };
 
-        await output.emit(newState);
+        await output.emit(nextSceneState);
       }
     }
   },

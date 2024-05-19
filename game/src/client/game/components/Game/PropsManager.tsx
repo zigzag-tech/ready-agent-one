@@ -33,6 +33,7 @@ type ConversationEvent = {
   content: string;
 };
 
+
 function interpolatePositions(
   from: { x: number; y: number },
   to: { x: number; y: number },
@@ -52,7 +53,7 @@ function PropRenderer({
     name: string;
     type: string;
     description: string;
-    speech?: string;
+    speech?: string | null;
   };
 }) {
   const [moving, setMoving] = useState(false);
@@ -61,6 +62,7 @@ function PropRenderer({
     x: 0,
     y: 0,
   });
+
   const pos = useMemo(
     () =>
       new THREE.Vector3(currentPosition.x, 0, currentPosition.y).multiplyScalar(
@@ -77,9 +79,7 @@ function PropRenderer({
   if (prop.type == "person") {
     return (
       <group scale={1} position={pos} key={prop.name}>
-        {
-          prop.speech && <SpeechBubble content={prop.speech}  position={pos}/>
-        }
+        {prop.speech && <SpeechBubble content={prop.speech} position={pos} />}
         <CharacterComponent
           ref={npcRef}
           lastAttack={0}
@@ -106,6 +106,10 @@ export function PropsManager() {
     tag: "summary-supervision",
     def: gameStateSchema,
   });
+
+  const [speechByCharacter, setSpeechByCharacter] = useState<
+    Record<string, string | null>
+  >({});
 
   useEffect(() => {
     feed && feed(alienCaveInitialInput);
@@ -193,26 +197,33 @@ export function PropsManager() {
         );
       })();
 
+      // subscribe to conversation events and update the character's speech
       const convoSub = conversationSubject.subscribe((event) => {
-        setGameState((prevState) => ({
-          ...prevState,
-          current: {
-            ...prevState.current,
-            props: prevState.current.props.map((prop) =>
-              prop.name === event.subject
-                ? {
-                    ...prop,
-                    conversation: event.content,
-                  }
-                : prop
-            ),
-          },
+        setSpeechByCharacter((prevState) => ({
+          [event.subject]: event.content,
         }));
       });
 
+      // const convoSub = conversationSubject.subscribe((event) => {
+      //   setGameState((prevState) => ({
+      //     ...prevState,
+      //     current: {
+      //       ...prevState.current,
+      //       props: prevState.current.props.map((prop) =>
+      //         prop.name === event.subject
+      //           ? {
+      //               ...prop,
+      //               conversation: event.content,
+      //             }
+      //           : prop
+      //       ),
+      //     },
+      //   }));
+      // });
+
       return () => {
         sub.unsubscribe();
-        convoSub.unsubscribe();
+        // convoSub.unsubscribe();
       };
     }
   }, [job]);
@@ -220,7 +231,12 @@ export function PropsManager() {
   return (
     <>
       {gameState.current.props.map((prop) => (
-        <PropRenderer prop={prop} />
+        <PropRenderer
+          prop={{
+            ...prop,
+            speech: speechByCharacter[prop.name] || null,
+          }}
+        />
       ))}
     </>
   );

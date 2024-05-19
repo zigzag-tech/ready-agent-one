@@ -18,6 +18,7 @@ import { alienCaveInitialInput } from "../../../../common/alien-cave";
 import { useInput, useOutput } from "@livestack/client/src";
 import { characterOutputSchema } from "../../../../common/characterOutputSchema";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
+import { Html, Text } from "@react-three/drei";
 interface localPlayerState {
   moving: boolean;
   rolling: boolean;
@@ -33,6 +34,10 @@ type ConversationEvent = {
   content: string;
 };
 
+type MoveEvent = {
+  subject: string;
+  position: { x: number; y: number };
+};
 
 function interpolatePositions(
   from: { x: number; y: number },
@@ -54,20 +59,20 @@ function PropRenderer({
     type: string;
     description: string;
     speech?: string | null;
+    current_position: { x: number; y: number; z: number };
   };
 }) {
   const [moving, setMoving] = useState(false);
   const [rolling, setRolling] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState({
-    x: 0,
-    y: 0,
-  });
 
+  const { current_position: currentPosition } = prop;
   const pos = useMemo(
     () =>
-      new THREE.Vector3(currentPosition.x, 0, currentPosition.y).multiplyScalar(
-        MAGNITUDE
-      ),
+      new THREE.Vector3(
+        currentPosition.x,
+        currentPosition.y,
+        currentPosition.z
+      ).multiplyScalar(MAGNITUDE),
     [currentPosition]
   );
   const CharacterComponent = useMemo(() => {
@@ -88,6 +93,28 @@ function PropRenderer({
           recharging={false}
           running={rolling}
         />
+      </group>
+    );
+  } else {
+    // render a tetrohedron with a label for now
+    return (
+      <group scale={1} position={pos} key={prop.name}>
+        <mesh>
+          <tetrahedronGeometry args={[1]} />
+          <meshBasicMaterial color="red" />
+        </mesh>
+        <Html>
+          <div
+            style={{
+              color: "black",
+              backgroundColor: "white",
+              padding: 10,
+              borderRadius: 10,
+            }}
+          >
+            {prop.name}
+          </div>
+        </Html>
       </group>
     );
   }
@@ -122,17 +149,17 @@ export function PropsManager() {
 
   useEffect(() => {
     if (job) {
-      const eventSubject = new Subject<StateChangeEvent>();
       const conversationSubject = new Subject<ConversationEvent>();
-      const obs = eventSubject.pipe(
-        filter(
-          (event) =>
-            event.fromState.position !== undefined &&
-            event.toState.position !== undefined
-        ), // Ensure positions are defined
+      const moveSubject = new Subject<MoveEvent>();
+
+      const obs = moveSubject.pipe(
+        filter((event) => !!event.position), // Ensure positions are defined
         switchMap((event) => {
-          const fromPosition = event.fromState.position!;
-          const toPosition = event.toState.position!;
+          const toPosition = event.position!;
+          const fromPosition = gameState.current.props.find(
+            (prop) => prop.name === event.subject
+          )?.current_position || { x: 0, y: 0 }; // Get the current position of the subject
+
           const duration = 2000; // Duration of the transition
           const intervalTime = 50; // Interval time for updates
           const steps = duration / intervalTime;
@@ -191,6 +218,16 @@ export function PropsManager() {
                   subject: data.data.subject,
                   content: action.message || "...",
                 });
+              } else if (
+                ["move_to", "walk_to", "run_to"].includes(action.action)
+              ) {
+                moveSubject.next({
+                  subject: data.data.subject,
+                  position: action.destination || {
+                    x: 0,
+                    y: 0,
+                  },
+                });
               }
             }
           }
@@ -235,6 +272,16 @@ export function PropsManager() {
           prop={{
             ...prop,
             speech: speechByCharacter[prop.name] || null,
+            current_position: {
+              x:
+                (prop.current_position?.x ||prop.position.x ||
+                  0) / 5,
+              y: 0,
+              z:
+                (prop.current_position?.y ||
+                  prop.position.y ||
+                  0) / 5,
+            },
           }}
         />
       ))}

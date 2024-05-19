@@ -20,7 +20,7 @@ export const characterProps = Object.entries(DIRECTIVE_BY_ROLE).map(
   })
 );
 
-const vicinity = [
+const porps = [
   ...characterProps,
   {
     type: "object",
@@ -67,7 +67,7 @@ export const alienCaveInitialInput: GameState = {
   current: {
     summary:
       "It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.",
-    props: vicinity,
+    props: porps,
   },
   sceneNumber: 1,
   recentHistory: [

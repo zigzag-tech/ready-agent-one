@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Workflow, conn, expose } from "@livestack/core";
+import { Liveflow, conn, expose } from "@livestack/core";
 import { summarySpec } from "./summarySpec";
 import { characterSpec } from "./characterWorker";
 import { supervisorSpec } from "./supervisorSpec";
@@ -8,7 +8,7 @@ import { gameEngineSpec } from "./gameEngineSpec";
 
 export const stringZ = z.string();
 
-export const liveflow = Workflow.define({
+export const liveflow = Liveflow.define({
   name: "CONVERSATION_WORKFLOW",
   connections: [
     conn({

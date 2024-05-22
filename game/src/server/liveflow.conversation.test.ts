@@ -1,4 +1,5 @@
-import { DefGraph, InstantiatedGraph, LiveEnv } from "@livestack/core";
+import { LiveEnv } from "@livestack/core";
+import { DefGraph, InstantiatedGraph } from "@livestack/shared";
 import { GAME_SPEC_NAME } from "../common/game";
 import { liveflow } from "./liveflow.conversation";
 

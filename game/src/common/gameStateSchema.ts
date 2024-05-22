@@ -46,14 +46,14 @@ export const scenePropsSchema = z.array(
     description: z.string(),
     position: locationSchema,
     // front-end only:
-    moving: z.boolean().optional(),
-    rolling: z.boolean().optional(),
-    current_position: z
-      .object({
-        x: z.number(),
-        y: z.number(),
-      })
-      .optional(),
+    // moving: z.boolean().optional(),
+    // rolling: z.boolean().optional(),
+    // current_position: z
+    //   .object({
+    //     x: z.number(),
+    //     y: z.number(),
+    //   })
+    //   .optional(),
   })
 );
 

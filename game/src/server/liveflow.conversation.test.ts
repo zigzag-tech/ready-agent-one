@@ -1,6 +1,6 @@
 import { DefGraph, InstantiatedGraph, LiveEnv } from "@livestack/core";
 import { GAME_SPEC_NAME } from "../common/game";
-import { workflow } from "./workflow.conversation";
+import { liveflow } from "./liveflow.conversation";
 
 LiveEnv.setGlobal(
   LiveEnv.create({
@@ -12,10 +12,10 @@ LiveEnv.setGlobal(
 (async () => {
   // await characterSpec.startWorker();
   // await npcWorker.startWorker();
-  await workflow.startWorker();
+  await liveflow.startWorker();
   // feed input to the playerWorker, playerWorker's output as input to npcWorker
 
-  const { input, output, graph } = await workflow.enqueueJob({});
+  const { input, output, graph } = await liveflow.enqueueJob({});
   saveToJSON(graph);
   await input("summary-supervision").feed(alienCaveInitialInput);
   (async () => {

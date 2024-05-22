@@ -8,7 +8,7 @@ import { gameEngineSpec } from "./gameEngineSpec";
 
 export const stringZ = z.string();
 
-export const workflow = Workflow.define({
+export const liveflow = Workflow.define({
   name: "CONVERSATION_WORKFLOW",
   connections: [
     conn({

@@ -57,15 +57,17 @@ function PropRenderer({
   prop: {
     name: string;
     type: string;
+    moving?: boolean;
+    rolling?: boolean;
     description: string;
     speech?: string | null;
-    current_position: { x: number; y: number; z: number };
+    currentPosition: { x: number; y: number; z: number };
   };
 }) {
-  const [moving, setMoving] = useState(false);
-  const [rolling, setRolling] = useState(false);
+  // const [moving, setMoving] = useState(false);
+  // const [rolling, setRolling] = useState(false);
 
-  const { current_position: currentPosition } = prop;
+  const { currentPosition } = prop;
   const pos = useMemo(
     () =>
       new THREE.Vector3(
@@ -89,9 +91,9 @@ function PropRenderer({
           ref={npcRef}
           lastAttack={0}
           lastDamaged={0}
-          moving={moving}
+          moving={!!prop.moving}
           recharging={false}
-          running={rolling}
+          running={!!prop.rolling}
         />
       </group>
     );
@@ -128,7 +130,7 @@ export function PropsManager() {
   if (!job) {
     return <>Error: cannot connect to the game server</>;
   }
-  const { feed } = useInput({
+  const { feed: feedSupervision } = useInput({
     job,
     tag: "summary-supervision",
     def: gameStateSchema,
@@ -138,17 +140,42 @@ export function PropsManager() {
     Record<string, string | null>
   >({});
 
+  const [stateByProp, setStateByProp] = useState<
+    Record<
+      string,
+      {
+        currentPosition: {
+          x: number;
+          y: number;
+        };
+        moving: boolean;
+        rolling: boolean;
+      }
+    >
+  >({});
+
   useEffect(() => {
-    feed && feed(alienCaveInitialInput);
-  }, [feed]);
+    feedSupervision && feedSupervision(alienCaveInitialInput);
+  }, [feedSupervision]);
 
   // mock gameState
-  const [gameState, setGameState] = useState<z.infer<typeof gameStateSchema>>(
-    alienCaveInitialInput
-  );
+  // const [gameState, setGameState] = useState<z.infer<typeof gameStateSchema>>(
+  //   alienCaveInitialInput
+  // );
+
+  const [stateD] = useOutput({
+    job,
+    tag: "game-state",
+    def: gameStateSchema,
+    query: {
+      type: "lastN",
+      n: 1,
+    },
+  });
+  const gameState = stateD?.data;
 
   useEffect(() => {
-    if (job) {
+    if (job && gameState) {
       const conversationSubject = new Subject<ConversationEvent>();
       const moveSubject = new Subject<MoveEvent>();
 
@@ -158,7 +185,7 @@ export function PropsManager() {
           const toPosition = event.position!;
           const fromPosition = gameState.current.props.find(
             (prop) => prop.name === event.subject
-          )?.current_position || { x: 0, y: 0 }; // Get the current position of the subject
+          )?.position || { x: 0, y: 0 }; // Get the current position of the subject
 
           const duration = 2000; // Duration of the transition
           const intervalTime = 50; // Interval time for updates
@@ -180,22 +207,32 @@ export function PropsManager() {
       );
 
       const sub = obs.subscribe((update) => {
-        setGameState((prevState) => ({
-          ...prevState,
-          current: {
-            ...prevState.current,
-            props: prevState.current.props.map(
-              (prop) =>
-                prop.name === update.subject
-                  ? {
-                      ...prop,
-                      current_position: update.position,
-                      moving: !update.isFinal,
-                    }
-                  : prop // Set moving to false if it's the final update
-            ),
+        setStateByProp((prev) => ({
+          ...prev,
+          [update.subject]: {
+            currentPosition: {
+              ...update.position,
+            },
+            moving: true,
+            rolling: true,
           },
         }));
+        // setGameState((prevState) => ({
+        //   ...prevState,
+        //   current: {
+        //     ...prevState.current,
+        //     props: prevState.current.props.map(
+        //       (prop) =>
+        //         prop.name === update.subject
+        //           ? {
+        //               ...prop,
+        //               current_position: update.position,
+        //               moving: !update.isFinal,
+        //             }
+        //           : prop // Set moving to false if it's the final update
+        //     ),
+        //   },
+        // }));
       });
 
       (async () => {
@@ -263,24 +300,20 @@ export function PropsManager() {
         // convoSub.unsubscribe();
       };
     }
-  }, [job]);
+  }, [job, gameState]);
 
   return (
     <>
-      {gameState.current.props.map((prop) => (
+      {gameState?.current.props.map((prop) => (
         <PropRenderer
           prop={{
             ...prop,
             speech: speechByCharacter[prop.name] || null,
-            current_position: {
-              x:
-                (prop.current_position?.x ||prop.position.x ||
-                  0) / 5,
+
+            currentPosition: {
+              x: (stateByProp[prop.name]?.currentPosition.x || 0) / 5,
               y: 0,
-              z:
-                (prop.current_position?.y ||
-                  prop.position.y ||
-                  0) / 5,
+              z: (stateByProp[prop.name]?.currentPosition.y || 0) / 5,
             },
           }}
         />

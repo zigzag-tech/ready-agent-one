@@ -4,7 +4,7 @@ import ViteExpress from "vite-express";
 import { initJobBinding } from "@livestack/gateway";
 import ollama from "ollama";
 import { EventResponseZ, GAME_SPEC_NAME, GameEventZ } from "../common/game";
-import { workflow } from "./workflow.conversation";
+import { liveflow } from "./liveflow.conversation";
 
 const app = express();
 
@@ -154,5 +154,5 @@ const server = ViteExpress.listen(app, PORT, () =>
 
 initJobBinding({
   httpServer: server,
-  allowedSpecsForBinding: [gameSpec, workflow],
+  allowedSpecsForBinding: [gameSpec, liveflow],
 });

@@ -186,6 +186,9 @@ export function PropsManager() {
         }
         return newState;
       });
+      if (gameState.totalNumOfLines === 0) {
+        setSpeechByCharacter({});
+      }
     }
   }, [gameState]);
 

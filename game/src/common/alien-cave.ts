@@ -14,8 +14,8 @@ export const characterProps = Object.entries(DIRECTIVE_BY_ROLE).map(
     description: description,
     // position: `${index + 1} meters ahead`,
     position: {
-      x: index + 1,
-      y: 0,
+      x: index * 3 - 1,
+      y: index * 3 - 1,
     },
   })
 );

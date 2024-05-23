@@ -172,7 +172,24 @@ export function PropsManager() {
       n: 1,
     },
   });
-  const gameState = stateD?.data;
+  const gameState = useMemo(() => stateD?.data, [stateD]);
+  useEffect(() => {
+    if (gameState) {
+      setStateByProp((prev) => {
+        const newState = {} as typeof prev;
+        for (const prop of gameState.current.props) {
+          newState[prop.name] = {
+            currentPosition: prop.position || { x: 0, y: 0 },
+            moving: false,
+            rolling: false,
+          };
+        }
+        return newState;
+      });
+    }
+  }, [gameState]);
+
+  
 
   useEffect(() => {
     if (job && gameState) {

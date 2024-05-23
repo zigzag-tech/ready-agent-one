@@ -79,7 +79,11 @@ function PropRenderer({
   );
   const CharacterComponent = useMemo(() => {
     // Randomly returns either <Robot /> or <Alien />
-    const types = [Robot, Alien, Knight];
+    const types = [
+      Robot,
+      // Alien,
+      Knight,
+    ];
     return types[Math.floor(Math.random() * types.length)];
   }, []);
   const npcRef = useRef(null);

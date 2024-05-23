@@ -123,7 +123,12 @@ export function NPC({
     }),
   });
   return (
-    <group ref={groupRef} position={position} {...props}>
+    <group
+      ref={groupRef}
+      position={position}
+      rotation={[Math.PI / 2, Math.PI / 2, 0]}
+      {...props}
+    >
       {/* <Hud> */}
       {resp?.data.from === npcConfig.initialMessage && (
         <SpeechBubble

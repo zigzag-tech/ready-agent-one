@@ -49,9 +49,22 @@ export const genStateChangesByActions = (
               },
             };
           }
-          throw new Error(
-            "Target not found while the action type is " + action
-          );
+          return {
+            subject,
+            fromLocation: {
+              ...(subjectProp.position || { x: 0, y: 0 }),
+            },
+            toLocation: _.sample([
+              { x: 0, y: 0 },
+              { x: 1, y: 0 },
+              { x: 0, y: 1 },
+              { x: 1, y: 1 },
+            ]),
+          };
+
+          // throw new Error(
+          //   "Target not found while the action type is " + action
+          // );
         }
 
         return {

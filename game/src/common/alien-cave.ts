@@ -3,8 +3,8 @@ import { GameState } from "../common/gameStateSchema";
 export const DIRECTIVE_BY_ROLE = {
   morgan:
     "Morgan is prudent, courageous but could slip into self doubt from time to time. ",
-  jeremy: "Jeremy has a sarcastic streak but deep down he's kind and helpful.",
-  guy: "Guy is tring to acting helpful but he always messes things up.",
+  jeremy: "Jeremy has a sarcastic streak but is generally helpful. ",
+  guy: "Guy is impatient and often messes things up. Nonetheless, he can have ingenious ideas.",
 };
 
 export const characterProps = Object.entries(DIRECTIVE_BY_ROLE).map(

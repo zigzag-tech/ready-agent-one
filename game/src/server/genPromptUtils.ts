@@ -166,7 +166,7 @@ INSTRUCTIONS:
 - Use each SUBJECT ALLOWED ACTIONS at most once per response. 
 - Always include a "talk" action with a message in the response.
 - Respond with ONLY the JSON and do NOT add any notes or comments.
-- Think step by step and provide the most logical action for the subject.
+- Be creative and try not to repeat what other characters have already said or done.
 `,
     },
     {

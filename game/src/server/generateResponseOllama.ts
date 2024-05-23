@@ -8,7 +8,7 @@ const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434";
 const ollama = new Ollama({ host: OLLAMA_HOST });
 // export const CONVO_MODEL = "command-r";
 // export const CONVO_MODEL_LLAMA3 = "command-r";
-export const CONVO_MODEL_LLAMA3 = "mistral:v0.3";
+const CONVO_MODEL = "mistral:v0.3";
 
 export async function generateResponseOllamaByMessages(messages: Message[]) {
   try {
@@ -19,7 +19,7 @@ export async function generateResponseOllamaByMessages(messages: Message[]) {
       },
       // format: "json",
       stream: true,
-      model: CONVO_MODEL_LLAMA3,
+      model: CONVO_MODEL,
       messages,
     });
     let message = "";
@@ -66,37 +66,42 @@ export async function generateJSONResponseOllamaByMessages({
   const NUM_RETRIES = 10;
   let count = 0;
   while (count < NUM_RETRIES) {
+    let jsonOutput: any = {};
+    let cleanJsonOutput: any = {};
+
     try {
       const output = await client.chat.completions.create({
-        model: CONVO_MODEL_LLAMA3,
+        model: CONVO_MODEL,
         messages,
+        temperature: 1.2,
         response_model: {
           schema,
           name: schemaName,
         },
         stream: true,
       });
-      let jsonOutput = {};
+
       process.stdout.write("Response:  ");
       // console.log("Response:  ");
       for await (const part of output) {
         jsonOutput = part;
         // console.log(jsonOutput);
       }
-      console.log(jsonOutput);
+      // console.log(jsonOutput);
       if (!jsonOutput) {
         throw new Error("No response from LLM");
       }
-      const cleanJsonOutput = _.omit(jsonOutput, "_meta");
+      cleanJsonOutput = _.omit(jsonOutput, "_meta");
+      console.log(cleanJsonOutput);
       schema.parse(cleanJsonOutput);
       return cleanJsonOutput;
     } catch (e) {
-      console.log(e);
+      console.log(JSON.stringify(cleanJsonOutput, null, 2));
+      console.log(JSON.stringify(e, null, 2));
       // await sleep(200);
     }
     count++;
   }
 
   return null;
-
 }

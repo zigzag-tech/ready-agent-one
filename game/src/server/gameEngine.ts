@@ -35,7 +35,7 @@ export const genStateChangesByActions = (
         return {
           subject,
           fromLocation: {
-            ...subjectProp.position,
+            ...(subjectProp.position || { x: 0, y: 0 }),
           },
           toLocation: { ...destination },
         };

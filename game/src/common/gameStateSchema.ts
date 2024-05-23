@@ -44,7 +44,7 @@ export const scenePropsSchema = z.array(
     type: z.string(),
     name: z.string(),
     description: z.string(),
-    position: locationSchema,
+    position: locationSchema.optional().nullable(),
     // front-end only:
     // moving: z.boolean().optional(),
     // rolling: z.boolean().optional(),

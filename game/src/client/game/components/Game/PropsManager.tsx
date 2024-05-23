@@ -105,9 +105,14 @@ function PropRenderer({
           <tetrahedronGeometry args={[1]} />
           <meshBasicMaterial color="red" />
         </mesh>
-        <Html>
+        <Html
+          style={{
+            zIndex: 0,
+          }}
+        >
           <div
             style={{
+              zIndex: 0,
               color: "black",
               backgroundColor: "white",
               padding: 10,

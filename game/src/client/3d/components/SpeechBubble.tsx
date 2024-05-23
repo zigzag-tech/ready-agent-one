@@ -8,10 +8,14 @@ export function SpeechBubble({
 }: { content?: string } & HtmlProps) {
   return (
     content && (
-      <Html {...rest}>
+      <Html
+        {...rest}
+        style={{
+          zIndex: 1000,
+        }}
+      >
         <div
           style={{
-            zIndex: 1000,
             fontFamily: "comic sans ms",
             // all uppercase
             textTransform: "uppercase",

@@ -26,19 +26,39 @@ export const genStateChangesByActions = (
   const outputs = actions
     .map(({ destination, action, target }) => {
       if (action === "walk_to" || action === "run_to") {
-        if (!destination) {
+        if (destination) {
+          return {
+            subject,
+            fromLocation: {
+              ...(subjectProp.position || { x: 0, y: 0 }),
+            },
+            toLocation: { ...destination },
+          };
+        } else if (target) {
+          const targetProp = currentState.current.props.find(
+            (p) => p.name === target
+          );
+          if (targetProp) {
+            return {
+              subject,
+              fromLocation: {
+                ...(subjectProp.position || { x: 0, y: 0 }),
+              },
+              toLocation: {
+                ...(targetProp.position || { x: 0, y: 0 }),
+              },
+            };
+          }
           throw new Error(
-            "Destination not set while the action type is " + action
+            "Target not found while the action type is " + action
           );
         }
 
-        return {
-          subject,
-          fromLocation: {
-            ...(subjectProp.position || { x: 0, y: 0 }),
-          },
-          toLocation: { ...destination },
-        };
+        throw new Error(
+          "Destination not set while the action type is " + action
+        );
+
+        
       } else if (
         action === "examine" ||
         action === "punch" ||

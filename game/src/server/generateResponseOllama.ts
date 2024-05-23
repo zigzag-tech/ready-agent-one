@@ -63,7 +63,7 @@ export async function generateJSONResponseOllamaByMessages({
   schema: z.ZodObject<any>;
   schemaName: string;
 }) {
-  const NUM_RETRIES = 3;
+  const NUM_RETRIES = 10;
   let count = 0;
   while (count < NUM_RETRIES) {
     try {

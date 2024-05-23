@@ -154,7 +154,7 @@ Instructions:
 });
 
 function conversationTooLong(state: GameState) {
-  return state.totalNumOfLines > 8;
+  return state.totalNumOfLines > 10;
 }
 
 function parseJSONResponse(raw: string | null) {

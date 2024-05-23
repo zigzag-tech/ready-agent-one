@@ -63,32 +63,40 @@ export async function generateJSONResponseOllamaByMessages({
   schema: z.ZodObject<any>;
   schemaName: string;
 }) {
-  try {
-    const output = await client.chat.completions.create({
-      model: CONVO_MODEL_LLAMA3,
-      messages,
-      response_model: {
-        schema,
-        name: schemaName,
-      },
-      stream: true,
-    });
-    let jsonOutput = {};
-    process.stdout.write("Response:  ");
-    // console.log("Response:  ");
-    for await (const part of output) {
-      jsonOutput = part;
-      // console.log(jsonOutput);
+  const NUM_RETRIES = 3;
+  let count = 0;
+  while (count < NUM_RETRIES) {
+    try {
+      const output = await client.chat.completions.create({
+        model: CONVO_MODEL_LLAMA3,
+        messages,
+        response_model: {
+          schema,
+          name: schemaName,
+        },
+        stream: true,
+      });
+      let jsonOutput = {};
+      process.stdout.write("Response:  ");
+      // console.log("Response:  ");
+      for await (const part of output) {
+        jsonOutput = part;
+        // console.log(jsonOutput);
+      }
+      console.log(jsonOutput);
+      if (!jsonOutput) {
+        throw new Error("No response from LLM");
+      }
+      const cleanJsonOutput = _.omit(jsonOutput, "_meta");
+      schema.parse(cleanJsonOutput);
+      return cleanJsonOutput;
+    } catch (e) {
+      console.log(e);
+      // await sleep(200);
     }
-    console.log(jsonOutput);
-    if (!jsonOutput) {
-      throw new Error("No response from LLM");
-    }
-    const cleanJsonOutput = _.omit(jsonOutput, "_meta");
-    return cleanJsonOutput;
-  } catch (e) {
-    console.log(e);
-    // await sleep(200);
-    return null;
+    count++;
   }
+
+  return null;
+
 }

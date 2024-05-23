@@ -4,7 +4,6 @@ import {
   gameStateSchema,
   historyEntrySchema,
 } from "../common/gameStateSchema";
-import { Message } from "ollama";
 import { genStateChangesByActions } from "./gameEngine";
 import { characterOutputSchema } from "../common/characterOutputSchema";
 

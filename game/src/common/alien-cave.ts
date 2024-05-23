@@ -29,7 +29,7 @@ const porps = [
     // position: "north",
     position: {
       x: 0,
-      y: 5,
+      y: 10,
     },
   },
   {
@@ -38,7 +38,7 @@ const porps = [
     description: "A small rock",
     // position: "east",
     position: {
-      x: 5,
+      x: 8,
       y: 0,
     },
   },
@@ -58,7 +58,7 @@ const porps = [
     description: "A device that can detect lifeforms.",
     // position: "west",
     position: {
-      x: -5,
+      x: -8,
       y: 0,
     },
   },

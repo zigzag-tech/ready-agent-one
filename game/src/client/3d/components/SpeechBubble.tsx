@@ -11,6 +11,7 @@ export function SpeechBubble({
       <Html {...rest}>
         <div
           style={{
+            zIndex: 1000,
             fontFamily: "comic sans ms",
             // all uppercase
             textTransform: "uppercase",

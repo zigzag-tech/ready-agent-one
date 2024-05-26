@@ -18,7 +18,7 @@ export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
   input: gameStateSchema,
   output: {
-    default: gameStateSchema,
+    default: gameStateSchema.extend({ releaseChange: z.boolean() }),
     "new-chapter-prompt": z.string(),
     "new-chapter-raw": z.string(),
   },
@@ -29,7 +29,7 @@ export const supervisorWorker = supervisorSpec.defineWorker({
     for await (const state of input) {
       // if the conversation has gone too long, change context by producing the next scene
       if (!conversationTooLong(state)) {
-        await output.emit(state);
+        await output.emit({ ...state, releaseChange: false });
       } else {
         const messages: Message[] = [
           {
@@ -147,7 +147,7 @@ Instructions:
           recentHistory: [],
         };
 
-        await output.emit(nextSceneState);
+        await output.emit({ ...nextSceneState, releaseChange: true });
       }
     }
   },

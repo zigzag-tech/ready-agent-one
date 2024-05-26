@@ -3,11 +3,13 @@ const objectState = z.string();
 const locationSchema = z.object({ x: z.number(), y: z.number() });
 const objectStateChangeSchema = z.object({
   subject: z.string(),
+  type: z.literal("status"),
   fromState: objectState,
   toState: objectState,
 });
 const objectLocationChangeSchema = z.object({
   subject: z.string(),
+  type: z.literal("location"),
   fromLocation: locationSchema,
   toLocation: locationSchema,
 });
@@ -16,7 +18,6 @@ export const stateEventSchema = z.union([
   objectStateChangeSchema,
   objectLocationChangeSchema,
 ]);
-
 
 export const charactersEnum = z.enum(["morgan", "jeremy", "guy"]);
 export const actionSchema = z.object({

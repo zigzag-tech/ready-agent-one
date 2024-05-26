@@ -6,6 +6,10 @@ import { supervisorSpec } from "./supervisorSpec";
 import { turnControlSpec } from "./turnSpecAndWorker";
 import { gameEngineSpec } from "./gameEngineSpec";
 
+// whenever scene increments, we need new scene and props (supervisor resets the scene)
+// whenever character has new actions (talk or movements), we need new actions/speech
+// whenever game engine updates the props states, we need new props states (triggered by character actions)
+
 export const stringZ = z.string();
 
 export const liveflow = Liveflow.define({
@@ -41,8 +45,8 @@ export const liveflow = Liveflow.define({
     expose(characterSpec.input["user-input"], "user-provided-input"),
     expose(characterSpec.output.default, "character-talk"),
     expose(characterSpec.output["user-signal"], "user-signal"),
-    expose(summarySpec.input.default, "summary-supervision"),
-    expose(summarySpec.output["default"], "game-state"),
+    expose(gameEngineSpec.input.supervision, "summary-supervision"),
+    expose(supervisorSpec.output["default"], "game-state"),
     expose(gameEngineSpec.output["history-entries"], "history-entries"),
   ],
 });

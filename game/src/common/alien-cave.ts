@@ -63,7 +63,7 @@ const porps = [
     },
   },
 ];
-export const alienCaveInitialInput: GameState = {
+export const alienCaveInitialInput: GameState & { releaseChange: boolean } = {
   current: {
     summary:
       "It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.",
@@ -85,4 +85,5 @@ export const alienCaveInitialInput: GameState = {
     },
   ],
   totalNumOfLines: 1,
+  releaseChange: true,
 };

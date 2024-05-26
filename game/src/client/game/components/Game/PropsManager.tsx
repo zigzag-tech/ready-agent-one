@@ -36,7 +36,8 @@ type ConversationEvent = {
 
 type MoveEvent = {
   subject: string;
-  position: { x: number; y: number };
+  from: { x: number; y: number };
+  to: { x: number; y: number };
 };
 
 function interpolatePositions(
@@ -175,7 +176,7 @@ export function PropsManager() {
   const [stateD] = useOutput({
     job,
     tag: "game-state",
-    def: gameStateSchema,
+    def: gameStateSchema.extend({ releaseChange: z.boolean() }),
     query: {
       type: "lastN",
       n: 1,
@@ -183,7 +184,8 @@ export function PropsManager() {
   });
   const gameState = useMemo(() => stateD?.data, [stateD]);
   useEffect(() => {
-    if (gameState) {
+    if (gameState && gameState.releaseChange) {
+      console.log("test", gameState);
       setStateByProp((prev) => {
         const newState = {} as typeof prev;
         for (const prop of gameState.current.props) {
@@ -201,29 +203,17 @@ export function PropsManager() {
     }
   }, [gameState]);
 
-  
-
   useEffect(() => {
     if (job && gameState) {
       const conversationSubject = new Subject<ConversationEvent>();
       const moveSubject = new Subject<MoveEvent>();
 
       const obs = moveSubject.pipe(
-        filter((event) => !!event.position), // Ensure positions are defined
         switchMap((event) => {
-          const toPosition = event.position!;
-          const fromPosition = gameState.current.props.find(
-            (prop) => prop.name === event.subject
-          )?.position || { x: 0, y: 0 }; // Get the current position of the subject
-
           const duration = 2000; // Duration of the transition
           const intervalTime = 50; // Interval time for updates
           const steps = duration / intervalTime;
-          const positions = interpolatePositions(
-            fromPosition,
-            toPosition,
-            steps
-          );
+          const positions = interpolatePositions(event.from, event.to, steps);
           return interval(intervalTime).pipe(
             take(positions.length),
             map((i) => ({
@@ -246,22 +236,6 @@ export function PropsManager() {
             rolling: true,
           },
         }));
-        // setGameState((prevState) => ({
-        //   ...prevState,
-        //   current: {
-        //     ...prevState.current,
-        //     props: prevState.current.props.map(
-        //       (prop) =>
-        //         prop.name === update.subject
-        //           ? {
-        //               ...prop,
-        //               current_position: update.position,
-        //               moving: !update.isFinal,
-        //             }
-        //           : prop // Set moving to false if it's the final update
-        //     ),
-        //   },
-        // }));
       });
 
       (async () => {
@@ -284,15 +258,20 @@ export function PropsManager() {
                   subject: data.data.subject,
                   content: action.message || "...",
                 });
-              } else if (
-                ["move_to", "walk_to", "run_to"].includes(action.action)
-              ) {
+              }
+            }
+
+            for (const stateChange of data.data.stateChanges) {
+              const defaultPos = {
+                x: 0,
+                y: 0,
+              };
+
+              if (stateChange.type === "location") {
                 moveSubject.next({
                   subject: data.data.subject,
-                  position: action.destination || {
-                    x: 0,
-                    y: 0,
-                  },
+                  from: stateChange.fromLocation || defaultPos,
+                  to: stateChange.toLocation || defaultPos,
                 });
               }
             }
@@ -306,23 +285,6 @@ export function PropsManager() {
           [event.subject]: event.content,
         }));
       });
-
-      // const convoSub = conversationSubject.subscribe((event) => {
-      //   setGameState((prevState) => ({
-      //     ...prevState,
-      //     current: {
-      //       ...prevState.current,
-      //       props: prevState.current.props.map((prop) =>
-      //         prop.name === event.subject
-      //           ? {
-      //               ...prop,
-      //               conversation: event.content,
-      //             }
-      //           : prop
-      //       ),
-      //     },
-      //   }));
-      // });
 
       return () => {
         sub.unsubscribe();
@@ -340,9 +302,9 @@ export function PropsManager() {
             speech: speechByCharacter[prop.name] || null,
 
             currentPosition: {
-              x: (stateByProp[prop.name]?.currentPosition.x || 0) / 5,
+              x: (stateByProp[prop.name]?.currentPosition.x || 0) / 4,
               y: 0,
-              z: (stateByProp[prop.name]?.currentPosition.y || 0) / 5,
+              z: (stateByProp[prop.name]?.currentPosition.y || 0) / 4,
             },
           }}
         />
@@ -360,8 +322,6 @@ type SubjectState = {
   };
   status: string;
 };
-
-
 
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));

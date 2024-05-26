@@ -6,12 +6,14 @@ import {
 } from "../common/gameStateSchema";
 import { genStateChangesByActions } from "./gameEngine";
 import { characterOutputSchema } from "../common/characterOutputSchema";
+import { z } from "zod";
+import _ from "lodash";
 
 export const gameEngineSpec = JobSpec.define({
   name: "GAME_ENGINE",
   input: {
     character: characterOutputSchema,
-    supervision: gameStateSchema,
+    supervision: gameStateSchema.extend({ releaseChange: z.boolean() }),
   },
   output: {
     default: gameStateSchema,
@@ -33,7 +35,9 @@ export const summaryWorker = gameEngineSpec.defineWorker({
     for await (const { data, tag } of input.merge("character", "supervision")) {
       switch (tag) {
         case "supervision": {
-          currentState = data;
+          if (data.releaseChange) {
+            currentState = data;
+          }
           break;
         }
         case "character": {
@@ -50,7 +54,8 @@ export const summaryWorker = gameEngineSpec.defineWorker({
           await output("history-entries").emit(historyEntry);
           currentState.totalNumOfLines += 1;
           // console.clear();
-          await output.emit(currentState);
+          const cleanState = _.omit(currentState, ["releaseChange"]);
+          await output.emit(cleanState as z.infer<typeof gameStateSchema>);
           break;
         }
 

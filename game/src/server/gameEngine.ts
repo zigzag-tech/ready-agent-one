@@ -29,6 +29,7 @@ export const genStateChangesByActions = (
         if (destination) {
           return {
             subject,
+            type: "location",
             fromLocation: {
               ...(subjectProp.position || { x: 0, y: 0 }),
             },
@@ -41,6 +42,7 @@ export const genStateChangesByActions = (
           if (targetProp) {
             return {
               subject,
+              type: "location",
               fromLocation: {
                 ...(subjectProp.position || { x: 0, y: 0 }),
               },
@@ -51,6 +53,7 @@ export const genStateChangesByActions = (
           }
           return {
             subject,
+            type: "location",
             fromLocation: {
               ...(subjectProp.position || { x: 0, y: 0 }),
             },
@@ -69,6 +72,7 @@ export const genStateChangesByActions = (
 
         return {
           subject,
+          type: "location",
           fromLocation: {
             ...(subjectProp.position || { x: 0, y: 0 }),
           },
@@ -91,6 +95,7 @@ export const genStateChangesByActions = (
       ) {
         return {
           subject: target || "unknown_target",
+          type: "status",
           fromState: "idle",
           toState: _.sample([
             "beeping",

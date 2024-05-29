@@ -9,7 +9,7 @@ const oai = new OpenAI({
   apiKey: "ollama", // required, but unused
   baseURL: `${OLLAMA_HOST}/v1`, // updated API URL
 });
-const MODEL_NAME = "mistral:v0.3";
+const MODEL_NAME = "llama3";
 
 import { z } from "zod";
 import { characterOutputSchema } from "./common/characterOutputSchema";

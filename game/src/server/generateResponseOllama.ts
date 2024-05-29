@@ -1,3 +1,4 @@
+import { format } from "winston";
 import { Message, Ollama } from "ollama";
 import Instructor from "@instructor-ai/instructor";
 import OpenAI from "openai";
@@ -8,7 +9,7 @@ const OLLAMA_HOST = process.env.OLLAMA_HOST || "http://localhost:11434";
 const ollama = new Ollama({ host: OLLAMA_HOST });
 // export const CONVO_MODEL = "command-r";
 // export const CONVO_MODEL_LLAMA3 = "command-r";
-const CONVO_MODEL = "mistral:v0.3";
+const CONVO_MODEL = "llama3";
 
 export async function generateResponseOllamaByMessages(messages: Message[]) {
   try {
@@ -79,6 +80,9 @@ export async function generateJSONResponseOllamaByMessages({
           name: schemaName,
         },
         stream: true,
+        // response_format:{
+        //   type:"json_object"
+        // }
       });
 
       process.stdout.write("Response:  ");

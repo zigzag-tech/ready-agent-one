@@ -19,7 +19,7 @@ export const stateEventSchema = z.union([
   objectLocationChangeSchema,
 ]);
 
-export const charactersEnum = z.enum(["morgan", "jeremy", "guy"]);
+export const charactersEnum = z.string();
 export const actionSchema = z.object({
   action: z.string(),
   target: z.string().optional().nullable(),

@@ -17,7 +17,10 @@ export const turnControl = turnControlSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const state of input) {
       const cleanState = _.omit(state, ["releaseChange"]);
-      const op = charactersEnum.options;
+      const op = state.current.props
+        .filter((prop) => prop.type === "person")
+        .map((prop) => prop.name)
+        .sort();
       const whoseTurn = op[state.totalNumOfLines % op.length];
       await output.emit({
         whoseTurn,

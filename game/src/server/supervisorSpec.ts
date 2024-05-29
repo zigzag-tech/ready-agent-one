@@ -11,7 +11,8 @@ import {
 } from "../common/gameStateSchema";
 import { z } from "zod";
 import { Message } from "ollama";
-import { characterProps } from "../common/alien-cave";
+// import { characterProps } from "../common/alien-cave";
+import { petStoreCharacterProps } from "../common/pet-store";
 import { genPropsPrompt } from "./genPromptUtils";
 
 export const supervisorSpec = JobSpec.define({
@@ -120,11 +121,11 @@ Instructions:
         const existingCharacters = propsMaybeMissingPeople.props.filter(
           (prop) =>
             prop.type === "person" &&
-            characterProps.map((p) => p.name).includes(prop.name)
+            petStoreCharacterProps.map((p) => p.name).includes(prop.name)
         );
 
         // add any missing characters
-        const missingCharacters = characterProps.filter(
+        const missingCharacters = petStoreCharacterProps.filter(
           (p) => !existingCharacters.find((c) => c.name === p.name)
         );
         const newProps = [

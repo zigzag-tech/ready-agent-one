@@ -15,6 +15,7 @@ import { useFrame } from "@react-three/fiber";
 import { Subject, Observable, interval } from "rxjs";
 import { switchMap, take, map, filter } from "rxjs/operators";
 import { alienCaveInitialInput } from "../../../../common/alien-cave";
+import { petStoreInitialInput } from "../../../../common/pet-store";
 import { useInput, useOutput } from "@livestack/client/src";
 import { characterOutputSchema } from "../../../../common/characterOutputSchema";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
@@ -165,7 +166,7 @@ export function PropsManager() {
   >({});
 
   useEffect(() => {
-    feedSupervision && feedSupervision(alienCaveInitialInput);
+    feedSupervision && feedSupervision(petStoreInitialInput);
   }, [feedSupervision]);
 
   // mock gameState

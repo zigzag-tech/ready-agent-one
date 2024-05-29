@@ -18,7 +18,7 @@ LiveEnv.setGlobal(
 
   const { input, output, graph } = await liveflow.enqueueJob({});
   saveToJSON(graph);
-  await input("summary-supervision").feed(alienCaveInitialInput);
+  await input("summary-supervision").feed(petStoreInitialInput);
   (async () => {
     for await (const data of output("character-talk")) {
       // console.log("player:", data.data);
@@ -46,6 +46,7 @@ LiveEnv.setGlobal(
 
 import fs from "fs";
 import { alienCaveInitialInput } from "../common/alien-cave";
+import { petStoreInitialInput } from "../common/pet-store";
 export function saveToJSON(g: InstantiatedGraph) {
   fs.writeFileSync(
     "workflow-converatio.graph.json",

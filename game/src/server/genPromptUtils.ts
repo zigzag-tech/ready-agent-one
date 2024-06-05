@@ -162,6 +162,20 @@ export function genActionPrompt(
       content: `
 You are a helpful assistant. Your job is to determine the next activities of the subject based on the context provided.
 
+JSON SCHEMA OF THE RESPONSE:
+{
+  "subject": string,
+  "reflection": string,
+  "activities": [
+    {
+      "action": string,
+      "target": string | null,
+      "destination": { "x": number, "y": number } | null,
+      "message": string | null
+    }
+  ]
+}
+
 INSTRUCTIONS:
 - Put all activities you think the character should do in the "activities" array.
 - Use each SUBJECT ALLOWED ACTIVITIES at most once in your activities.
@@ -169,6 +183,8 @@ INSTRUCTIONS:
 - Always include "subject", "reflection" and "activities" in the JSON.
 - Respond with ONLY the JSON and do NOT add any notes or comments.
 - Be creative and try not to repeat what other characters have already said or done.
+
+
 `,
     },
     {

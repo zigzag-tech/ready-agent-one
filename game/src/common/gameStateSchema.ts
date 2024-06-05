@@ -31,7 +31,7 @@ export const historyEntrySchema = z.object({
   subject: z.string(),
   reflection: z.string(),
   // intent: z.string().nullable().optional(),
-  actions: z.array(actionSchema),
+  activities: z.array(actionSchema),
   stateChanges: z.array(stateEventSchema),
 });
 

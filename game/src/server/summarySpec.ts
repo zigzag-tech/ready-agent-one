@@ -62,7 +62,7 @@ export const summaryWorker = summarySpec.defineWorker({
               subject: "lizard-warrior",
               reflection: "I am the last of my kind. I must fight to survive.",
               // intent: "fight",
-              actions: [
+              activities: [
                 {
                   action: "message",
                   message: "I must fight to survive.",
@@ -75,7 +75,7 @@ export const summaryWorker = summarySpec.defineWorker({
               reflection:
                 "There is no point for us lizard to exist. I must stop lizard-one.",
               // intent: "stop existing",
-              actions: [
+              activities: [
                 {
                   action: "message",
                   message: "I must stop lizard-one.",
@@ -91,6 +91,7 @@ export const summaryWorker = summarySpec.defineWorker({
               stateChanges: [
                 {
                   subject: "lizard-nihilist",
+                  type: "location",
                   fromLocation: {
                     x: 0,
                     y: 0,
@@ -153,12 +154,6 @@ UPDATED SUMMARY:
 
       currentState.totalNumOfLines += 1;
       // console.clear();
-      // console.log({
-      //   ...currentState,
-      //   recentHistory: currentState.recentHistory.map(
-      //     (h) => `${h.subject}: ${JSON.stringify(h.actions)};`
-      //   ),
-      // });
       await output.emit(currentState);
     }
   },

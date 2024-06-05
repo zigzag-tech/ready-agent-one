@@ -253,7 +253,7 @@ export function PropsManager() {
             },
           },
           (data) => {
-            for (const action of data.data.actions) {
+            for (const action of data.data.activities) {
               if (action.action.startsWith("talk")) {
                 conversationSubject.next({
                   subject: data.data.subject,

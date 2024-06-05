@@ -41,13 +41,13 @@ export const summaryWorker = gameEngineSpec.defineWorker({
           break;
         }
         case "character": {
-          const { actions, subject, reflection } = data;
+          const { activities, subject, reflection } = data;
           const stateChanges = genStateChangesByActions(data, currentState);
           const historyEntry = {
             subject,
             reflection,
             // intent,
-            actions,
+            activities,
             stateChanges,
           };
           currentState.recentHistory.push(historyEntry);

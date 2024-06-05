@@ -288,7 +288,7 @@ export const petStoreInitialInput: GameState & { releaseChange: boolean } = {
     {
       subject: "guy",
       reflection: "Guy is kinda bored.",
-      actions: [
+      activities: [
         {
           action: "talk",
           message: "Yawn.",

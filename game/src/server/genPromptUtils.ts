@@ -160,10 +160,10 @@ export function genActionPrompt(
     {
       role: "system",
       content: `
-You are a helpful assistant. Your job is to determine the next actions of the subject based on the context provided.
+You are a helpful assistant. Your job is to determine the next activities of the subject based on the context provided.
 
 INSTRUCTIONS:
-- Use each SUBJECT ALLOWED ACTIONS at most once per response. 
+- Use each SUBJECT ALLOWED ACTIVITIES at most once per response. 
 - Always include a "talk" action with a message in the response.
 - Respond with ONLY the JSON and do NOT add any notes or comments.
 - Be creative and try not to repeat what other characters have already said or done.
@@ -181,22 +181,20 @@ Emily wants catch her cat and take it to the vet.
 
 OBJECTS IN SCENE:
 [
-    {"type":"person","name":"emily","description":"Emily the cat lover.","position":"5 meters ahead"},
-    {"type":"person","name":"cat","description":"A black cat.","position":"2 meters ahead"}
+    {"type":"person","name":"emily","description":"Emily the cat lover.","position": {"x": 0, "y": 0}},
+    {"type":"person","name":"cat","description":"A black cat.","position": {"x": 0, "y": 5}},
 ]
 
 RECENT ACTIVITY LOG:
-[
-    {"subject: "cat", "action":"walk", "target":"emily"},
-    {"subject: "cat", "action":"talk", "message":"Meow."}
-]
+cat: [walk_to {"x": 0, "y": 0}]
+cat: [talk] Meow!
 
 SUBJECT NAME:
 Emily
 
-SUBJECT ALLOWED ACTIONS:
+SUBJECT ALLOWED ACTIVITIES:
 [
-  {"action": "walk", "target": "[sample_destination]"},
+  {"action": "walk_to", "target": "[sample_destination]"},
   {"action": "look_at", "target": "[sample_target]"},
   {"action": "feed", "target": "[sample_target]"},
   {"action": "talk", "message": "[sample_message]"}
@@ -213,7 +211,7 @@ ${JSON.stringify(
     subject: "emily",
     reflection: "I am so worried about the cat. Must get her to the vet soon.",
     // intent: "I must catch the cat and take her to the vet.",
-    actions: [
+    activities: [
       {
         action: "look_at",
         target: "cat",
@@ -240,22 +238,20 @@ Frodo tries to get treasure from a legendary mountain.
 
 OBJECTS IN SCENE:
 [
-    {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position":"33 meters ahead"},
-    {"type":"person","name":"bear","description":"A hungry green bear.","position":"2 meters behind"},
+    {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position": {"x": 3, "y": 2}},
+    {"type":"person","name":"bear","description":"A hungry green bear.","position": {"x": 1, "y": 5}},
 ]
 
 
 RECENT ACTIVITY LOG:
-[
-    {"subject":"frodo", "action":"shoot", "target":"bear"},
-    {"subject":"bear", "action":"talk", "message":"Growl!"},
-    {"subject":"bear", "action":"attack","target":"frodo"},
-]
+frodo: [walk_to {"x": 1, "y": 5}]
+bear: [talk] Growl!
+bear: [attack frodo]
 
 SUBJECT NAME:
 Frodo
 
-SUBJECT ALLOWED ACTIONS:
+SUBJECT ALLOWED ACTIVITIES:
 [
     {"action": "shoot", "target": "[some_target]"},
     {"action": "attack", "target": "[some_target]"},
@@ -275,7 +271,7 @@ ${JSON.stringify(
     reflection:
       "Man that didn't work! This bear is distracting me from my goal.",
     // intent: "I must hide from the bear.",
-    actions: [
+    activities: [
       {
         action: "talk",
         message: "Oh no, the bear didn't die! I must hide!",
@@ -305,29 +301,26 @@ ${state.current.props.map((prop) => JSON.stringify(prop)).join(",\n")}
 ]
 
 RECENT ACTIVITY LOG:
-[
 ${state.recentHistory
   .flatMap((history) => {
-    const actions = history.actions.map((action) => {
-      const baseObj = {
-        subject: history.subject,
-        action: action.action,
-      };
-      if (action.target) baseObj["target"] = action.target;
-      if (action.message) baseObj["message"] = action.message;
-      return baseObj;
+    const actions = history.activities.map((action) => {
+      return { ...action, subject: history.subject };
     });
-    return [...actions, ...history.stateChanges].map((obj) =>
-      JSON.stringify(obj)
-    );
+    return actions.map((obj) => {
+      const dest = obj.destination
+        ? JSON.stringify(obj.destination)
+        : obj.target
+        ? obj.target
+        : "";
+      return `${obj.subject}: [${obj.action} ${dest}] ${obj.message || ""}`;
+    });
   })
-  .join(",\n")}
-]
+  .join("\n")}
 
 SUBJECT NAME:
 ${role}
 
-SUBJECT ALLOWED ACTIONS:
+SUBJECT ALLOWED ACTIVITIES:
 [
 ${[
   { action: "talk", message: "[sample_message]", target: null },

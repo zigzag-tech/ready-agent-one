@@ -35,6 +35,7 @@ export const characterWorker = characterSpec.defineWorker({
       // }
 
       const actionPrompt = genActionPrompt(whoseTurn, state);
+      console.log(`${JSON.stringify(actionPrompt, null, 2)}`);
       await output("action-prompt").emit(actionPrompt);
       // const response = await generateResponseOllamaByMessages(actionPrompt);
       // if (!response) {

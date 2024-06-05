@@ -4,5 +4,5 @@ export const characterOutputSchema = z.object({
   subject: charactersEnum,
   reflection: z.string(),
   //   intent: z.string(),
-  actions: z.array(actionSchema),
+  activities: z.array(actionSchema),
 });

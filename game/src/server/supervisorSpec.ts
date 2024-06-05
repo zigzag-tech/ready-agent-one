@@ -75,9 +75,7 @@ ${JSON.stringify(state.recentHistory)}
 
 INSTRUCTIONS
 - Write the plot for new scene ${newSceneNumber}.
-- Do not introduce new characters. Limit the plot to only be about interactions and adventure among [${Object.keys(
-          charactersEnum.Values
-        ).join(", ")}].
+- Do not introduce new characters.
 - Be dramatic and creative.
 - The new scene should have a new setting or twist.
 - Keep the response under 30 words.

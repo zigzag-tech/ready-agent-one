@@ -10,7 +10,7 @@ export const genStateChangesByActions = (
   characterActions: z.infer<typeof characterOutputSchema>,
   currentState: z.infer<typeof gameStateSchema>
 ) => {
-  const { actions, subject } = characterActions;
+  const { activities, subject } = characterActions;
   const subjectProp = currentState.current.props.find(
     (p) => p.name === subject
   );
@@ -23,7 +23,7 @@ export const genStateChangesByActions = (
   }
   // const outputs = [] as z.infer<typeof changeSchema>[];
 
-  const outputs = actions
+  const outputs = activities
     .map(({ destination, action, target }) => {
       if (action === "walk_to" || action === "run_to") {
         if (destination) {

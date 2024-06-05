@@ -16,7 +16,7 @@ import { Subject, Observable, interval } from "rxjs";
 import { switchMap, take, map, filter } from "rxjs/operators";
 import { alienCaveInitialInput } from "../../../../common/alien-cave";
 import { petStoreInitialInput } from "../../../../common/pet-store";
-import { useInput, useOutput } from "@livestack/client/src";
+import { useInput, useOutput } from "@livestack/client";
 import { characterOutputSchema } from "../../../../common/characterOutputSchema";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 import { Html, Text } from "@react-three/drei";

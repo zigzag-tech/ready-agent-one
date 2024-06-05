@@ -32,7 +32,7 @@ import {
   attackInputData,
   attackStateProxy,
 } from "../Game/components/AttackUIContainer/components/AttackUI/AttackUI";
-import { useInput, useOutput } from "@livestack/client/src";
+import { useInput, useOutput } from "@livestack/client";
 import { z } from "zod";
 import { LiveJobContext } from "../Game/LiveJob";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";

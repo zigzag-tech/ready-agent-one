@@ -3,36 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "packageManager": "yarn@4.1.0",
-  "scripts": {
-    "postinstall": "preconstruct dev",
-    "sync": "git submodule sync && git submodule update --init --recursive",
-    "preinstall": "yarn sync"
-  },
   "author": "",
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "livestack/*",
     "game"
   ],
-  "preconstruct": {
-    "packages": [
-      "livestack/core",
-      "livestack/client",
-      "livestack/gateway",
-      "livestack/replicate",
-      "livestack/runpod",
-      "livestack/shared",
-      "livestack/vault-client",
-      "livestack/vault-interface",
-      "vault-dev-server",
-      "vault-interface"
-    ]
-  },
   "devDependencies": {
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.6",
-    "@babel/preset-typescript": "^7.23.3",
-    "@preconstruct/cli": "^2.8.3"
+    "@babel/preset-typescript": "^7.23.3"
   }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { useInput, useOutput } from "@livestack/client/src";
+import { useInput, useOutput } from "@livestack/client";
 import { LiveJobContext } from "./LiveJob";
 import styled from "styled-components";
 

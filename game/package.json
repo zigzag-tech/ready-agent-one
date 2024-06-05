@@ -11,6 +11,12 @@
   "license": "MIT",
   "dependencies": {
     "@instructor-ai/instructor": "^1.3.0",
+    "@livestack/client": "^0",
+    "@livestack/core": "^0",
+    "@livestack/gateway": "^0",
+    "@livestack/shared": "^0",
+    "@livestack/vault-client": "^0",
+    "@livestack/vault-interface": "^0",
     "@react-hook/window-size": "^3.1.1",
     "@react-three/drei": "^9.99.5",
     "@react-three/fiber": "^8.15.16",

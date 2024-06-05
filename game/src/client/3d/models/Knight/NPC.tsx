@@ -1,6 +1,6 @@
 import { GroupProps } from "@react-three/fiber";
 import NPCCharacter from "./NPCCharacter";
-import { useOutput } from "@livestack/client/src";
+import { useOutput } from "@livestack/client";
 import { LiveJobContext } from "../../../game/components/Game/LiveJob";
 import React, { useRef } from "react";
 import { z } from "zod";

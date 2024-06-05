@@ -163,8 +163,10 @@ export function genActionPrompt(
 You are a helpful assistant. Your job is to determine the next activities of the subject based on the context provided.
 
 INSTRUCTIONS:
-- Use each SUBJECT ALLOWED ACTIVITIES at most once per response. 
-- Always include a "talk" action with a message in the response.
+- Put all activities you think the character should do in the "activities" array.
+- Use each SUBJECT ALLOWED ACTIVITIES at most once in your activities.
+- Always include a "talk" action with a message in the "activities" array.
+- Always include "subject", "reflection" and "activities" in the JSON.
 - Respond with ONLY the JSON and do NOT add any notes or comments.
 - Be creative and try not to repeat what other characters have already said or done.
 `,
@@ -200,7 +202,7 @@ SUBJECT ALLOWED ACTIVITIES:
   {"action": "talk", "message": "[sample_message]"}
 ]
 
-SUBJECT NEXT ACTION(S):
+SUBJECT NEXT ACTIVITIES:
 `,
     },
     {
@@ -259,7 +261,7 @@ SUBJECT ALLOWED ACTIVITIES:
     {"action": "talk", "message": "[sample_message]"}
 ]
 
-SUBJECT NEXT ACTION(S):
+SUBJECT NEXT ACTIVITIES:
 `,
     },
     {
@@ -372,7 +374,7 @@ ${[
   .join("\n")}
 ]
 
-SUBJECT NEXT ACTION(S):
+SUBJECT NEXT ACTIVITIES:
 `;
 
   messages.push({ role: "user", content: newUserPrompt });

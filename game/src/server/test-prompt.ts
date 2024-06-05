@@ -46,7 +46,7 @@ SUBJECT ALLOWED ACTIONS:
   {"action": "talk", "message": "[sample_message]"}
 ]
 
-SUBJECT NEXT ACTION(S):
+SUBJECT NEXT ACTIVITIES:
 `,
   },
   {
@@ -107,7 +107,7 @@ SUBJECT ALLOWED ACTIONS:
     {"action": "talk", "message": "[sample_message]"}
 ]
 
-SUBJECT NEXT ACTION(S):
+SUBJECT NEXT ACTIVITIES:
 `,
   },
   {
@@ -194,7 +194,7 @@ SUBJECT ALLOWED ACTIONS:
     {"action": "run", "destination": "[sample_destination]" 
 }
 
-SUBJECT NEXT ACTION(S):
+SUBJECT NEXT ACTIVITIES:
     `,
   },
 ];

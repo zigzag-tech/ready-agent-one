@@ -287,13 +287,10 @@ export const petStoreInitialInput: GameState & { releaseChange: boolean } = {
   recentHistory: [
     {
       subject: "guy",
-      reflection: "Guy is kinda bored.",
-      activities: [
-        {
-          action: "talk",
-          message: "Yawn.",
-        },
-      ],
+      thinking: "Guy is kinda bored.",
+      action: "yawn",
+      target: null,
+      message: "What a boring day... Another day at the store.",
       stateChanges: [],
     },
   ],

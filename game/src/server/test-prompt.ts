@@ -4,13 +4,16 @@ export const MESSAGES: Message[] = [
   {
     role: "system",
     content: `
-You are a helpful assistant. Your job is to determine the next actions of the subject based on the context provided.
+Based on the context provided, fill in the following JSON schema with the subject's next action, thinking process, target, and message. Ensure that the action and message are coherent and logically follow from the context.
 
-INSTRUCTIONS:
-- Use each SUBJECT ALLOWED ACTIONS at most once per response. 
-- Always include a "talk" action with a message in the response.
-- Respond with ONLY the JSON and do NOT add any notes or comments.
-- Think step by step and provide the most logical action for the subject.
+JSON Schema:
+{
+"subject": "Subject's name or identifier. Mandatory.",
+"thinking": "What is the subject considering or thinking about?",
+"action": "What is the subject's next action? Use one verb. Mandatory.",
+"target": "Who or what is the target of the action? Provide coordinates in the format of "[x,y]" if applicable, otherwise null.",
+"message": "What does the subject say or communicate next? Mandatory."
+}
 `,
   },
   {
@@ -25,28 +28,18 @@ Emily wants catch her cat and take it to the vet.
 
 OBJECTS IN SCENE:
 [
-    {"type":"person","name":"emily","description":"Emily the cat lover.","position":"5 meters ahead"},
-    {"type":"person","name":"cat","description":"A black cat.","position":"2 meters ahead"}
+  {"type":"person","name":"emily","description":"Emily the cat lover.","position": {"x": 0, "y": 0}},
+  {"type":"person","name":"cat","description":"A black cat.","position": {"x": 0, "y": 5}},
 ]
 
 RECENT ACTIVITY LOG:
-[
-    {"subject: "cat", "action":"walk", "target":"emily"},
-    {"subject: "cat", "action":"talk", "message":"Meow."}
-]
+cat: [walk_to [0,0]]
+cat: [talk] Meow!
 
 SUBJECT NAME:
 Emily
 
-SUBJECT ALLOWED ACTIONS:
-[
-  {"action": "walk", "target": "[sample_destination]"},
-  {"action": "look_at", "target": "[sample_target]"},
-  {"action": "feed", "target": "[sample_target]"},
-  {"action": "talk", "message": "[sample_message]"}
-]
-
-SUBJECT NEXT ACTIVITIES:
+RESPONSE:
 `,
   },
   {
@@ -55,18 +48,10 @@ SUBJECT NEXT ACTIVITIES:
 ${JSON.stringify(
   {
     subject: "emily",
-    reflection: "I am so worried about the cat. Must get her to the vet soon.",
-    // intent: "I must catch the cat and take her to the vet.",
-    actions: [
-      {
-        action: "look_at",
-        target: "cat",
-      },
-      {
-        action: "talk",
-        message: "Hey, kitty! You want some treats?",
-      },
-    ],
+    thinking: "I am so worried about the cat. Must get her to the vet soon.",
+    action: "look_at",
+    target: "cat",
+    message: "Hey, kitty! You want some treats?",
   },
   null,
   2
@@ -84,30 +69,20 @@ Frodo tries to get treasure from a legendary mountain.
 
 OBJECTS IN SCENE:
 [
-    {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position":"33 meters ahead"},
-    {"type":"person","name":"bear","description":"A hungry green bear.","position":"2 meters behind"},
+  {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position": {"x": 3, "y": 2}},
+  {"type":"person","name":"bear","description":"A hungry green bear.","position": {"x": 1, "y": 5}},
 ]
 
 
 RECENT ACTIVITY LOG:
-[
-    {"subject":"frodo", "action":"shoot", "target":"bear"},
-    {"subject":"bear", "action":"talk", "message":"Growl!"},
-    {"subject":"bear", "action":"attack","target":"frodo"},
-]
+frodo: [walk_to [1,5]]
+bear: [talk] Growl!
+bear: [attack frodo]
 
 SUBJECT NAME:
 Frodo
 
-SUBJECT ALLOWED ACTIONS:
-[
-    {"action": "shoot", "target": "[some_target]"},
-    {"action": "attack", "target": "[some_target]"},
-    {"action": "hide", "target": null },
-    {"action": "talk", "message": "[sample_message]"}
-]
-
-SUBJECT NEXT ACTIVITIES:
+RESPONSE:
 `,
   },
   {
@@ -116,29 +91,19 @@ SUBJECT NEXT ACTIVITIES:
 ${JSON.stringify(
   {
     subject: "frodo",
-    reflection:
-      "Man that didn't work! This bear is distracting me from my goal.",
-    // intent: "I must hide from the bear.",
-    actions: [
-      {
-        action: "talk",
-        message: "Oh no, the bear didn't die! I must hide!",
-      },
-      {
-        action: "hide",
-        target: null,
-      },
-    ],
+    thinking: "Man that didn't work! This bear is distracting me from my goal.",
+    action: "hide",
+    target: null,
+    message: "Oh no, the bear didn't die! I must hide!",
   },
   null,
   2
 )}
-    `,
+`,
   },
   {
     role: "user",
     content: `
-
 CONTEXT:
 It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.
 
@@ -183,22 +148,22 @@ RECENT ACTIVITY LOG:
 SUBJECT NAME:
 jeremy
 
-SUBJECT ALLOWED ACTIONS:
-[
-    {"action": "walk", "target": "[sample_destination]"},
-    {"action": "jump" }
-    {"action": "examine", "target": "[sample_target]" }
-    {"action": "operate", "target": "[sample_target]" }
-    {"action": "punch", "target": "[sample_target]" }
-    {"action": "kick", "target": "[sample_target]" }
-    {"action": "run", "destination": "[sample_destination]" 
-}
-
-SUBJECT NEXT ACTIVITIES:
+RESPONSE:
     `,
   },
 ];
 
+
+// SUBJECT ALLOWED ACTIONS:
+// [
+//     {"action": "walk", "target": "[sample_destination]"},
+//     {"action": "jump" }
+//     {"action": "examine", "target": "[sample_target]" }
+//     {"action": "operate", "target": "[sample_target]" }
+//     {"action": "punch", "target": "[sample_target]" }
+//     {"action": "kick", "target": "[sample_target]" }
+//     {"action": "run", "destination": "[sample_destination]" 
+// }
 /**
  subject: "jeremy",
  action: "walk",

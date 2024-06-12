@@ -10,7 +10,7 @@ export const genStateChangesByActions = (
   characterActions: z.infer<typeof characterOutputSchema>,
   currentState: z.infer<typeof gameStateSchema>
 ) => {
-  const { activities, subject } = characterActions;
+  const { action, subject, target } = characterActions;
   const subjectProp = currentState.current.props.find(
     (p) => p.name === subject
   );
@@ -23,34 +23,55 @@ export const genStateChangesByActions = (
   }
   // const outputs = [] as z.infer<typeof changeSchema>[];
 
-  const outputs = activities
-    .map(({ destination, action, target }) => {
+  const outputs = [{ action, target }]
+    .map(({ action, target }) => {
       if (action === "walk_to" || action === "run_to") {
-        if (destination) {
-          return {
-            subject,
-            type: "location",
-            fromLocation: {
-              ...(subjectProp.position || { x: 0, y: 0 }),
-            },
-            toLocation: { ...destination },
-          };
-        } else if (target) {
-          const targetProp = currentState.current.props.find(
-            (p) => p.name === target
+        if (target) {
+          console.log("target", target);
+          const targetMatch = target.match(
+            /\[\-?(\d+(\.\d+)?),\s?\-?(\d+(\.\d+)?)\]/g
           );
-          if (targetProp) {
+          if (targetMatch) {
+            const [x, y] = targetMatch[0].slice(1, -1).split(",").map(Number);
             return {
               subject,
               type: "location",
               fromLocation: {
                 ...(subjectProp.position || { x: 0, y: 0 }),
               },
-              toLocation: {
-                ...(targetProp.position || { x: 0, y: 0 }),
+              toLocation: { x, y },
+            };
+          } else {
+            const targetProp = currentState.current.props.find(
+              (p) => p.name === target
+            );
+            if (targetProp) {
+              return {
+                subject,
+                type: "location",
+                fromLocation: {
+                  ...(subjectProp.position || { x: 0, y: 0 }),
+                },
+                toLocation: {
+                  ...(targetProp.position || { x: 0, y: 0 }),
+                },
+              };
+            }
+            return {
+              subject,
+              type: "location",
+              fromLocation: {
+                ...(subjectProp.position || { x: 0, y: 0 }),
               },
+              toLocation: _.sample([
+                { x: 0, y: 0 },
+                { x: 1, y: 0 },
+                { x: 0, y: 1 },
+                { x: 1, y: 1 },
+              ]),
             };
           }
+        } else {
           return {
             subject,
             type: "location",
@@ -64,25 +85,7 @@ export const genStateChangesByActions = (
               { x: 1, y: 1 },
             ]),
           };
-
-          // throw new Error(
-          //   "Target not found while the action type is " + action
-          // );
         }
-
-        return {
-          subject,
-          type: "location",
-          fromLocation: {
-            ...(subjectProp.position || { x: 0, y: 0 }),
-          },
-          toLocation: _.sample([
-            { x: 0, y: 0 },
-            { x: 1, y: 0 },
-            { x: 0, y: 1 },
-            { x: 1, y: 1 },
-          ]),
-        };
 
         // throw new Error(
         //   "Destination not set while the action type is " + action
@@ -112,14 +115,3 @@ export const genStateChangesByActions = (
     .filter((o) => !!o) as z.infer<typeof stateEventSchema>[];
   return outputs;
 };
-
-// [
-//     {"action": "talk", "message": "[sample_message]"},
-//     {"action": "walk_to", "target": "[sample_destination]"},
-//     {"action": "jump", "target": null },
-//     {"action": "examine", "target": "[sample_target]" },
-//     {"action": "operate", "target": "[sample_target]" },
-//     {"action": "punch", "target": "[sample_target]" },
-//     {"action": "kick", "target": "[sample_target]" },
-//     {"action": "run_to", "target": "[sample_destination]" }
-//   ]

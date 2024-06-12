@@ -74,24 +74,24 @@ async function extractData() {
       name: "Extraction",
     },
     max_retries: 3,
-    stream: true,
+    stream: false,
   });
 
-  let extractedData = {};
-  process.stdout.write("Response:  ");
-  // console.log("Response:  ");
-  for await (const result of extractionStream) {
-    extractedData = result;
-    process.stdout.write(JSON.stringify(result));
-  }
-  // erase all of what was written
-  // Move the cursor to the beginning of the line
-  process.stdout.write("\r");
-  process.stdout.write("\r\n");
-  // Clear the entire line
-  process.stdout.write("\x1b[2K");
+  // let extractedData = {};
+  // process.stdout.write("Response:  ");
+  // // console.log("Response:  ");
+  // for await (const result of extractionStream) {
+  //   extractedData = result;
+  //   process.stdout.write(JSON.stringify(result));
+  // }
+  // // erase all of what was written
+  // // Move the cursor to the beginning of the line
+  // process.stdout.write("\r");
+  // process.stdout.write("\r\n");
+  // // Clear the entire line
+  // process.stdout.write("\x1b[2K");
 
-  console.log("Final extraction:", extractedData);
+  console.log("Final extraction:", extractionStream);
 }
 
 async function characterWorkerTest() {
@@ -121,5 +121,6 @@ async function characterWorkerTest() {
 
 if (require.main === module) {
   // main();
+  // extractData();
   characterWorkerTest();
 }

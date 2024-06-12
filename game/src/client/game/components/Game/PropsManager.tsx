@@ -17,7 +17,6 @@ import { switchMap, take, map, filter } from "rxjs/operators";
 import { alienCaveInitialInput } from "../../../../common/alien-cave";
 import { petStoreInitialInput } from "../../../../common/pet-store";
 import { useInput, useOutput } from "@livestack/client";
-import { characterOutputSchema } from "../../../../common/characterOutputSchema";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 import { Html, Text } from "@react-three/drei";
 interface localPlayerState {
@@ -253,14 +252,10 @@ export function PropsManager() {
             },
           },
           (data) => {
-            for (const action of data.data.activities) {
-              if (action.action.startsWith("talk")) {
-                conversationSubject.next({
-                  subject: data.data.subject,
-                  content: action.message || "...",
-                });
-              }
-            }
+            conversationSubject.next({
+              subject: data.data.subject,
+              content: data.data.message || "...",
+            });
 
             for (const stateChange of data.data.stateChanges) {
               const defaultPos = {

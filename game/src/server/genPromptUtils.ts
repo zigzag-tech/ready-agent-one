@@ -160,31 +160,16 @@ export function genActionPrompt(
     {
       role: "system",
       content: `
-You are a helpful assistant. Your job is to determine the next activities of the subject based on the context provided.
+Based on the context provided, fill in the following JSON schema with the subject's next action, thinking process, target, and message. Ensure that the action and message are coherent and logically follow from the context.
 
-JSON SCHEMA OF THE RESPONSE:
+JSON Schema:
 {
-  "subject": string,
-  "reflection": string,
-  "activities": [
-    {
-      "action": string,
-      "target": string | null,
-      "destination": { "x": number, "y": number } | null,
-      "message": string | null
-    }
-  ]
+  "subject": "Subject's name or identifier. Mandatory.",
+  "thinking": "What is the subject considering or thinking about?",
+  "action": "What is the subject's next action? Use one verb. Mandatory.",
+  "target": "Who or what is the target of the action? Provide coordinates in the format of "[x,y]" if applicable, otherwise null.",
+  "message": "What does the subject say or communicate next? Mandatory."
 }
-
-INSTRUCTIONS:
-- Put all activities you think the character should do in the "activities" array.
-- Use each SUBJECT ALLOWED ACTIVITIES at most once in your activities.
-- Always include a "talk" action with a message in the "activities" array.
-- Always include "subject", "reflection" and "activities" in the JSON.
-- Respond with ONLY the JSON and do NOT add any notes or comments.
-- Be creative and try not to repeat what other characters have already said or done.
-
-
 `,
     },
     {
@@ -204,21 +189,13 @@ OBJECTS IN SCENE:
 ]
 
 RECENT ACTIVITY LOG:
-cat: [walk_to {"x": 0, "y": 0}]
+cat: [walk_to [0,0]]
 cat: [talk] Meow!
 
 SUBJECT NAME:
 Emily
 
-SUBJECT ALLOWED ACTIVITIES:
-[
-  {"action": "walk_to", "target": "[sample_destination]"},
-  {"action": "look_at", "target": "[sample_target]"},
-  {"action": "feed", "target": "[sample_target]"},
-  {"action": "talk", "message": "[sample_message]"}
-]
-
-SUBJECT NEXT ACTIVITIES:
+RESPONSE:
 `,
     },
     {
@@ -227,18 +204,10 @@ SUBJECT NEXT ACTIVITIES:
 ${JSON.stringify(
   {
     subject: "emily",
-    reflection: "I am so worried about the cat. Must get her to the vet soon.",
-    // intent: "I must catch the cat and take her to the vet.",
-    activities: [
-      {
-        action: "look_at",
-        target: "cat",
-      },
-      {
-        action: "talk",
-        message: "Hey, kitty! You want some treats?",
-      },
-    ],
+    thinking: "I am so worried about the cat. Must get her to the vet soon.",
+    action: "look_at",
+    target: "cat",
+    message: "Hey, kitty! You want some treats?",
   },
   null,
   2
@@ -262,22 +231,14 @@ OBJECTS IN SCENE:
 
 
 RECENT ACTIVITY LOG:
-frodo: [walk_to {"x": 1, "y": 5}]
+frodo: [walk_to [1,5]]
 bear: [talk] Growl!
 bear: [attack frodo]
 
 SUBJECT NAME:
 Frodo
 
-SUBJECT ALLOWED ACTIVITIES:
-[
-    {"action": "shoot", "target": "[some_target]"},
-    {"action": "attack", "target": "[some_target]"},
-    {"action": "hide", "target": null },
-    {"action": "talk", "message": "[sample_message]"}
-]
-
-SUBJECT NEXT ACTIVITIES:
+RESPONSE:
 `,
     },
     {
@@ -286,19 +247,10 @@ SUBJECT NEXT ACTIVITIES:
 ${JSON.stringify(
   {
     subject: "frodo",
-    reflection:
-      "Man that didn't work! This bear is distracting me from my goal.",
-    // intent: "I must hide from the bear.",
-    activities: [
-      {
-        action: "talk",
-        message: "Oh no, the bear didn't die! I must hide!",
-      },
-      {
-        action: "hide",
-        target: null,
-      },
-    ],
+    thinking: "Man that didn't work! This bear is distracting me from my goal.",
+    action: "hide",
+    target: null,
+    message: "Oh no, the bear didn't die! I must hide!",
   },
   null,
   2
@@ -311,8 +263,6 @@ ${JSON.stringify(
 CONTEXT:
 ${state.current.summary}
 
-OBJECTIVE:
-
 OBJECTS IN SCENE:
 [
 ${state.current.props.map((prop) => JSON.stringify(prop)).join(",\n")}
@@ -320,77 +270,15 @@ ${state.current.props.map((prop) => JSON.stringify(prop)).join(",\n")}
 
 RECENT ACTIVITY LOG:
 ${state.recentHistory
-  .flatMap((history) => {
-    const actions = history.activities.map((action) => {
-      return { ...action, subject: history.subject };
-    });
-    return actions.map((obj) => {
-      const dest = obj.destination
-        ? JSON.stringify(obj.destination)
-        : obj.target
-        ? obj.target
-        : "";
-      return `${obj.subject}: [${obj.action} ${dest}] ${obj.message || ""}`;
-    });
+  .map((h) => {
+    return `${h.subject}: [${h.action} ${h.target}] ${h.message || ""}`;
   })
   .join("\n")}
 
 SUBJECT NAME:
 ${role}
 
-SUBJECT ALLOWED ACTIVITIES:
-[
-${[
-  { action: "talk", message: "[sample_message]", target: null },
-  {
-    action: "walk_to",
-    message: null,
-    destination: { x: 1, y: 1 },
-    target: null,
-  },
-  {
-    action: "run_to",
-    message: null,
-    destination: { x: 2, y: 1 },
-    target: null,
-  },
-  { action: "jump", message: null, target: null, destination: null },
-  {
-    action: "examine",
-    message: null,
-    target: "[sample_target]",
-    destination: null,
-  },
-  {
-    action: "operate",
-    message: null,
-    target: "[sample_target]",
-    destination: null,
-  },
-  {
-    action: "punch",
-    message: null,
-    target: "[sample_target]",
-    destination: null,
-  },
-  {
-    action: "kick",
-    message: null,
-    target: "[sample_target]",
-    destination: null,
-  },
-  {
-    action: "run_to",
-    message: null,
-    target: "[sample_destination]",
-    destination: null,
-  },
-]
-  .map((d) => JSON.stringify(d))
-  .join("\n")}
-]
-
-SUBJECT NEXT ACTIVITIES:
+RESPONSE:
 `;
 
   messages.push({ role: "user", content: newUserPrompt });

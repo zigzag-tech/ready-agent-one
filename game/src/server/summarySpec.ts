@@ -5,7 +5,6 @@ import { Message } from "ollama";
 import { genStateChangesByActions } from "./gameEngine";
 import { characterOutputSchema } from "../common/characterOutputSchema";
 
-
 export const summarySpec = JobSpec.define({
   name: "SUMMARY_WORKER",
   input: gameStateSchema,
@@ -60,34 +59,19 @@ export const summaryWorker = summarySpec.defineWorker({
           recentHistory: [
             {
               subject: "lizard-warrior",
-              reflection: "I am the last of my kind. I must fight to survive.",
-              // intent: "fight",
-              activities: [
-                {
-                  action: "message",
-                  message: "I must fight to survive.",
-                },
-              ],
+              thinking: "I am the last of my kind. I must fight to survive.",
+              action: "stand",
+              target: null,
+              message: "Grrrrr! Fear me! I am the lizard warrior!",
               stateChanges: [],
             },
             {
               subject: "lizard-nihilist",
-              reflection:
+              thinking:
                 "There is no point for us lizard to exist. I must stop lizard-one.",
-              // intent: "stop existing",
-              activities: [
-                {
-                  action: "message",
-                  message: "I must stop lizard-one.",
-                },
-                {
-                  action: "move",
-                  destination: {
-                    x: 0,
-                    y: 0,
-                  },
-                },
-              ],
+              message: "You need to die for our species to stop existing.",
+              action: "move",
+              target: "[0,0]",
               stateChanges: [
                 {
                   subject: "lizard-nihilist",

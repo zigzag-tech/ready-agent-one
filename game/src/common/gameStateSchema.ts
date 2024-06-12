@@ -23,15 +23,14 @@ export const charactersEnum = z.string();
 export const actionSchema = z.object({
   action: z.string(),
   target: z.string().optional().nullable(),
-  message: z.string().optional().nullable(),
-  destination: locationSchema.optional().nullable(),
+  // message: z.string().optional().nullable(),
+  // destination: locationSchema.optional().nullable(),
 });
 
-export const historyEntrySchema = z.object({
+export const historyEntrySchema = actionSchema.extend({
   subject: z.string(),
-  reflection: z.string(),
-  // intent: z.string().nullable().optional(),
-  activities: z.array(actionSchema),
+  thinking: z.string(),
+  message: z.string(),
   stateChanges: z.array(stateEventSchema),
 });
 

@@ -74,8 +74,8 @@ export const alienCaveInitialInput: GameState & { releaseChange: boolean } = {
     {
       subject: "guy",
       // intent: "Guy is looking for a place to take a selfie.",
-      reflection: "Guy is looking for a place to take a selfie.",
-      activities: [
+      thinking: "Guy is looking for a place to take a selfie.",
+      action: [
         {
           action: "talk",
           message: "Hey, Morgan, do you see that cave?",

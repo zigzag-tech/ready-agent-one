@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { charactersEnum, actionSchema } from "./gameStateSchema";
-export const characterOutputSchema = z.object({
+export const characterOutputSchema = actionSchema.extend({
   subject: charactersEnum,
-  reflection: z.string(),
-  //   intent: z.string(),
-  activities: z.array(actionSchema),
+  thinking: z.string(),
+  message: z.string(),
 });

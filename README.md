@@ -13,6 +13,7 @@ Experimental prototype. Work in Progress.
 
 ```bash
 yarn
+cd game
 yarn dev
 ```
 

@@ -11,10 +11,18 @@ Experimental prototype. Work in Progress.
 
 ## Getting Start
 
+
+### Run the full game
 ```bash
 yarn
 cd game
 yarn dev
+```
+
+### Run backend only
+```
+cd game
+./run-ts src/server/liveflow.conversation.test.ts
 ```
 
 ## Technology

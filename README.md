@@ -5,6 +5,17 @@
 
 Experimental prototype. Work in Progress.
 
+## Prerequisites
+- Node.js > 20
+- Ollama
+
+## Getting Start
+
+```bash
+yarn
+yarn dev
+```
+
 ## Technology
 
 Powered by [LiveStack](https://github.com/zigzag-tech/livestack).

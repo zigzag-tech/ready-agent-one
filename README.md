@@ -7,7 +7,7 @@ Experimental prototype. Work in Progress.
 
 ## Prerequisites
 - Node.js > 20
-- Ollama
+- [Ollama](https://ollama.com/)
 
 ## Getting Start
 

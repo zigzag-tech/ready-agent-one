@@ -1,0 +1,30 @@
+{
+  "action": "walk_to",
+  "target": "guy",
+  "subject": "jackie",
+  "thinking": "I need to make some changes around here, things are getting stale.",
+  "message": "Hey Guy, can I talk to you for a minute? We need to discuss some new ideas to bring in more customers.",
+  "_meta": {
+    "_isValid": true,
+    "_activePath": [
+      "message"
+    ],
+    "_completedPaths": [
+      [
+        "subject"
+      ],
+      [
+        "thinking"
+      ],
+      [
+        "action"
+      ],
+      [
+        "target"
+      ],
+      [
+        "message"
+      ]
+    ]
+  }
+}

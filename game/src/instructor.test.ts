@@ -14,6 +14,7 @@ const MODEL_NAME = "gemma2";
 
 import { z } from "zod";
 import { characterOutputSchema } from "./common/characterOutputSchema";
+import { extractRawContent, parseRawContentToJSON } from "./server/genPromptUtils";
 
 const prompt = [
   {
@@ -269,32 +270,3 @@ if (require.main === module) {
   characterWorkerTest();
 }
 
-
-function extractRawContent(input: string): string {
-  const startTag = '<response>';
-  const endTag = '</response>';
-  
-  const startIndex = input.indexOf(startTag) + startTag.length;
-  const endIndex = input.indexOf(endTag);
-  
-  if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
-    console.error(input);
-      throw new Error("Invalid input format");
-  }
-  
-  return input.substring(startIndex, endIndex).trim();
-}
-
-function parseRawContentToJSON(rawContent: string): object {
-  const lines = rawContent.split('\n').map(line => line.trim()).filter(line => line);
-  const json: { [key: string]: string } = {};
-  
-  lines.forEach(line => {
-      const [key, value] = line.split(':', 2);
-      if (key && value) {
-          json[key.trim().toLowerCase()] = value.trim();
-      }
-  });
-  
-  return json;
-}

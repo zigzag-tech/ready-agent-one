@@ -9,6 +9,7 @@ import {
 } from "./generateResponseOllama";
 import _ from "lodash";
 import { characterOutputSchema } from "../common/characterOutputSchema";
+import { extractRawContent, parseRawContentToJSON } from "./genPromptUtils";
 
 // TODO:
 // 1. let LLM generate actions (maybe from a set of basic actions)
@@ -42,15 +43,16 @@ export const characterWorker = characterSpec.defineWorker({
       //   throw new Error("No response from LLM");
       // }
       // const r = parseJSONResponse(response);
-      const r = (await generateJSONResponseOllamaByMessages({
-        messages: actionPrompt,
-        schema: characterOutputSchema,
-        schemaName: "characterOutputSchema",
-      })) as z.infer<typeof characterOutputSchema>;
-      r.subject = whoseTurn;
+      const rawMessage = await generateResponseOllamaByMessages(actionPrompt);
+      if(!rawMessage) {
+        throw new Error("Ollama response is empty.");
+      }
+      const rawContent = extractRawContent(rawMessage);
+      const json = parseRawContentToJSON(rawContent) as z.infer<typeof characterOutputSchema>;
+      json.subject = whoseTurn;
       // const withoutReason = _.omit(r, "reason");
 
-      await output("default").emit(r);
+      await output("default").emit(json);
     }
   },
 });

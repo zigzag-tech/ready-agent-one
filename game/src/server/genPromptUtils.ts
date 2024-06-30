@@ -160,16 +160,18 @@ export function genActionPrompt(
     {
       role: "system",
       content: `
-Based on the context provided, fill in the following JSON schema with the subject's next action, thinking process, target, and message. Ensure that the action and message are coherent and logically follow from the context.
+You are a game script writing assistant. Based on the context provided, produce the subject\'s next action, thinking process, target, and message. 
 
-JSON Schema:
-{
-  "subject": "Subject's name or identifier. Mandatory.",
-  "thinking": "What is the subject considering or thinking about?",
-  "action": "What is the subject's next action? Use one verb. Mandatory.",
-  "target": "Who or what is the target of the action? Provide coordinates in the format of "[x,y]" if applicable, otherwise null.",
-  "message": "What does the subject say or communicate next? Mandatory."
-}
+- Ensure that the action and message are coherent and logically follow from the context.
+
+Format of your response shoul be:
+<format>
+Thinking: What is the subject considering or thinking about?
+Subject: Subject\'s name or identifier. Mandatory.
+Action: What is the subject\'s next action? Mandatory. Use only options from the ALLOWED ACTIONS list.
+Target: Who or what is the target of the action? Provide the id of the target from one of the props if applicable, otherwise null.
+Message: What does the subject say or communicate next? Mandatory. Always start with an emotion emoji.
+</format>
 `,
     },
     {
@@ -184,16 +186,19 @@ Emily wants catch her cat and take it to the vet.
 
 OBJECTS IN SCENE:
 [
-    {"type":"person","name":"emily","description":"Emily the cat lover.","position": {"x": 0, "y": 0}},
-    {"type":"person","name":"cat","description":"A black cat.","position": {"x": 0, "y": 5}},
+    {"type":"person","name":"emily","description":"Emily the cat lover.","position": "north"},
+    {"type":"person","name":"cat","description":"A black cat.","position": "south"},
 ]
 
 RECENT ACTIVITY LOG:
-cat: [walk_to [0,0]]
+cat: [walk_to emily]
 cat: [talk] Meow!
 
 SUBJECT NAME:
 Emily
+
+ALLOWED ACTIONS:
+walk_to, pet, look_at
 
 RESPONSE:
 `,
@@ -201,17 +206,13 @@ RESPONSE:
     {
       role: "assistant",
       content: `
-${JSON.stringify(
-  {
-    subject: "emily",
-    thinking: "I am so worried about the cat. Must get her to the vet soon.",
-    action: "look_at",
-    target: "cat",
-    message: "Hey, kitty! You want some treats?",
-  },
-  null,
-  2
-)}
+<response>
+Subject: emily
+Thinking: I am so worried about the cat. Must get her to the vet soon.
+Action: look_at
+Target: cat
+Message: 😁 Hey, kitty! You want some treats?
+</response>
 `,
     },
     {
@@ -225,18 +226,21 @@ Frodo tries to get treasure from a legendary mountain.
 
 OBJECTS IN SCENE:
 [
-    {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position": {"x": 3, "y": 2}},
-    {"type":"person","name":"bear","description":"A hungry green bear.","position": {"x": 1, "y": 5}},
+    {"type":"person","name":"frodo","description":"Frodo the hobbit. Frodo loves adventures.","position": "north"},
+    {"type":"person","name":"bear","description":"A hungry green bear.","position": "south"},
 ]
 
 
 RECENT ACTIVITY LOG:
-frodo: [walk_to [1,5]]
+frodo: [walk_to bear]
 bear: [talk] Growl!
 bear: [attack frodo]
 
 SUBJECT NAME:
 Frodo
+
+ALLOWED ACTIONS:
+walk_to, look_at, hide, attack
 
 RESPONSE:
 `,
@@ -244,18 +248,14 @@ RESPONSE:
     {
       role: "assistant",
       content: `
-${JSON.stringify(
-  {
-    subject: "frodo",
-    thinking: "Man that didn't work! This bear is distracting me from my goal.",
-    action: "hide",
-    target: null,
-    message: "Oh no, the bear didn't die! I must hide!",
-  },
-  null,
-  2
-)}
-  `,
+<response>
+Subject: frodo
+Thinking: Man that didn't work! This bear is distracting me from my goal.
+Action: hide
+Target: null
+Message: 😵 Oh no, the bear didn't die! I must hide!
+</response>
+`,
     },
   ];
 
@@ -278,11 +278,46 @@ ${state.recentHistory
 SUBJECT NAME:
 ${role}
 
+ALLOWED ACTIONS:
+walk_to, look_at, examine
+
 RESPONSE:
 `;
 
   messages.push({ role: "user", content: newUserPrompt });
   return messages;
+}
+
+export function extractRawContent(input: string): string {
+  const startTag = "<response>";
+  const endTag = "</response>";
+
+  const startIndex = input.indexOf(startTag) + startTag.length;
+  const endIndex = input.indexOf(endTag);
+
+  if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+    console.error(input);
+    throw new Error("Invalid input format");
+  }
+
+  return input.substring(startIndex, endIndex).trim();
+}
+
+export function parseRawContentToJSON(rawContent: string): object {
+  const lines = rawContent
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line);
+  const json: { [key: string]: string } = {};
+
+  lines.forEach((line) => {
+    const [key, value] = line.split(":", 2);
+    if (key && value) {
+      json[key.trim().toLowerCase()] = value.trim();
+    }
+  });
+
+  return json;
 }
 
 export function parseJSONResponse(raw: string) {

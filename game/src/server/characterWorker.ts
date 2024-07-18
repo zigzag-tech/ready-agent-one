@@ -3,10 +3,7 @@ import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
 import { genActionPrompt, parseJSONResponse } from "./genPromptUtils";
-import {
-  generateJSONResponseOllamaByMessages,
-  generateResponseOllamaByMessages,
-} from "./generateResponseOllama";
+import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import _ from "lodash";
 import { characterOutputSchema } from "../common/characterOutputSchema";
 import { extractRawContent, parseRawContentToJSON } from "./genPromptUtils";
@@ -44,11 +41,13 @@ export const characterWorker = characterSpec.defineWorker({
       // }
       // const r = parseJSONResponse(response);
       const rawMessage = await generateResponseOllamaByMessages(actionPrompt);
-      if(!rawMessage) {
+      if (!rawMessage) {
         throw new Error("Ollama response is empty.");
       }
       const rawContent = extractRawContent(rawMessage);
-      const json = parseRawContentToJSON(rawContent) as z.infer<typeof characterOutputSchema>;
+      const json = parseRawContentToJSON(rawContent) as z.infer<
+        typeof characterOutputSchema
+      >;
       json.subject = whoseTurn;
       // const withoutReason = _.omit(r, "reason");
 

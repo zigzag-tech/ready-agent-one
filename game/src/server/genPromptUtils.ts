@@ -17,11 +17,14 @@ export function genPropsPrompt(newScene: string) {
       content: `
 You are a scene writing assistant. Your job is to write the type, name, description, and position of objects mentioned in the SCENE PROVIDED.
 
-Instructions:
-- position should be only one of "north", "west", "south", "east".
-- type should be only one of the "person" or "object".
-- name and description should be a string.
-- Respond with only the JSON and do NOT explain.
+Format of your response should be:
+<response>
+Position: position should be only one of "north", "west", "south", "east".
+Type: type should be only one of the "person" or "object".
+Name: name of the object or person.
+Description: description of the object or person.
+</response>
+Repeat the above format for each object in the scene.
 `,
     },
     {
@@ -30,47 +33,30 @@ Instructions:
 SCENE PROVIDED:
 In a cozy room, Emily sits, a black cat curled at her feet. She tries to get the cat's attention with a toy.
 
-JSON OBJECTS:
+RESPONSE:
 `,
     },
     {
       role: "assistant",
       content: `
-${JSON.stringify(
-  {
-    props: [
-      {
-        type: "person",
-        name: "emily",
-        description: "emily the cat lover.",
-        position: {
-          x: 0,
-          y: 0,
-        },
-      },
-      {
-        type: "object",
-        name: "cat",
-        description: "A black cat.",
-        position: {
-          x: 0,
-          y: 5,
-        },
-      },
-      {
-        type: "object",
-        name: "cat toy",
-        description: "A round toy with a bell inside.",
-        position: {
-          x: 5,
-          y: 5,
-        },
-      },
-    ],
-  },
-  null,
-  2
-)}
+<response>
+Position: north
+Type: person
+Name: emily
+Description: Emily the cat lover.
+</response>
+<response>
+Position: south
+Type: object
+Name: cat
+Description: A black cat.
+</response>
+<response>
+Position: south
+Type: object
+Name: cat toy
+Description: A round toy with a bell inside.
+</response>
 `,
     },
     {
@@ -79,65 +65,42 @@ ${JSON.stringify(
 SCENE PROVIDED:
 In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a treasure chest and a skeleton.
 
-JSON OBJECTS:
+RESPONSE:
 `,
     },
     {
       role: "assistant",
       content: `
-${JSON.stringify(
-  {
-    props: [
-      {
-        type: "person",
-        name: "jack",
-        description: "Jack the adventurer.",
-        position: {
-          x: 0,
-          y: 0,
-        },
-      },
-      {
-        type: "person",
-        name: "tracy",
-        description: "Tracy the adventurer.",
-        position: {
-          x: 5,
-          y: 0,
-        },
-      },
-      {
-        type: "person",
-        name: "indiana",
-        description: "Indiana the adventurer.",
-        position: {
-          x: 5,
-          y: 5,
-        },
-      },
-      {
-        type: "object",
-        name: "treasure chest",
-        description: "A large treasure chest.",
-        position: {
-          x: 2,
-          y: 2,
-        },
-      },
-      {
-        type: "object",
-        name: "skeleton",
-        description: "A human skeleton.",
-        position: {
-          x: 3,
-          y: 3,
-        },
-      },
-    ],
-  },
-  null,
-  2
-)}
+<response>
+Position: north
+Type: person
+Name: jack
+Description: Jack the adventurer.
+</response>
+<response>
+Position: south
+Type: person
+Name: tracy
+Description: Tracy the adventurer.
+</response>
+<response>
+Position: south
+Type: person
+Name: indiana
+Description: Indiana the adventurer.
+</response>
+<response>
+Position: east
+Type: object
+Name: treasure chest
+Description: A large treasure chest.
+</response>
+<response>
+Position: east
+Type: object
+Name: skeleton
+Description: A human skeleton.
+</response>
 `,
     },
     {
@@ -146,7 +109,7 @@ ${JSON.stringify(
 SCENE PROVIDED:
 ${newScene}
 
-JSON OBJECTS:
+RESPONSE:
 `,
     },
   ];
@@ -164,7 +127,7 @@ You are a game script writing assistant. Based on the context provided, produce 
 
 - Ensure that the action and message are coherent and logically follow from the context.
 
-Format of your response shoul be:
+Format of your response should be:
 <format>
 Thinking: What is the subject considering or thinking about?
 Subject: Subject\'s name or identifier. Mandatory.

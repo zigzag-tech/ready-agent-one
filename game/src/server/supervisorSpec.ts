@@ -1,7 +1,4 @@
-import {
-  generateJSONResponseOllamaByMessages,
-  generateResponseOllamaByMessages,
-} from "./generateResponseOllama";
+import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import {
   GameState,
@@ -13,7 +10,11 @@ import { z } from "zod";
 import { Message } from "ollama";
 // import { characterProps } from "../common/alien-cave";
 import { petStoreCharacterProps } from "../common/pet-store";
-import { genPropsPrompt } from "./genPromptUtils";
+import {
+  extractRawContent,
+  genPropsPrompt,
+  parseRawContentToJSON,
+} from "./genPromptUtils";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -105,16 +106,26 @@ Instructions:
         // console.log("supervisorSpec newTopic", newTopic);
 
         const propsGenMessages = genPropsPrompt(newTopic);
-        // const scene =
-        //   (await generateResponseOllamaByMessages(sceneGenMessages)) || "";
-        // const propsMaybeMissingPeople = parseJSONResponse(scene);
-        // console.error("supervisorSpec props", scene);
-        const propsMaybeMissingPeople =
-          (await generateJSONResponseOllamaByMessages({
-            messages: propsGenMessages,
-            schema: z.object({ props: scenePropsSchema }),
-            schemaName: "scenePropsSchema",
-          })) as { props: z.infer<typeof scenePropsSchema> };
+
+        const rawMessage = await generateResponseOllamaByMessages(
+          propsGenMessages
+        );
+
+        if (!rawMessage) {
+          throw new Error("Ollama response is empty.");
+        }
+
+        const regex = /<response>[\s\S]*?<\/response>/g;
+        const matches = rawMessage.match(regex);
+        const propsMaybeMissingPeople = {
+          props: [] as z.infer<typeof scenePropsSchema>,
+        };
+        if (matches) {
+          matches.forEach((match) => {
+            const json = parseRawContentToJSON(extractRawContent(match)) as any;
+            propsMaybeMissingPeople.props.push(json);
+          });
+        }
 
         const existingCharacters = propsMaybeMissingPeople.props.filter(
           (prop) =>
@@ -154,16 +165,4 @@ Instructions:
 
 function conversationTooLong(state: GameState) {
   return state.totalNumOfLines > 10;
-}
-
-function parseJSONResponse(raw: string | null) {
-  type Props = z.infer<typeof scenePropsSchema>;
-  if (!raw) return [] as Props;
-  try {
-    const responseJson = JSON.parse(raw.trim()) as { props: Props };
-    return responseJson.props;
-  } catch (e) {
-    console.log("Error parsing response", e, "raw:", raw);
-    return [] as Props;
-  }
 }

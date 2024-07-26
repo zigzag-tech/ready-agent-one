@@ -1,6 +1,7 @@
 import { z } from "zod";
 const objectState = z.string();
-const locationSchema = z.object({ x: z.number(), y: z.number() });
+// const locationSchema = z.object({ x: z.number(), y: z.number() });
+const locationSchema = z.string();
 const objectStateChangeSchema = z.object({
   subject: z.string(),
   type: z.literal("status"),

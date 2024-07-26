@@ -12,11 +12,11 @@ export const characterProps = Object.entries(DIRECTIVE_BY_ROLE).map(
     type: "person",
     name: role,
     description: description,
-    // position: `${index + 1} meters ahead`,
-    position: {
-      x: index * 3 - 1,
-      y: index * 3 - 1,
-    },
+    position: `${index + 1} meters ahead`,
+    // position: {
+    //   x: index * 3 - 1,
+    //   y: index * 3 - 1,
+    // },
   })
 );
 
@@ -26,41 +26,41 @@ const porps = [
     type: "object",
     name: "cave",
     description: "A mysterious cave",
-    // position: "north",
-    position: {
-      x: 0,
-      y: 10,
-    },
+    position: "north",
+    // position: {
+    //   x: 0,
+    //   y: 10,
+    // },
   },
   {
     type: "object",
     name: "small rock",
     description: "A small rock",
-    // position: "east",
-    position: {
-      x: 8,
-      y: 0,
-    },
+    position: "east",
+    // position: {
+    //   x: 8,
+    //   y: 0,
+    // },
   },
   {
     type: "object",
     name: "giant tree",
     description: "An alien looking tree that is 10 meters tall",
-    // position: "south",
-    position: {
-      x: 0,
-      y: -10,
-    },
+    position: "south",
+    // position: {
+    //   x: 0,
+    //   y: -10,
+    // },
   },
   {
     type: "object",
     name: "lifeform detector",
     description: "A device that can detect lifeforms.",
-    // position: "west",
-    position: {
-      x: -8,
-      y: 0,
-    },
+    position: "west",
+    // position: {
+    //   x: -8,
+    //   y: 0,
+    // },
   },
 ];
 export const alienCaveInitialInput: GameState & { releaseChange: boolean } = {
@@ -75,12 +75,8 @@ export const alienCaveInitialInput: GameState & { releaseChange: boolean } = {
       subject: "guy",
       // intent: "Guy is looking for a place to take a selfie.",
       thinking: "Guy is looking for a place to take a selfie.",
-      action: [
-        {
-          action: "talk",
-          message: "Hey, Morgan, do you see that cave?",
-        },
-      ],
+      action: "talk",
+      message: "Hey, Morgan, do you see that cave?",
       stateChanges: [],
     },
   ],

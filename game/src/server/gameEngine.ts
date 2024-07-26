@@ -28,62 +28,18 @@ export const genStateChangesByActions = (
       if (action === "walk_to" || action === "run_to") {
         if (target) {
           console.log("target", target);
-          const targetMatch = target.match(
-            /\[\-?(\d+(\.\d+)?),\s?\-?(\d+(\.\d+)?)\]/g
-          );
-          if (targetMatch) {
-            const [x, y] = targetMatch[0].slice(1, -1).split(",").map(Number);
-            return {
-              subject,
-              type: "location",
-              fromLocation: {
-                ...(subjectProp.position || { x: 0, y: 0 }),
-              },
-              toLocation: { x, y },
-            };
-          } else {
-            const targetProp = currentState.current.props.find(
-              (p) => p.name === target
-            );
-            if (targetProp) {
-              return {
-                subject,
-                type: "location",
-                fromLocation: {
-                  ...(subjectProp.position || { x: 0, y: 0 }),
-                },
-                toLocation: {
-                  ...(targetProp.position || { x: 0, y: 0 }),
-                },
-              };
-            }
-            return {
-              subject,
-              type: "location",
-              fromLocation: {
-                ...(subjectProp.position || { x: 0, y: 0 }),
-              },
-              toLocation: _.sample([
-                { x: 0, y: 0 },
-                { x: 1, y: 0 },
-                { x: 0, y: 1 },
-                { x: 1, y: 1 },
-              ]),
-            };
-          }
+          return {
+            subject,
+            type: "location",
+            fromLocation: subjectProp.position || "north",
+            toLocation: target,
+          };
         } else {
           return {
             subject,
             type: "location",
-            fromLocation: {
-              ...(subjectProp.position || { x: 0, y: 0 }),
-            },
-            toLocation: _.sample([
-              { x: 0, y: 0 },
-              { x: 1, y: 0 },
-              { x: 0, y: 1 },
-              { x: 1, y: 1 },
-            ]),
+            fromLocation: subjectProp.position || "north",
+            toLocation: _.sample(["north", "west", "east", "south"]),
           };
         }
 

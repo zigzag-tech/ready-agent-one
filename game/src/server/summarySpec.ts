@@ -30,28 +30,31 @@ export const summaryWorker = summarySpec.defineWorker({
                 name: "lizard-warrior",
                 type: "person",
                 description: "a lizard warrior",
-                position: {
-                  x: 0,
-                  y: 0,
-                },
+                position: "north",
+                // position: {
+                //   x: 0,
+                //   y: 0,
+                // },
               },
               {
                 name: "lizard-nihilist",
                 type: "person",
                 description: "a lizard nihilist",
-                position: {
-                  x: 1,
-                  y: 1,
-                },
+                position: "south",
+                // position: {
+                //   x: 1,
+                //   y: 1,
+                // },
               },
               {
                 name: "flames",
                 type: "object",
                 description: "The fire of doom",
-                position: {
-                  x: 2,
-                  y: 2,
-                },
+                position: "east",
+                // position: {
+                //   x: 2,
+                //   y: 2,
+                // },
               },
             ],
           },
@@ -71,19 +74,13 @@ export const summaryWorker = summarySpec.defineWorker({
                 "There is no point for us lizard to exist. I must stop lizard-one.",
               message: "You need to die for our species to stop existing.",
               action: "move",
-              target: "[0,0]",
+              target: "north",
               stateChanges: [
                 {
                   subject: "lizard-nihilist",
                   type: "location",
-                  fromLocation: {
-                    x: 0,
-                    y: 0,
-                  },
-                  toLocation: {
-                    x: 1,
-                    y: 1,
-                  },
+                  fromLocation: "south",
+                  toLocation: "north",
                 },
               ],
             },

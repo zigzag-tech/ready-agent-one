@@ -128,13 +128,13 @@ You are a game script writing assistant. Based on the context provided, produce 
 - Ensure that the action and message are coherent and logically follow from the context.
 
 Format of your response should be:
-<format>
+<response>
 Thinking: What is the subject considering or thinking about?
 Subject: Subject\'s name or identifier. Mandatory.
 Action: What is the subject\'s next action? Mandatory. Use only options from the ALLOWED ACTIONS list.
 Target: Who or what is the target of the action? Provide the id of the target from one of the props if applicable, otherwise null.
 Message: What does the subject say or communicate next? Mandatory. Always start with an emotion emoji.
-</format>
+</response>
 `,
     },
     {
@@ -258,12 +258,12 @@ export function extractRawContent(input: string): string {
   const startIndex = input.indexOf(startTag) + startTag.length;
   const endIndex = input.indexOf(endTag);
 
-  if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
+  if (startIndex === -1) {
     console.error(input);
     throw new Error("Invalid input format");
   }
 
-  return input.substring(startIndex, endIndex).trim();
+  return input.substring(startIndex, endIndex === -1 ? undefined : endIndex).trim();
 }
 
 export function parseRawContentToJSON(rawContent: string): object {

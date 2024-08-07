@@ -1,14 +1,16 @@
 import { z } from "zod";
 const objectState = z.string();
 // const locationSchema = z.object({ x: z.number(), y: z.number() });
-const locationSchema = z.string();
+export const locationSchema = z.enum(["center", "south", "east", "west", "north", "southwest", "southeast", "northwest", "northeast"]);
+export const POSSIBLE_LOCATIONS = locationSchema.options;
+
 const objectStateChangeSchema = z.object({
   subject: z.string(),
   type: z.literal("status"),
   fromState: objectState,
   toState: objectState,
 });
-const objectLocationChangeSchema = z.object({
+export const objectLocationChangeSchema = z.object({
   subject: z.string(),
   type: z.literal("location"),
   fromLocation: locationSchema,

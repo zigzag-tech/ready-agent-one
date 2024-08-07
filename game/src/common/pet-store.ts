@@ -1,4 +1,4 @@
-import { GameState } from "./gameStateSchema";
+import { GameState, locationSchema } from "./gameStateSchema";
 import { z } from "zod";
 export const PET_STORE_DIRECTIVE_BY_ROLE = {
   morgan:
@@ -14,20 +14,20 @@ export const petStoreCharacterProps = Object.entries(
   type: "person",
   name: role,
   description: description,
-  position: `${index + 1} meters ahead`,
+  position: `southeast` as z.infer<typeof locationSchema>,
   // position: {
   //   x: index * 3 - 1,
   //   y: index * 3 - 1,
   // },
 }));
 
-const porps = [
+const props = [
   ...petStoreCharacterProps,
   {
     type: "object",
     name: "cat trees",
     description: "A 3-level cat tree on diplay",
-    position: "north",
+    position: "north" as z.infer<typeof locationSchema>,
     // position: {
     //   x: 0,
     //   y: 10,
@@ -37,7 +37,7 @@ const porps = [
     type: "object",
     name: "dog food aisle",
     description: "An aisle filled with various brands of dog food",
-    position: "south",
+    position: "south" as z.infer<typeof locationSchema>,
     // position: {
     //   x: 5,
     //   y: 3,
@@ -47,7 +47,7 @@ const porps = [
     type: "object",
     name: "fish tanks",
     description: "A row of aquariums with different kinds of fish",
-    position: "west",
+    position: "west" as z.infer<typeof locationSchema>,
     // position: {
     //   x: -2,
     //   y: 5,
@@ -57,7 +57,7 @@ const porps = [
     type: "object",
     name: "bird cages",
     description: "Cages with various colorful birds inside",
-    position: "east",
+    position: "east" as z.infer<typeof locationSchema>,
     // position: {
     //   x: 3,
     //   y: -1,
@@ -67,7 +67,7 @@ const porps = [
     type: "object",
     name: "cash register",
     description: "The checkout counter with a cash register",
-    position: "west",
+    position: "west" as z.infer<typeof locationSchema>,
     // position: {
     //   x: -1,
     //   y: -5,
@@ -77,7 +77,7 @@ const porps = [
     type: "object",
     name: "pet toys",
     description: "A display of assorted pet toys",
-    position: "north",
+    position: "north" as z.infer<typeof locationSchema>,
     // position: {
     //   x: 2,
     //   y: 2,
@@ -87,7 +87,7 @@ const porps = [
     type: "object",
     name: "grooming station",
     description: "A section for pet grooming services",
-    position: "south",
+    position: "south" as z.infer<typeof locationSchema>,
     // position: {
     //   x: 6,
     //   y: -3,
@@ -97,7 +97,7 @@ const porps = [
     type: "object",
     name: "reptile terrariums",
     description: "Enclosures for reptiles like snakes and lizards",
-    position: "south",
+    position: "south" as z.infer<typeof locationSchema>,
     // position: {
     //   x: -4,
     //   y: 4,
@@ -108,7 +108,7 @@ export const petStoreInitialInput: GameState & { releaseChange: boolean } = {
   current: {
     summary:
       "The story begins in a pet store called 'Pet Paradise'. The store is bustling with customers and pets. Morgan, a recent dog owner, is looking for tips and tricks to train her dog. She approaches Guy.",
-    props: porps,
+    props: props,
   },
   sceneNumber: 1,
   recentHistory: [

@@ -19,6 +19,11 @@ import { petStoreInitialInput } from "../../../../common/pet-store";
 import { useInput, useOutput } from "@livestack/client";
 import { SpeechBubble } from "../../../3d/components/SpeechBubble";
 import { Html, Text } from "@react-three/drei";
+import {
+  addCoordinatesToObjectLocation,
+  convertToRandomCoordinates,
+} from "../../../../common/location";
+
 interface localPlayerState {
   moving: boolean;
   rolling: boolean;
@@ -190,7 +195,9 @@ export function PropsManager() {
         const newState = {} as typeof prev;
         for (const prop of gameState.current.props) {
           newState[prop.name] = {
-            currentPosition: prop.position || { x: 0, y: 0 },
+            currentPosition: convertToRandomCoordinates(
+              prop.position || "center"
+            ),
             moving: false,
             rolling: false,
           };
@@ -264,10 +271,12 @@ export function PropsManager() {
               };
 
               if (stateChange.type === "location") {
+                const stateChgWithCoordinates =
+                  addCoordinatesToObjectLocation(stateChange);
                 moveSubject.next({
                   subject: data.data.subject,
-                  from: stateChange.fromLocation || defaultPos,
-                  to: stateChange.toLocation || defaultPos,
+                  from: stateChgWithCoordinates.fromCoordinates || defaultPos,
+                  to: stateChgWithCoordinates.toCoordinates || defaultPos,
                 });
               }
             }

@@ -2,8 +2,10 @@ import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import { JobSpec } from "@livestack/core";
 import {
   GameState,
+  POSSIBLE_LOCATIONS,
   charactersEnum,
   gameStateSchema,
+  locationSchema,
   scenePropsSchema,
 } from "../common/gameStateSchema";
 import { z } from "zod";
@@ -140,7 +142,17 @@ Instructions:
         const newProps = [
           ...propsMaybeMissingPeople.props,
           ...missingCharacters,
-        ];
+        ].map((prop) => {
+          if (
+            POSSIBLE_LOCATIONS.includes(
+              prop.position as z.infer<typeof locationSchema>
+            )
+          ) {
+            return prop;
+          } else {
+            return { ...prop, position: "center" as const };
+          }
+        });
 
         const nextSceneState: GameState = {
           previous: {

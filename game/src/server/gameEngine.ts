@@ -1,8 +1,9 @@
 import { z } from "zod";
 import {
-  actionSchema,
   stateEventSchema,
   gameStateSchema,
+  POSSIBLE_LOCATIONS,
+  locationSchema,
 } from "../common/gameStateSchema";
 import _ from "lodash";
 import { characterOutputSchema } from "../common/characterOutputSchema";
@@ -28,18 +29,34 @@ export const genStateChangesByActions = (
       if (action === "walk_to" || action === "run_to") {
         if (target) {
           console.log("target", target);
+          let toLocation: z.infer<typeof locationSchema> = "center";
+          if (
+            POSSIBLE_LOCATIONS.includes(
+              target as z.infer<typeof locationSchema>
+            )
+          ) {
+            toLocation = target as z.infer<typeof locationSchema>;
+          } else {
+            const matchedProp = currentState.current.props.find(
+              (p) => p.name === target
+            );
+            if (matchedProp) {
+              toLocation = matchedProp.position || "center";
+            }
+          }
+
           return {
             subject,
             type: "location",
             fromLocation: subjectProp.position || "north",
-            toLocation: target,
+            toLocation: toLocation,
           };
         } else {
           return {
             subject,
             type: "location",
             fromLocation: subjectProp.position || "north",
-            toLocation: _.sample(["north", "west", "east", "south"]),
+            toLocation: _.sample(POSSIBLE_LOCATIONS),
           };
         }
 

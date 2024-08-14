@@ -1,7 +1,8 @@
-import { LiveEnv } from "@livestack/core";
+import { LiveEnv, sleep } from "@livestack/core";
 import { InstantiatedGraph } from "@livestack/shared";
 import { GAME_SPEC_NAME } from "../common/game";
 import { liveflow } from "./liveflow.conversation";
+import inquire from 'inquirer';
 
 LiveEnv.setGlobal(
   LiveEnv.create({
@@ -25,17 +26,18 @@ LiveEnv.setGlobal(
     }
   })();
 
-  for await (const data of output("user-signal")) {
-    console.log("user-signal:", data.data);
-
-    if (data.data === "ENABLE") {
-      // const rl = readline.createInterface({ input: stdin, output: stdout });
-      // const answer = await rl.question("What you want to say?: ");
-      const answer = "";
-      // rl.close();
-
-      await input("user-provided-input").feed(answer);
-    }
+  for await (const data of output("needs-user-choice")) {
+    const options = data.data;
+    const answer = await inquire.prompt([
+      {
+        type: 'list',
+        name: 'userChoice',
+        message: 'Please choose an option:',
+        choices: options.map(option => option.label),
+      }
+    ]);
+    console.log(answer);
+    await input("user-choice").feed(answer.userChoice);
   }
 
   console.log("done");

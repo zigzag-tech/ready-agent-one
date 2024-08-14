@@ -448,19 +448,9 @@ const Player: React.FC = () => {
     }),
   });
 
-  const { last: userSignalResp } = useOutput({
-    tag: "user-signal",
-    job: workflowJob,
-    def: z.enum(["ENABLE", "DISABLE"]),
-  });
 
   const [inputOn, setInputOn] = React.useState(false);
 
-  useEffect(() => {
-    if (userSignalResp?.data === "ENABLE") {
-      setInputOn(true);
-    }
-  }, [userSignalResp]);
 
   const { feed: feedInitState } = useInput({
     tag: "summary-supervision",

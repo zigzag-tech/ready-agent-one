@@ -42,9 +42,9 @@ export const liveflow = Liveflow.define({
   ],
   exposures: [
     expose(characterSpec.input.default, "character-input"),
-    expose(characterSpec.input["user-input"], "user-provided-input"),
+    expose(characterSpec.input["user-choice"], "user-choice"),
     expose(characterSpec.output.default, "character-talk"),
-    expose(characterSpec.output["user-signal"], "user-signal"),
+    expose(characterSpec.output["needs-user-choice"], "needs-user-choice"),
     expose(gameEngineSpec.input.supervision, "summary-supervision"),
     expose(supervisorSpec.output["default"], "game-state"),
     expose(gameEngineSpec.output["history-entries"], "history-entries"),

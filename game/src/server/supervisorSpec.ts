@@ -13,7 +13,7 @@ import { Message } from "ollama";
 // import { characterProps } from "../common/alien-cave";
 import { petStoreCharacterProps } from "../common/pet-store";
 import {
-  extractRawContent,
+  extractRawActionContent,
   genPropsPrompt,
   parseRawContentToJSON,
 } from "./genPromptUtils";
@@ -124,7 +124,7 @@ Instructions:
         };
         if (matches) {
           matches.forEach((match) => {
-            const json = parseRawContentToJSON(extractRawContent(match)) as any;
+            const json = parseRawContentToJSON(extractRawActionContent(match)) as any;
             propsMaybeMissingPeople.props.push(json);
           });
         }

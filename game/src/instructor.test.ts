@@ -14,7 +14,7 @@ const MODEL_NAME = "gemma2";
 
 import { z } from "zod";
 import { characterOutputSchema } from "./common/characterOutputSchema";
-import { extractRawContent, parseRawContentToJSON } from "./server/genPromptUtils";
+import { extractRawActionContent, parseRawContentToJSON } from "./server/genPromptUtils";
 
 const prompt = [
   {
@@ -250,7 +250,7 @@ async function characterWorkerTest() {
   });
 
   const rawMessage = output.message.content;
-  const rawContent = extractRawContent(rawMessage);
+  const rawContent = extractRawActionContent(rawMessage);
   const json = parseRawContentToJSON(rawContent);
 
   console.log(json);

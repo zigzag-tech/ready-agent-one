@@ -23,6 +23,8 @@ import {
   addCoordinatesToObjectLocation,
   convertToRandomCoordinates,
 } from "../../../../common/location";
+import SelectionBox from "../../../3d/components/SelectionBox";
+import { userChoicesSchema } from "../../../../common/characterOutputSchema";
 
 interface localPlayerState {
   moving: boolean;
@@ -68,6 +70,8 @@ function PropRenderer({
     description: string;
     speech?: string | null;
     currentPosition: { x: number; y: number; z: number };
+    userChoices?: string[];
+    setUserChoice?: (input: string) => void;
   };
 }) {
   // const [moving, setMoving] = useState(false);
@@ -93,10 +97,15 @@ function PropRenderer({
     return types[Math.floor(Math.random() * types.length)];
   }, []);
   const npcRef = useRef(null);
+
   if (prop.type == "person") {
     return (
       <group scale={1} position={pos} key={prop.name}>
         {prop.speech && <SpeechBubble content={prop.speech} position={pos} />}
+        <SelectionBox
+          options={prop.userChoices}
+          onSelect={prop.setUserChoice}
+        />
         <CharacterComponent
           ref={npcRef}
           lastAttack={0}
@@ -187,6 +196,7 @@ export function PropsManager() {
       n: 1,
     },
   });
+
   const gameState = useMemo(() => stateD?.data, [stateD]);
   useEffect(() => {
     if (gameState && gameState.releaseChange) {
@@ -298,6 +308,27 @@ export function PropsManager() {
     }
   }, [job, gameState]);
 
+  const { feed: feedUserChoice } = useInput({
+    job,
+    tag: "user-choice",
+    def: z.string(),
+  });
+
+  const [userChoices] = useOutput({
+    job,
+    tag: "needs-user-choice",
+    def: userChoicesSchema,
+    query: {
+      type: "lastN",
+      n: 1,
+    },
+  });
+
+  const setUserChoice = (choice: string) => {
+    feedUserChoice && feedUserChoice(choice);
+    console.log(choice);
+  };
+
   return (
     <>
       {gameState?.current.props.map((prop) => (
@@ -305,12 +336,13 @@ export function PropsManager() {
           prop={{
             ...prop,
             speech: speechByCharacter[prop.name] || null,
-
             currentPosition: {
               x: (stateByProp[prop.name]?.currentPosition.x || 0) / 4,
               y: 0,
               z: (stateByProp[prop.name]?.currentPosition.y || 0) / 4,
             },
+            userChoices: userChoices?.data.map((d) => d.label),
+            setUserChoice: prop.name === "morgan" ? setUserChoice : undefined,
           }}
         />
       ))}

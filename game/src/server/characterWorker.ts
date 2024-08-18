@@ -5,12 +5,14 @@ import { z } from "zod";
 import {
   genActionPrompt,
   genActionChoicesPrompt,
-  parseJSONResponse,
   extractAllTaggedContent,
 } from "./genPromptUtils";
 import { generateResponseOllamaByMessages } from "./generateResponseOllama";
 import _ from "lodash";
-import { characterOutputSchema } from "../common/characterOutputSchema";
+import {
+  characterOutputSchema,
+  userChoicesSchema,
+} from "../common/characterOutputSchema";
 import {
   extractRawActionContent,
   parseRawContentToJSON,
@@ -29,9 +31,7 @@ export const characterSpec = JobSpec.define({
   output: {
     default: characterOutputSchema,
     "action-prompt": z.any(),
-    "needs-user-choice": z.array(
-      characterOutputSchema.extend({ label: z.string() })
-    ),
+    "needs-user-choice": userChoicesSchema,
   },
 });
 
@@ -65,6 +65,7 @@ export const characterWorker = characterSpec.defineWorker({
         await output("needs-user-choice").emit(choices);
         const userChoice = await input("user-choice").nextValue();
         console.log(userChoice);
+        await output("needs-user-choice").emit([]);
         const json = choices.find((c) => c.label === userChoice) || choices[0];
         json.subject = whoseTurn;
         const jsonWithoutLabel = _.omit(json, "label");

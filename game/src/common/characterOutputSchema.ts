@@ -5,3 +5,7 @@ export const characterOutputSchema = actionSchema.extend({
   thinking: z.string(),
   message: z.string(),
 });
+
+export const userChoicesSchema = z.array(
+  characterOutputSchema.extend({ label: z.string() })
+);

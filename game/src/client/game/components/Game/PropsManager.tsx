@@ -314,7 +314,7 @@ export function PropsManager() {
     def: z.string(),
   });
 
-  const [userChoices] = useOutput({
+  const [userChoicesBackend] = useOutput({
     job,
     tag: "needs-user-choice",
     def: userChoicesSchema,
@@ -324,9 +324,24 @@ export function PropsManager() {
     },
   });
 
+  const [hidden, setHidden] = useState(true);
+
+  const userChoices = useMemo(() => {
+    if(hidden) {
+      return null;
+    } else {
+      return userChoicesBackend;
+    }
+  }, [hidden, userChoicesBackend]);
+
+  useEffect(() => {
+    setHidden(false);
+  }, [userChoicesBackend]);
+
   const setUserChoice = (choice: string) => {
     feedUserChoice && feedUserChoice(choice);
     console.log(choice);
+    setHidden(true);
   };
 
   return (

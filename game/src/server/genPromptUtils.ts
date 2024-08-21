@@ -25,20 +25,13 @@ Name: name of the object or person.
 Description: description of the object or person.
 </response>
 Repeat the above format for each object in the scene.
-`,
-    },
-    {
-      role: "user",
-      content: `
+
+Here are 2 examples:
+Example 1:
 SCENE PROVIDED:
 In a cozy room, Emily sits, a black cat curled at her feet. She tries to get the cat's attention with a toy.
 
 RESPONSE:
-`,
-    },
-    {
-      role: "assistant",
-      content: `
 <response>
 Position: north
 Type: person
@@ -57,20 +50,12 @@ Type: object
 Name: cat toy
 Description: A round toy with a bell inside.
 </response>
-`,
-    },
-    {
-      role: "user",
-      content: `
+
+Example 2:
 SCENE PROVIDED:
 In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a treasure chest and a skeleton.
 
 RESPONSE:
-`,
-    },
-    {
-      role: "assistant",
-      content: `
 <response>
 Position: north
 Type: person
@@ -119,28 +104,8 @@ export function genActionPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const messages: Message[] = [
-    {
-      role: "system",
-      content: `
-You are a game script writing assistant. Based on the context provided, produce the subject\'s next action, thinking process, target, and message. 
-
-- Ensure that the action and message are coherent and logically follow from the context.
-- Response should be surrounded by <response></response> tag.
-
-Format of your response should be:
-<response>
-Thinking: What is the subject considering or thinking about?
-Subject: Subject\'s name or identifier. Mandatory.
-Action: What is the subject\'s next action? Mandatory. Use only options from the ALLOWED ACTIONS list.
-Target: Who or what is the target of the action? Provide the id of the target from one of the props if applicable, otherwise null.
-Message: What does the subject say or communicate next? Mandatory. Always start with an emotion emoji.
-</response>
-`,
-    },
-    {
-      role: "user",
-      content: `
+  const fewShotExamples = `
+=== Example 1 ===
 CONTEXT:
 Emily Loves cats. She is a cat lover and she is always surrounded by cats. 
 Her cat is sick. 
@@ -163,11 +128,8 @@ Emily
 
 ALLOWED ACTIONS:
 walk_to, pet, look_at
-`,
-    },
-    {
-      role: "assistant",
-      content: `
+
+RESPONSE:
 <response>
 Subject: emily
 Thinking: I am so worried about the cat. Must get her to the vet soon.
@@ -175,11 +137,8 @@ Action: look_at
 Target: cat
 Message: 😁 Hey, kitty! You want some treats?
 </response>
-`,
-    },
-    {
-      role: "user",
-      content: `
+
+=== Example 2 ===
 CONTEXT:
 Frodo encounters a green bear on his way to the mountain.
 
@@ -203,11 +162,8 @@ Frodo
 
 ALLOWED ACTIONS:
 walk_to, look_at, hide, attack
-`,
-    },
-    {
-      role: "assistant",
-      content: `
+
+RESPONSE:
 <response>
 Subject: frodo
 Thinking: Man that didn't work! This bear is distracting me from my goal.
@@ -215,9 +171,7 @@ Action: hide
 Target: null
 Message: 😵 Oh no, the bear didn't die! I must hide!
 </response>
-`,
-    },
-  ];
+`;
 
   const newUserPrompt = `
 CONTEXT:
@@ -240,7 +194,37 @@ ${role}
 
 ALLOWED ACTIONS:
 walk_to, look_at, examine
+
+RESPONSE:
 `;
+
+  const messages: Message[] = [
+    {
+      role: "system",
+      content: `
+You are a game script writing assistant. Based on the context provided, produce the subject\'s next action, thinking process, target, and message. 
+
+- Ensure that the action and message are coherent and logically follow from the context.
+- Response should be surrounded by <response></response> tag.
+
+Format of your response should be:
+<response>
+Thinking: What is the subject considering or thinking about?
+Subject: Subject\'s name or identifier. Mandatory.
+Action: What is the subject\'s next action? Mandatory. Use only options from the ALLOWED ACTIONS list.
+Target: Who or what is the target of the action? Provide the id of the target from one of the props if applicable, otherwise null.
+Message: What does the subject say or communicate next? Mandatory. Always start with an emotion emoji.
+</response>
+
+Here are 2 examples:
+${fewShotExamples}
+`,
+    },
+    {
+      role: "user",
+      content: newUserPrompt,
+    },
+  ];
 
   messages.push({ role: "user", content: newUserPrompt });
   return messages;
@@ -250,29 +234,8 @@ export function genActionChoicesPrompt(
   role: z.infer<typeof charactersEnum>,
   state: GameState
 ) {
-  const messages: Message[] = [
-    {
-      role: "system",
-      content: `
-You are a game script writing assistant. Based on the context provided, produce 3 sets of the subject\'s next possible action, thinking process, target, and message, as if the choices are to be made by a RPG game player.
-
-- Ensure that the action and message are coherent and logically follow from the context.
-- Ensure that the 3 choices are distinct from each other.
-
-Format of each of your choices should be as follows:
-<choice>
-Label: The name of the choice to be displayed on the game UI.
-Thinking: What is the subject considering or thinking about?
-Subject: Subject's name or identifier. Mandatory.
-Action: What is the subject\'s next action? Mandatory. Use only options from the ALLOWED ACTIONS list.
-Target: Who or what is the target of the action? Provide the id of the target from one of the props if applicable, otherwise null.
-Message: What does the subject say or communicate next? Mandatory. Always start with an emotion emoji.
-</choice>
-`,
-    },
-    {
-      role: "user",
-      content: `
+  const fewShotExamples = `
+=== Example 1 ===
 CONTEXT:
 Emily Loves cats. She is a cat lover and she is always surrounded by cats. 
 Her cat is sick. 
@@ -295,11 +258,8 @@ Emily
 
 ALLOWED ACTIONS:
 walk_to, pet, look_at
-`,
-    },
-    {
-      role: "assistant",
-      content: `
+
+RESPONSE:
 <choice>
 Label: Play Game with Cat
 Subject: emily
@@ -324,11 +284,8 @@ Action: look_at
 Target: cat
 Message: 🍗 Look what I have for you! It's your favorite treat.
 </choice>
-`,
-    },
-    {
-      role: "user",
-      content: `
+
+=== Example 2 ===
 CONTEXT:
 Frodo encounters a green bear on his way to the mountain.
 
@@ -341,7 +298,6 @@ OBJECTS IN SCENE:
     {"type":"person","name":"bear","description":"A hungry green bear.","position": "south"},
 ]
 
-
 RECENT ACTIVITY LOG:
 frodo: [walk_to bear]
 bear: [talk] Growl!
@@ -352,11 +308,8 @@ Frodo
 
 ALLOWED ACTIONS:
 walk_to, look_at, hide, attack
-`,
-    },
-    {
-      role: "assistant",
-      content: `
+
+RESPONSE:
 <choice>
 Label: Run Away
 Subject: frodo
@@ -381,9 +334,7 @@ Action: look_at
 Target: bear
 Message: 🧀 Hey, look over here! Maybe you'd like some cheese instead?
 </choice>
-`,
-    },
-  ];
+`;
 
   const newUserPrompt = `
 CONTEXT:
@@ -406,9 +357,39 @@ ${role}
 
 ALLOWED ACTIONS:
 walk_to, look_at, examine
+
+RESPONSE:
 `;
 
-  messages.push({ role: "user", content: newUserPrompt });
+  const messages: Message[] = [
+    {
+      role: "system",
+      content: `
+You are a game script writing assistant. Based on the context provided, produce 3 sets of the subject\'s next possible action, thinking process, target, and message, as if the choices are to be made by a RPG game player.
+
+- Ensure that the action and message are coherent and logically follow from the context.
+- Ensure that the 3 choices are distinct from each other.
+
+Format of each of your choices should be as follows:
+<choice>
+Label: The name of the choice to be displayed on the game UI.
+Thinking: What is the subject considering or thinking about?
+Subject: Subject's name or identifier. Mandatory.
+Action: What is the subject\'s next action? Mandatory. Use only options from the ALLOWED ACTIONS list.
+Target: Who or what is the target of the action? Provide the id of the target from one of the props if applicable, otherwise null.
+Message: What does the subject say or communicate next? Mandatory. Always start with an emotion emoji.
+</choice>
+
+Here are 2 examples:
+${fewShotExamples}
+`,
+    },
+    {
+      role: "user",
+      content: newUserPrompt,
+    },
+  ];
+
   return messages;
 }
 

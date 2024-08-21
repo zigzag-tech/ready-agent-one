@@ -10,7 +10,6 @@ interface SelectionBoxProps {
 const SelectionBox: React.FC<SelectionBoxProps> = ({ options, onSelect }) => {
   return (
     options &&
-    options.length > 0 &&
     onSelect && (
       <Html position={[0, 1, 0]} center>
         <div

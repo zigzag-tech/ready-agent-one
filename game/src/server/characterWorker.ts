@@ -64,8 +64,7 @@ export const characterWorker = characterSpec.defineWorker({
         console.log("needs-user-choice", choices);
         await output("needs-user-choice").emit(choices);
         const userChoice = await input("user-choice").nextValue();
-        console.log(userChoice);
-        await output("needs-user-choice").emit([]);
+        
         const json = choices.find((c) => c.label === userChoice) || choices[0];
         json.subject = whoseTurn;
         const jsonWithoutLabel = _.omit(json, "label");

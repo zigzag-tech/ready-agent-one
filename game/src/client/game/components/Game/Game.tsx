@@ -84,6 +84,7 @@ const Game: React.FC = () => {
                 {/*<TestBox/>*/}
               </Physics>
             </Canvas>
+            <NextButton />
           </Joystick>
           <GameUI />
 
@@ -105,6 +106,7 @@ const useStore = create((set, get) => ({
 import { npcConfigs, playerPosition } from "../../../state/positions";
 
 import { PropsManager } from "./PropsManager";
+import { NextButton } from "../../../3d/components/NextButton";
 
 function Render() {
   const aTarget = useFBO(window.innerWidth / 4, window.innerHeight / 4);

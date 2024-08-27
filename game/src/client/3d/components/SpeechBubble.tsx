@@ -1,6 +1,6 @@
 import { Html } from "@react-three/drei";
-import React from "react";
 import { HtmlProps } from "@react-three/drei/web/Html";
+// import { NextButton } from "./NextButton";
 
 export function SpeechBubble({
   content,
@@ -35,6 +35,7 @@ export function SpeechBubble({
         >
           {content}
         </div>
+        {/* <NextButton /> */}
       </Html>
     )
   );

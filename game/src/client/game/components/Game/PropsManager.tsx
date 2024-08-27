@@ -327,7 +327,7 @@ export function PropsManager() {
   const [hidden, setHidden] = useState(true);
 
   const userChoices = useMemo(() => {
-    if(hidden) {
+    if (hidden) {
       return null;
     } else {
       return userChoicesBackend;

@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { Liveflow, conn, expose } from "@livestack/core";
-import { summarySpec } from "./summarySpec";
 import { characterSpec } from "./characterWorker";
 import { supervisorSpec } from "./supervisorSpec";
 import { turnControlSpec } from "./turnSpecAndWorker";
 import { gameEngineSpec } from "./gameEngineSpec";
+import { userSignalSpec } from "./userSignalSpec";
 
 // whenever scene increments, we need new scene and props (supervisor resets the scene)
 // whenever character has new actions (talk or movements), we need new actions/speech
@@ -20,6 +20,14 @@ export const liveflow = Liveflow.define({
       to: gameEngineSpec.input["character"],
     }),
     conn({
+      from: gameEngineSpec,
+      to: userSignalSpec,
+    }),
+    conn({
+      from: userSignalSpec,
+      to: supervisorSpec,
+    }),
+    conn({
       from: supervisorSpec,
       to: turnControlSpec,
     }),
@@ -28,16 +36,8 @@ export const liveflow = Liveflow.define({
       to: characterSpec,
     }),
     conn({
-      from: summarySpec,
-      to: supervisorSpec,
-    }),
-    conn({
       from: supervisorSpec,
       to: gameEngineSpec.input["supervision"],
-    }),
-    conn({
-      from: gameEngineSpec,
-      to: summarySpec,
     }),
   ],
   exposures: [
@@ -48,5 +48,7 @@ export const liveflow = Liveflow.define({
     expose(gameEngineSpec.input.supervision, "summary-supervision"),
     expose(supervisorSpec.output["default"], "game-state"),
     expose(gameEngineSpec.output["history-entries"], "history-entries"),
+    expose(userSignalSpec.input["user-signal"], "user-signal"),
+    expose(userSignalSpec.output["needs-user-signal"], "needs-user-signal"),
   ],
 });

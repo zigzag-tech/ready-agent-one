@@ -20,7 +20,7 @@ export const gameEngineSpec = JobSpec.define({
     "history-entries": historyEntrySchema,
   },
 });
-export const summaryWorker = gameEngineSpec.defineWorker({
+export const gameEngineWorker = gameEngineSpec.defineWorker({
   processor: async ({ input, output }) => {
     let currentState: GameState = {
       current: {

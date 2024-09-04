@@ -78,10 +78,7 @@ ${JSON.stringify(state.recentHistory)}
 
 INSTRUCTIONS
 - Write the plot for new scene ${newSceneNumber}.
-- Do not introduce new characters.
-- Be dramatic and creative.
-- The new scene should have a new setting or twist.
-- Keep the response under 30 words.
+
 `;
         // console.log("supervisorSpec newTopicPrompt", newTopicPrompt);
         // console.log("SUPERVISOR: GENERATING NEW SCENE");
@@ -100,6 +97,10 @@ Types of goals:
 Requirements:
 - The description of the scene must be around 200 words.
 - Restrict the characters to only Morgan, Jeremy, and Guy.
+- Do not introduce new characters.
+- Be dramatic and creative.
+- The new scene should have a new setting or twist.
+- Keep the response under 30 words.
 
 Example:
 <scene>

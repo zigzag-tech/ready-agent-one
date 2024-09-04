@@ -90,10 +90,25 @@ INSTRUCTIONS
           {
             role: "system",
             content: `
-            You are a script writing assistant. Your job is to write a new scene in the story based on the context provided.
-Instructions:
-- Make a detailed plot, around 200 words.
-- Respone with only the plot and do NOT explain.
+You are a game script writing assistant. Your job is to write a scene based on an (optional) previous summary, along with an goal that, when achieved, will trigger successful completion of the scene.
+
+Types of goals:
+- One or more characters must reach a specific location.
+- One or more characters must interact with a specific object.
+- One or more characters must perform a specific action.
+
+Requirements:
+- The description of the scene must be around 200 words.
+- Restrict the characters to only Morgan, Jeremy, and Guy.
+
+Example:
+<scene>
+In a dark alley, three explorers, Morgan, Jeremy and Guy are on a quest to find the lost treasure of the ancient city of Zor. They are being pursued by a group of bandits. The explorers must reach the end of the alley and find the hidden entrance to the city before the bandits catch up to them.
+</scene>
+<goal>
+All explorers must reach the entrance of the city at the end of the alley.
+</goal>
+
 `,
           },
           {
@@ -124,7 +139,9 @@ Instructions:
         };
         if (matches) {
           matches.forEach((match) => {
-            const json = parseRawContentToJSON(extractRawActionContent(match)) as any;
+            const json = parseRawContentToJSON(
+              extractRawActionContent(match)
+            ) as any;
             propsMaybeMissingPeople.props.push(json);
           });
         }
@@ -176,5 +193,5 @@ Instructions:
 });
 
 function conversationTooLong(state: GameState) {
-  return state.totalNumOfLines > 10;
+  return state.totalNumOfLines > 9;
 }

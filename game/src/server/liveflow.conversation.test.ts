@@ -26,15 +26,21 @@ LiveEnv.setGlobal(
     }
   })();
 
+  (async () => {
+    for await (const data of output("needs-user-signal")) {
+      await input("user-signal").feed("next");
+    }
+  })();
+
   for await (const data of output("needs-user-choice")) {
     const options = data.data;
     const answer = await inquire.prompt([
       {
-        type: 'list',
-        name: 'userChoice',
-        message: 'Please choose an option:',
-        choices: options.map(option => option.label),
-      }
+        type: "list",
+        name: "userChoice",
+        message: "Please choose an option:",
+        choices: options.map((option) => option.label),
+      },
     ]);
     console.log(answer);
     await input("user-choice").feed(answer.userChoice);

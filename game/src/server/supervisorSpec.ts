@@ -22,7 +22,7 @@ export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
   input: gameStateSchema,
   output: {
-    default: gameStateSchema.extend({ releaseChange: z.boolean() }),
+    default: gameStateSchema.extend({ stateHasChanged: z.boolean() }),
     "new-chapter-prompt": z.string(),
     "new-chapter-raw": z.string(),
   },
@@ -33,7 +33,7 @@ export const supervisorWorker = supervisorSpec.defineWorker({
     for await (const state of input) {
       // if the conversation has gone too long, change context by producing the next scene
       if (!conversationTooLong(state)) {
-        await output.emit({ ...state, releaseChange: false });
+        await output.emit({ ...state, stateHasChanged: false });
       } else {
         const messages: Message[] = [
           {
@@ -118,12 +118,12 @@ All explorers must reach the entrance of the city at the end of the alley.
           },
         ];
         await output("new-chapter-prompt").emit(newTopicPrompt);
-        const newTopic =
+        const newSceneAndGoal =
           (await generateResponseOllamaByMessages(newTopicMessages)) || "";
-        await output("new-chapter-raw").emit(newTopic);
+        await output("new-chapter-raw").emit(newSceneAndGoal);
         // console.log("supervisorSpec newTopic", newTopic);
 
-        const propsGenMessages = genPropsPrompt(newTopic);
+        const propsGenMessages = genPropsPrompt(newSceneAndGoal);
 
         const rawMessage = await generateResponseOllamaByMessages(
           propsGenMessages
@@ -177,7 +177,7 @@ All explorers must reach the entrance of the city at the end of the alley.
             summary: previousScenesSummary,
           },
           current: {
-            summary: newTopic,
+            summary: newSceneAndGoal,
             props: newProps,
           },
           sceneNumber: newSceneNumber,
@@ -187,7 +187,7 @@ All explorers must reach the entrance of the city at the end of the alley.
           recentHistory: [],
         };
 
-        await output.emit({ ...nextSceneState, releaseChange: true });
+        await output.emit({ ...nextSceneState, stateHasChanged: true });
       }
     }
   },

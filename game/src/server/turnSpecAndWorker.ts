@@ -16,7 +16,7 @@ export const turnControlSpec = JobSpec.define({
 export const turnControl = turnControlSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const state of input) {
-      const cleanState = _.omit(state, ["releaseChange"]);
+      const cleanState = _.omit(state, ["stateHasChanged"]);
       const op = state.current.props
         .filter((prop) => prop.type === "person")
         .map((prop) => prop.name)

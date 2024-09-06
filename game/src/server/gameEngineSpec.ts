@@ -13,7 +13,7 @@ export const gameEngineSpec = JobSpec.define({
   name: "GAME_ENGINE",
   input: {
     character: characterOutputSchema,
-    supervision: gameStateSchema.extend({ releaseChange: z.boolean() }),
+    supervision: gameStateSchema.extend({ stateHasChanged: z.boolean() }),
   },
   output: {
     default: gameStateSchema,
@@ -35,7 +35,7 @@ export const gameEngineWorker = gameEngineSpec.defineWorker({
     for await (const { data, tag } of input.merge("character", "supervision")) {
       switch (tag) {
         case "supervision": {
-          if (data.releaseChange) {
+          if (data.stateHasChanged) {
             currentState = data;
           }
           break;
@@ -53,7 +53,7 @@ export const gameEngineWorker = gameEngineSpec.defineWorker({
           await output("history-entries").emit(historyEntry);
           currentState.totalNumOfLines += 1;
           // console.clear();
-          const cleanState = _.omit(currentState, ["releaseChange"]);
+          const cleanState = _.omit(currentState, ["stateHasChanged"]);
           await output.emit(cleanState as z.infer<typeof gameStateSchema>);
           break;
         }

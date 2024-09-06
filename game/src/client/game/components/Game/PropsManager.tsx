@@ -190,7 +190,7 @@ export function PropsManager() {
   const [stateD] = useOutput({
     job,
     tag: "game-state",
-    def: gameStateSchema.extend({ releaseChange: z.boolean() }),
+    def: gameStateSchema.extend({ stateHasChanged: z.boolean() }),
     query: {
       type: "lastN",
       n: 1,
@@ -199,7 +199,7 @@ export function PropsManager() {
 
   const gameState = useMemo(() => stateD?.data, [stateD]);
   useEffect(() => {
-    if (gameState && gameState.releaseChange) {
+    if (gameState && gameState.stateHasChanged) {
       console.log("test", gameState);
       setStateByProp((prev) => {
         const newState = {} as typeof prev;

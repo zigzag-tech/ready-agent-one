@@ -22,7 +22,19 @@ LiveEnv.setGlobal(
   await input("summary-supervision").feed(petStoreInitialInput);
   (async () => {
     for await (const data of output("character-talk")) {
-      // console.log("player:", data.data);
+      const characterOutput = data.data as CharacterOutput;
+      // format: character: [action target] message
+
+      console.log(
+        `${characterOutput.subject}: [${characterOutput.action} ${characterOutput.target}] ${characterOutput.message}`
+      );
+    }
+  })();
+
+  (async () => {
+    for await (const data of output("new-chapter-raw")) {
+      const newSceneOutput = data.data as string;
+      console.log(newSceneOutput);
     }
   })();
 
@@ -40,9 +52,9 @@ LiveEnv.setGlobal(
         name: "userChoice",
         message: "Please choose an option:",
         choices: options.map((option) => option.label),
-      },
+      } as any,
     ]);
-    console.log(answer);
+    // console.log(answer);
     await input("user-choice").feed(answer.userChoice);
   }
 
@@ -55,6 +67,7 @@ LiveEnv.setGlobal(
 import fs from "fs";
 import { alienCaveInitialInput } from "../common/alien-cave";
 import { petStoreInitialInput } from "../common/pet-store";
+import { CharacterOutput } from "../common/characterOutputSchema";
 export function saveToJSON(g: InstantiatedGraph) {
   fs.writeFileSync(
     "workflow-converatio.graph.json",

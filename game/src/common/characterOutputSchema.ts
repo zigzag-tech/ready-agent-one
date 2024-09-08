@@ -6,6 +6,8 @@ export const characterOutputSchema = actionSchema.extend({
   message: z.string(),
 });
 
+export type CharacterOutput = z.infer<typeof characterOutputSchema>;
+
 export const userChoicesSchema = z.array(
   characterOutputSchema.extend({ label: z.string() })
 );

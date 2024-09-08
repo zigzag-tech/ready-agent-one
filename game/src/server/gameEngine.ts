@@ -28,7 +28,7 @@ export const genStateChangesByActions = (
     .map(({ action, target }) => {
       if (action === "walk_to" || action === "run_to") {
         if (target) {
-          console.log("target", target);
+          // console.log("target", target);
           let toLocation: z.infer<typeof locationSchema> = "center";
           if (
             POSSIBLE_LOCATIONS.includes(

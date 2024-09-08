@@ -1,5 +1,6 @@
 import { JobSpec } from "@livestack/core";
 import {
+  Criteria,
   GameState,
   gameStateSchema,
   historyEntrySchema,
@@ -54,6 +55,13 @@ export const gameEngineWorker = gameEngineSpec.defineWorker({
           await output("history-entries").emit(historyEntry);
           currentState.totalNumOfLines += 1;
           // console.clear();
+
+          // transition to next scene if all criteria are met
+          // const shouldTransitionToNextScene =
+          //   currentState.current.criteria.every((criterion) =>
+          //     isMet(criterion, currentState)
+          //   );
+
           const cleanState = _.omit(currentState, ["stateHasChanged"]);
           await output.emit(cleanState as z.infer<typeof gameStateSchema>);
           break;
@@ -65,3 +73,7 @@ export const gameEngineWorker = gameEngineSpec.defineWorker({
     }
   },
 });
+
+// function isMet(criterion: Criteria, state: GameState) {
+//   //TODO
+// }

@@ -50,5 +50,6 @@ export const liveflow = Liveflow.define({
     expose(gameEngineSpec.output["history-entries"], "history-entries"),
     expose(userSignalSpec.input["user-signal"], "user-signal"),
     expose(userSignalSpec.output["needs-user-signal"], "needs-user-signal"),
+    expose(supervisorSpec.output["new-chapter-raw"], "new-chapter-raw"),
   ],
 });

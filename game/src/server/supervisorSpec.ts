@@ -3,7 +3,6 @@ import { JobSpec } from "@livestack/core";
 import {
   GameState,
   POSSIBLE_LOCATIONS,
-  charactersEnum,
   gameStateSchema,
   locationSchema,
   scenePropsSchema,
@@ -14,10 +13,13 @@ import { Message } from "ollama";
 import { petStoreCharacterProps } from "../common/pet-store";
 import {
   extractAllTaggedContent,
-  genPropsPrompt,
   parseRawContentToJSON,
-  parseRawCriterionContentToJSON
+  parseRawCriterionContentToJSON,
 } from "./genPromptUtils";
+import {
+  genPropsAndCriteriaPrompt,
+  parseRawCrteriaString,
+} from "./genPropsAndCriteriaPrompt";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -124,7 +126,7 @@ All explorers must reach the entrance of the city at the end of the alley.
         await output("new-chapter-raw").emit(newSceneAndGoal);
         // console.log("supervisorSpec newTopic", newTopic);
 
-        const propsGenMessages = genPropsPrompt(newSceneAndGoal);
+        const propsGenMessages = genPropsAndCriteriaPrompt(newSceneAndGoal);
 
         const rawMessage = await generateResponseOllamaByMessages(
           propsGenMessages
@@ -133,9 +135,6 @@ All explorers must reach the entrance of the city at the end of the alley.
         if (!rawMessage) {
           throw new Error("Ollama response is empty.");
         }
-
-        const criterionRegex = /<criterion>[\s\S]*?<\/criterion>/g;
-        const criterionMatches = rawMessage.match(criterionRegex);
 
         const propsMaybeMissingPeople = {
           props: [] as z.infer<typeof scenePropsSchema>,
@@ -158,11 +157,15 @@ All explorers must reach the entrance of the city at the end of the alley.
           endTag: "</criterion>",
         });
 
-        const parsedCriteria = rawCriterionContents.map(
+        const parsedRawCriteria = rawCriterionContents.map(
           (content) => parseRawCriterionContentToJSON(content) as any
         );
 
-        console.log("parsedCriteria", parsedCriteria);
+        const parsedCriteria = parsedRawCriteria.map((c) =>
+          parseRawCrteriaString(c)
+        );
+
+        // console.log("parsedCriteria", parsedCriteria);
 
         const existingCharacters = propsMaybeMissingPeople.props.filter(
           (prop) =>
@@ -196,6 +199,7 @@ All explorers must reach the entrance of the city at the end of the alley.
           current: {
             summary: newSceneAndGoal,
             props: newProps,
+            criteria: parsedCriteria,
           },
           sceneNumber: newSceneNumber,
           totalNumOfLines: 0,

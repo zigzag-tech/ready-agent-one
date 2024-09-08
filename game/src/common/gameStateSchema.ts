@@ -60,6 +60,23 @@ export const scenePropsSchema = z.array(
   })
 );
 
+
+export const criterionSchema = z.union([
+  z.object({
+    type: z.literal("is_at"),
+    character: z.string(),
+    object: z.string(),
+  }),
+  z.object({
+    type: z.literal("performed"),
+    character: z.string(),
+    action: z.string(),
+    target: z.string().optional(),
+  }),
+]);
+
+export type Criteria = z.infer<typeof criterionSchema>;
+
 export const gameStateSchema = z.object({
   previous: z
     .object({
@@ -70,6 +87,7 @@ export const gameStateSchema = z.object({
   current: z.object({
     summary: z.string(),
     props: scenePropsSchema,
+    criteria: z.array(criterionSchema),
   }),
   recentHistory: z.array(historyEntrySchema),
   totalNumOfLines: z.number(),

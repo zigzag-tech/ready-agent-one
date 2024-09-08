@@ -12,7 +12,7 @@ export const characterProps = Object.entries(DIRECTIVE_BY_ROLE).map(
     type: "person",
     name: role,
     description: description,
-    position: `${index + 1} meters ahead`,
+    position: `southwest` as const,
     // position: {
     //   x: index * 3 - 1,
     //   y: index * 3 - 1,
@@ -26,7 +26,7 @@ const porps = [
     type: "object",
     name: "cave",
     description: "A mysterious cave",
-    position: "north",
+    position: "north" as const,
     // position: {
     //   x: 0,
     //   y: 10,
@@ -36,7 +36,7 @@ const porps = [
     type: "object",
     name: "small rock",
     description: "A small rock",
-    position: "east",
+    position: "east" as const,
     // position: {
     //   x: 8,
     //   y: 0,
@@ -46,7 +46,7 @@ const porps = [
     type: "object",
     name: "giant tree",
     description: "An alien looking tree that is 10 meters tall",
-    position: "south",
+    position: "south" as const,
     // position: {
     //   x: 0,
     //   y: -10,
@@ -56,7 +56,7 @@ const porps = [
     type: "object",
     name: "lifeform detector",
     description: "A device that can detect lifeforms.",
-    position: "west",
+    position: "west" as const,
     // position: {
     //   x: -8,
     //   y: 0,
@@ -68,6 +68,13 @@ export const alienCaveInitialInput: GameState & { stateHasChanged: boolean } = {
     summary:
       "It is year 2300. In an alien planet, a group of astronauts went into a jungle and found a mysterious cave.",
     props: porps,
+    criteria: [
+      {
+        type: "is_at",
+        character: "guy",
+        object: "cave",
+      },
+    ],
   },
   sceneNumber: 1,
   recentHistory: [

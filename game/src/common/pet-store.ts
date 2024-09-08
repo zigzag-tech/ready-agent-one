@@ -109,6 +109,13 @@ export const petStoreInitialInput: GameState & { stateHasChanged: boolean } = {
     summary:
       "The story begins in a pet store called 'Pet Paradise'. The store is bustling with customers and pets. Morgan, a recent dog owner, is looking for tips and tricks to train her dog. She approaches Guy.",
     props: props,
+    criteria: [
+      {
+        type: "is_at",
+        character: "guy",
+        object: "cash register",
+      },
+    ],
   },
   sceneNumber: 1,
   recentHistory: [

@@ -26,6 +26,7 @@ export const gameEngineWorker = gameEngineSpec.defineWorker({
       current: {
         summary: "",
         props: [],
+        criteria: [],
       },
       sceneNumber: 1,
       recentHistory: [],

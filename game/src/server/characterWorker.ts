@@ -1,4 +1,3 @@
-import { green } from "ansis";
 import { turnAndStateSchema } from "./turnSpecAndWorker";
 import { JobSpec } from "@livestack/core";
 import { z } from "zod";
@@ -61,10 +60,10 @@ export const characterWorker = characterSpec.defineWorker({
               typeof characterOutputSchema
             > & { label: string }
         );
-        console.log("needs-user-choice", choices);
+        // console.log("needs-user-choice", choices);
         await output("needs-user-choice").emit(choices);
         const userChoice = await input("user-choice").nextValue();
-        
+
         const json = choices.find((c) => c.label === userChoice) || choices[0];
         json.subject = whoseTurn;
         const jsonWithoutLabel = _.omit(json, "label");
@@ -72,7 +71,7 @@ export const characterWorker = characterSpec.defineWorker({
         await output("default").emit(jsonWithoutLabel);
       } else {
         const actionPrompt = genActionPrompt(whoseTurn, state);
-        console.log(`${JSON.stringify(actionPrompt, null, 2)}`);
+        // console.log(`${JSON.stringify(actionPrompt, null, 2)}`);
         await output("action-prompt").emit(actionPrompt);
         // const response = await generateResponseOllamaByMessages(actionPrompt);
         // if (!response) {

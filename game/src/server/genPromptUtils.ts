@@ -15,77 +15,125 @@ export function genPropsPrompt(newScene: string) {
     {
       role: "system",
       content: `
-You are a scene writing assistant. Your job is to write the type, name, description, and position of objects mentioned in the SCENE PROVIDED.
+You are a game scene writing assistant. Given a game scene that consists of <scene></scene> and <goal></goal>, your job is to:
+1. Imagine the type, name, description, and position of objects and characters that is related to the description in <scene></scene>.
+2. Devise a criterion based on <goal></goal> that the game engine can use to determine if the player has successfully completed the scene.
 
-Format of your response should be:
-<response>
+Below is a list of possible goals along with examples of the criterion:
+- Goal type: one or more characters must reach a specific destination. Criterion example: (is_at|emily|cat)
+- Goal type: one or more characters must interact with a specific object. Criterion example: (performed|emily|walk_to|cat)
+- Goal type: one or more characters must perform a specific action. Criterion example: (performed|jeremy|jump)
+
+Types of criteria must be one of the following:
+- (is_at|character|object)
+- (performed|character/*|action|[optional target]). Allowable actions are: walk_to, look_at, examine, open
+- Note that character can be * to indicate any character.
+- You must only use the characters and objects that you have defined in the scene and actions that are allowed.
+
+
+Format of your response for objects and characters should be:
+<obj>
 Position: position should be only one of "north", "west", "south", "east".
 Type: type should be only one of the "person" or "object".
 Name: name of the object or person.
 Description: description of the object or person.
-</response>
+</obj>
 Repeat the above format for each object in the scene.
+
+Example format of your response for the criterion should be:
+<criterion>(is_at|character/*|object)</criterion>
+or 
+<criterion>(performed|character/*|action|[optional target])</criterion>
+Repeat the above format for each criterion in the scene.
+
 
 Here are 2 examples:
 Example 1:
 SCENE PROVIDED:
-In a cozy room, Emily sits, a black cat curled at her feet. She tries to get the cat's attention with a toy.
+<scene>
+In a cozy room, Emily sits, a black cat is hiding under the desk. He is supiciously quiet. Emily is worried about him and tries to figure out what's wrong. A cat toy is on the floor.
+</scene>
+<goal>
+Emily must reach the cat and interact with the cat.
+</goal>
 
 RESPONSE:
-<response>
+<obj>
 Position: north
 Type: person
 Name: emily
 Description: Emily the cat lover.
-</response>
-<response>
+</obj>
+<obj>
 Position: south
 Type: object
 Name: cat
 Description: A black cat.
-</response>
-<response>
+</obj>
+<obj>
 Position: south
 Type: object
 Name: cat toy
 Description: A round toy with a bell inside.
-</response>
+</obj>
+<criterion>(is_at|emily|cat)</criterion>
+<criterion>(performed|emily|examine|cat toy)</criterion>
 
 Example 2:
 SCENE PROVIDED:
-In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a treasure chest and a skeleton.
+<scene>
+In the ancient ruins, a group of 3 adventurers, Jack, Tracy, and Indiana, entered a dark chamber. They found a lot of ancient artifacts along with 3 boxes of different colors. Legend says that this chamber has an ancient map that would lead you to immense wealth.
+</scene>
+<goal>
+Tracy must discover a partial map in the dark chamber that will lead the group to a different location.
+</goal>
 
 RESPONSE:
-<response>
+<obj>
 Position: north
 Type: person
 Name: jack
 Description: Jack the adventurer.
-</response>
-<response>
+</obj>
+<obj>
 Position: south
 Type: person
 Name: tracy
 Description: Tracy the adventurer.
-</response>
-<response>
+</obj>
+<obj>
 Position: south
 Type: person
 Name: indiana
 Description: Indiana the adventurer.
-</response>
-<response>
+</obj>
+<obj>
 Position: east
 Type: object
-Name: treasure chest
-Description: A large treasure chest.
-</response>
-<response>
+Name: red box
+Description: A large red wooden box.
+</obj>
+<obj>
+Position: east
+Type: object
+Name: blue box
+Description: A large blue stone box.
+</obj>
+<obj>
+Position: east
+Type: object
+Name: yellow box
+Description: A small yellow wooden box.
+</obj>
+<obj>
 Position: east
 Type: object
 Name: skeleton
 Description: A human skeleton.
-</response>
+</obj>
+<criterion>(performed|*|open|red box)</criterion>
+<criterion>(performed|*|open|blue box)</criterion>
+<criterion>(performed|*|open|yellow box)</criterion>
 `,
     },
     {
@@ -130,13 +178,13 @@ ALLOWED ACTIONS:
 walk_to, pet, look_at
 
 RESPONSE:
-<response>
+<obj>
 Subject: emily
 Thinking: I am so worried about the cat. Must get her to the vet soon.
 Action: look_at
 Target: cat
 Message: 😁 Hey, kitty! You want some treats?
-</response>
+</obj>
 
 === Example 2 ===
 CONTEXT:
@@ -164,13 +212,13 @@ ALLOWED ACTIONS:
 walk_to, look_at, hide, attack
 
 RESPONSE:
-<response>
+<obj>
 Subject: frodo
 Thinking: Man that didn't work! This bear is distracting me from my goal.
 Action: hide
 Target: null
 Message: 😵 Oh no, the bear didn't die! I must hide!
-</response>
+</obj>
 `;
 
   const newUserPrompt = `
@@ -193,7 +241,7 @@ SUBJECT NAME:
 ${role}
 
 ALLOWED ACTIONS:
-walk_to, look_at, examine
+walk_to, look_at, examine, open
 
 RESPONSE:
 `;
@@ -205,7 +253,8 @@ RESPONSE:
 You are a game script writing assistant. Based on the context provided, produce the subject\'s next action, thinking process, target, and message. 
 
 - Ensure that the action and message are coherent and logically follow from the context.
-- Response should be surrounded by <response></response> tag.
+- Response should be surrounded by <response></response>.
+- Characters in the criterion should be from the list of characters you have been provided.
 
 Format of your response should be:
 <response>
@@ -356,7 +405,7 @@ SUBJECT NAME:
 ${role}
 
 ALLOWED ACTIONS:
-walk_to, look_at, examine
+walk_to, look_at, examine, open
 
 RESPONSE:
 `;
@@ -471,6 +520,34 @@ export function parseRawContentToJSON(rawContent: string): object {
   });
 
   return json;
+}
+
+export function parseRawCriterionContentToJSON(rawContent: string) {
+  // format: (xxx|xxx|xxx|...); each token is separated by |
+  // extract each token xxx and put them into an array
+
+  const start = rawContent.indexOf("(");
+  const end = rawContent.lastIndexOf(")");
+  const content = rawContent.slice(start + 1, end);
+  const tokens = content.split("|").map((token) => token.trim());
+
+  const criterion = tokens[0];
+  if (criterion === "is_at") {
+    return {
+      type: criterion as "is_at",
+      character: tokens[1],
+      object: tokens[2],
+    };
+  } else if (criterion === "performed") {
+    return {
+      type: criterion as "performed",
+      character: tokens[1],
+      action: tokens[2],
+      target: tokens[3] || null,
+    };
+  } else {
+    throw new Error("Invalid criterion format");
+  }
 }
 
 export function parseJSONResponse(raw: string) {

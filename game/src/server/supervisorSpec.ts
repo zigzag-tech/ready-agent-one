@@ -13,9 +13,10 @@ import { Message } from "ollama";
 // import { characterProps } from "../common/alien-cave";
 import { petStoreCharacterProps } from "../common/pet-store";
 import {
-  extractRawActionContent,
+  extractAllTaggedContent,
   genPropsPrompt,
   parseRawContentToJSON,
+  parseRawCriterionContentToJSON
 } from "./genPromptUtils";
 
 export const supervisorSpec = JobSpec.define({
@@ -89,8 +90,8 @@ INSTRUCTIONS
             content: `
 You are a game script writing assistant. Your job is to write a scene based on an (optional) previous summary, along with an goal that, when achieved, will trigger successful completion of the scene.
 
-Types of goals:
-- One or more characters must reach a specific location.
+Types of goals must be one of the following:
+- One or more characters must reach a specific destination.
 - One or more characters must interact with a specific object.
 - One or more characters must perform a specific action.
 
@@ -133,19 +134,35 @@ All explorers must reach the entrance of the city at the end of the alley.
           throw new Error("Ollama response is empty.");
         }
 
-        const regex = /<response>[\s\S]*?<\/response>/g;
-        const matches = rawMessage.match(regex);
+        const criterionRegex = /<criterion>[\s\S]*?<\/criterion>/g;
+        const criterionMatches = rawMessage.match(criterionRegex);
+
         const propsMaybeMissingPeople = {
           props: [] as z.infer<typeof scenePropsSchema>,
         };
-        if (matches) {
-          matches.forEach((match) => {
-            const json = parseRawContentToJSON(
-              extractRawActionContent(match)
-            ) as any;
-            propsMaybeMissingPeople.props.push(json);
-          });
-        }
+
+        const rawObjContents = extractAllTaggedContent({
+          input: rawMessage,
+          startTag: "<obj>",
+          endTag: "</obj>",
+        });
+
+        const parsedProps = rawObjContents.map(
+          (content) => parseRawContentToJSON(content) as any
+        );
+        propsMaybeMissingPeople.props.push(...parsedProps);
+
+        const rawCriterionContents = extractAllTaggedContent({
+          input: rawMessage,
+          startTag: "<criterion>",
+          endTag: "</criterion>",
+        });
+
+        const parsedCriteria = rawCriterionContents.map(
+          (content) => parseRawCriterionContentToJSON(content) as any
+        );
+
+        console.log("parsedCriteria", parsedCriteria);
 
         const existingCharacters = propsMaybeMissingPeople.props.filter(
           (prop) =>

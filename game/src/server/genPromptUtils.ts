@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import {
+  Criteria,
   GameState,
   actionSchema,
   charactersEnum,
@@ -384,7 +385,7 @@ export function parseRawContentToJSON(rawContent: string): object {
   return json;
 }
 
-export function parseRawCriterionContentToJSON(rawContent: string) {
+export function parseRawCriterionContentToJSON(rawContent: string): Criteria {
   // format: (xxx|xxx|xxx|...); each token is separated by |
   // extract each token xxx and put them into an array
 

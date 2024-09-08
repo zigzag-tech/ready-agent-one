@@ -16,10 +16,7 @@ import {
   parseRawContentToJSON,
   parseRawCriterionContentToJSON,
 } from "./genPromptUtils";
-import {
-  genPropsAndCriteriaPrompt,
-  parseRawCrteriaString,
-} from "./genPropsAndCriteriaPrompt";
+import { genPropsAndCriteriaPrompt } from "./genPropsAndCriteriaPrompt";
 
 export const supervisorSpec = JobSpec.define({
   name: "SUPERVISOR_WORKER",
@@ -157,12 +154,8 @@ All explorers must reach the entrance of the city at the end of the alley.
           endTag: "</criterion>",
         });
 
-        const parsedRawCriteria = rawCriterionContents.map(
+        const parsedCriteria = rawCriterionContents.map(
           (content) => parseRawCriterionContentToJSON(content) as any
-        );
-
-        const parsedCriteria = parsedRawCriteria.map((c) =>
-          parseRawCrteriaString(c)
         );
 
         // console.log("parsedCriteria", parsedCriteria);

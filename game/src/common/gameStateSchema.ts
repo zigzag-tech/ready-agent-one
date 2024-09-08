@@ -71,7 +71,7 @@ export const criterionSchema = z.union([
     type: z.literal("performed"),
     character: z.string(),
     action: z.string(),
-    target: z.string().optional(),
+    target: z.string().nullable().optional(),
   }),
 ]);
 

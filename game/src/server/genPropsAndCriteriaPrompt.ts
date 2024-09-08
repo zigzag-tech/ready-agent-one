@@ -1,20 +1,3 @@
-import { z } from "zod";
-import { Criteria } from "../common/gameStateSchema";
-
-export function parseRawCrteriaString(rawCriteria: string): Criteria {
-  const [type, character, ...rest] = rawCriteria.split("|");
-  if (type === "is_at") {
-    const object = rest[0];
-    return { type, character, object };
-  } else if (type === "performed") {
-    const action = rest[0];
-    const target = rest[1];
-    return { type, character, action, target };
-  } else {
-    throw new Error("Invalid criteria type");
-  }
-}
-
 export function genPropsAndCriteriaPrompt(newScene: string) {
   return [
     {

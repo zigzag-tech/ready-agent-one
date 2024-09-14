@@ -137,8 +137,6 @@ ${fewShotExamples}
       content: newUserPrompt,
     },
   ];
-
-  messages.push({ role: "user", content: newUserPrompt });
   return messages;
 }
 

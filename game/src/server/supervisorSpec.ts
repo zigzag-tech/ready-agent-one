@@ -31,8 +31,9 @@ export const supervisorSpec = JobSpec.define({
 export const supervisorWorker = supervisorSpec.defineWorker({
   processor: async ({ input, output }) => {
     for await (const state of input) {
+      const criteriaMet = criteriaHaveBeenMet(state);
       // if the conversation has gone too long, change context by producing the next scene
-      if (!conversationTooLong(state)) {
+      if (!criteriaMet) {
         await output.emit({ ...state, stateHasChanged: false });
       } else {
         const messages: Message[] = [
@@ -209,4 +210,27 @@ All explorers must reach the entrance of the city at the end of the alley.
 
 function conversationTooLong(state: GameState) {
   return state.totalNumOfLines > 9;
+}
+
+function criteriaHaveBeenMet(state: GameState) {
+  // mechanical way to check if criteria have been met
+  return state.current.criteria.every((criterion) => {
+    if (criterion.type === "is_at") {
+      return state.current.props.some(
+        (prop) =>
+          prop.type === "person" &&
+          prop.name === criterion.character &&
+          prop.position === criterion.object
+      );
+    } else if (criterion.type === "performed") {
+      return state.recentHistory.some(
+        (history) =>
+          history.subject === criterion.character &&
+          history.action === criterion.action &&
+          (!criterion.target || history.target === criterion.target)
+      );
+    } else {
+      throw new Error("Invalid criterion type");
+    }
+  });
 }

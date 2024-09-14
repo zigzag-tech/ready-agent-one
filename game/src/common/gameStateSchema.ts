@@ -1,7 +1,17 @@
 import { z } from "zod";
 const objectState = z.string();
 // const locationSchema = z.object({ x: z.number(), y: z.number() });
-export const locationSchema = z.enum(["center", "south", "east", "west", "north", "southwest", "southeast", "northwest", "northeast"]);
+export const locationSchema = z.enum([
+  "center",
+  "south",
+  "east",
+  "west",
+  "north",
+  "southwest",
+  "southeast",
+  "northwest",
+  "northeast",
+]);
 export const POSSIBLE_LOCATIONS = locationSchema.options;
 
 const objectStateChangeSchema = z.object({
@@ -59,7 +69,6 @@ export const scenePropsSchema = z.array(
     //   .optional(),
   })
 );
-
 
 export const criterionSchema = z.union([
   z.object({

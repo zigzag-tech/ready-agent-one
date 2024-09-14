@@ -24,7 +24,7 @@ export const supervisorSpec = JobSpec.define({
   output: {
     default: gameStateSchema.extend({ stateHasChanged: z.boolean() }),
     "new-chapter-prompt": z.string(),
-    "new-chapter-raw": z.string(),
+    "new-scene-and-goal-raw": z.string(),
   },
 });
 
@@ -119,12 +119,18 @@ All explorers must reach the entrance of the city at the end of the alley.
           },
         ];
         await output("new-chapter-prompt").emit(newTopicPrompt);
-        const newSceneAndGoal =
+        const newSceneAndGoalRaw =
           (await generateResponseOllamaByMessages(newTopicMessages)) || "";
-        await output("new-chapter-raw").emit(newSceneAndGoal);
+        await output("new-scene-and-goal-raw").emit(newSceneAndGoalRaw);
+        const newGoal =
+          extractAllTaggedContent({
+            input: newSceneAndGoalRaw,
+            startTag: "<goal>",
+            endTag: "</goal>",
+          })[0] || "";
         // console.log("supervisorSpec newTopic", newTopic);
 
-        const propsGenMessages = genPropsAndCriteriaPrompt(newSceneAndGoal);
+        const propsGenMessages = genPropsAndCriteriaPrompt(newSceneAndGoalRaw);
 
         const rawMessage = await generateResponseOllamaByMessages(
           propsGenMessages
@@ -156,7 +162,7 @@ All explorers must reach the entrance of the city at the end of the alley.
         });
 
         const parsedCriteria = rawCriterionContents.map(
-          (content) => parseRawCriterionContentToJSON(content) as any
+          (content) => parseRawCriterionContentToJSON(content, newGoal) as any
         );
 
         // console.log("parsedCriteria", parsedCriteria);
@@ -191,7 +197,7 @@ All explorers must reach the entrance of the city at the end of the alley.
             summary: previousScenesSummary,
           },
           current: {
-            summary: newSceneAndGoal,
+            summary: newSceneAndGoalRaw,
             props: newProps,
             criteria: parsedCriteria,
           },

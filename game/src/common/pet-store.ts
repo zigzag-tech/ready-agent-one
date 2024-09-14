@@ -114,6 +114,7 @@ export const petStoreInitialInput: GameState & { stateHasChanged: boolean } = {
         type: "is_at",
         character: "guy",
         object: "cash register",
+        goalDescription: "Guy must be at the cash register."
       },
     ],
   },

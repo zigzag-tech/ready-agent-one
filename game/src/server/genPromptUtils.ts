@@ -383,7 +383,10 @@ export function parseRawContentToJSON(rawContent: string): object {
   return json;
 }
 
-export function parseRawCriterionContentToJSON(rawContent: string): Criteria {
+export function parseRawCriterionContentToJSON(
+  rawContent: string,
+  goalDescription: string
+): Criteria {
   // format: (xxx|xxx|xxx|...); each token is separated by |
   // extract each token xxx and put them into an array
 
@@ -398,6 +401,7 @@ export function parseRawCriterionContentToJSON(rawContent: string): Criteria {
       type: criterion as "is_at",
       character: tokens[1],
       object: tokens[2],
+      goalDescription,
     };
   } else if (criterion === "performed") {
     return {
@@ -405,6 +409,7 @@ export function parseRawCriterionContentToJSON(rawContent: string): Criteria {
       character: tokens[1],
       action: tokens[2],
       target: tokens[3] || null,
+      goalDescription,
     };
   } else {
     throw new Error("Invalid criterion format");

@@ -61,7 +61,9 @@ export const characterWorker = characterSpec.defineWorker({
             > & { label: string }
         );
         // console.log("needs-user-choice", choices);
-        await output("needs-user-choice").emit(choices);
+        await output("needs-user-choice").emit({
+          choices, criteria: state.current.criteria
+        });
         const userChoice = await input("user-choice").nextValue();
 
         const json = choices.find((c) => c.label === userChoice) || choices[0];

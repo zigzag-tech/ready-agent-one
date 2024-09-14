@@ -2,7 +2,7 @@ import { LiveEnv, sleep } from "@livestack/core";
 import { InstantiatedGraph } from "@livestack/shared";
 import { GAME_SPEC_NAME } from "../common/game";
 import { liveflow } from "./liveflow.conversation";
-import inquire from 'inquirer';
+import inquire from "inquirer";
 
 LiveEnv.setGlobal(
   LiveEnv.create({
@@ -32,7 +32,7 @@ LiveEnv.setGlobal(
   })();
 
   (async () => {
-    for await (const data of output("new-chapter-raw")) {
+    for await (const data of output("new-scene-and-goal-raw")) {
       const newSceneOutput = data.data as string;
       console.log(newSceneOutput);
     }
@@ -45,13 +45,13 @@ LiveEnv.setGlobal(
   })();
 
   for await (const data of output("needs-user-choice")) {
-    const options = data.data;
+    const { choices: choiceObjs, criteria } = data.data;
     const answer = await inquire.prompt([
       {
         type: "list",
         name: "userChoice",
-        message: "Please choose an option:",
-        choices: options.map((option) => option.label),
+        message: `Goal: ${criteria[0]?.goalDescription}\n Please choose an option:`,
+        choices: choiceObjs.map((option) => option.label),
       } as any,
     ]);
     // console.log(answer);

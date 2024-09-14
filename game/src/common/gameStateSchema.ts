@@ -70,13 +70,15 @@ export const scenePropsSchema = z.array(
   })
 );
 
-export const criterionSchema = z.union([
+export const criterionSchema =  z.union([
   z.object({
+    goalDescription: z.string(),
     type: z.literal("is_at"),
     character: z.string(),
     object: z.string(),
   }),
   z.object({
+    goalDescription: z.string(),
     type: z.literal("performed"),
     character: z.string(),
     action: z.string(),

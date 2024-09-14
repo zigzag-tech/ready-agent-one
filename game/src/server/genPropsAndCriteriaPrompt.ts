@@ -1,4 +1,4 @@
-export function genPropsAndCriteriaPrompt(newScene: string) {
+export function genPropsAndCriteriaPrompt(newSceneAndGoal: string) {
   return [
     {
       role: "system",
@@ -128,7 +128,7 @@ Description: A human skeleton.
       role: "user",
       content: `
 SCENE PROVIDED:
-${newScene}
+${newSceneAndGoal}
 
 RESPONSE:
 `,

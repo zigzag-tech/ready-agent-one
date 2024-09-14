@@ -38,6 +38,9 @@ export const characterWorker = characterSpec.defineWorker({
   processor: async ({ input, output }) => {
     // const rl = readline.createInterface({ input:stdin, output:stdout });
     for await (const { whoseTurn, state } of input("default")) {
+      // quick fix to prevent recentHistory from growing indefinitely
+      state.recentHistory = state.recentHistory.slice(-7);
+
       if (whoseTurn === "morgan") {
         // generate 3 responses with LLM
         // send a NEEDS_USER_CHOICE output

@@ -33,7 +33,7 @@ export const supervisorWorker = supervisorSpec.defineWorker({
     for await (const state of input) {
       const criteriaMet = criteriaHaveBeenMet(state);
       // if the conversation has gone too long, change context by producing the next scene
-      if (!criteriaMet) {
+      if (!true) {
         await output.emit({ ...state, stateHasChanged: false });
       } else {
         const messages: Message[] = [
@@ -88,7 +88,7 @@ INSTRUCTIONS
           {
             role: "system",
             content: `
-You are a game script writing assistant. Your job is to write a scene based on an (optional) previous summary, along with an goal that, when achieved, will trigger successful completion of the scene.
+You are a game script writing assistant. Your job is to write a scene based on an (optional) previous summary, along with a goal that, when achieved, will trigger successful completion of the scene. In addition, provide subgoals that helps the game and player lead toward the final goal.
 
 Types of goals must be one of the following:
 - One or more characters must reach a specific destination.
@@ -99,16 +99,26 @@ Requirements:
 - The description of the scene must be around 200 words.
 - Restrict the characters to only Morgan, Jeremy, and Guy.
 - Do not introduce new characters.
-- Be dramatic and creative.
-- The new scene should have a new setting or twist.
-- Keep the response under 30 words.
+- All subgoals must lead to achieving the final goal and nothing else.
+
+
 
 Example:
 <scene>
-In a dark alley, three explorers, Morgan, Jeremy and Guy are on a quest to find the lost treasure of the ancient city of Zor. They are being pursued by a group of bandits. The explorers must reach the end of the alley and find the hidden entrance to the city before the bandits catch up to them.
+Three explorers, Morgan, Jeremy and Guy are on a quest to find the lost treasure of the ancient city of Zor. 
+They are now lost in a dark valley and must find their way out. In front of them, there are three paths: one to the left (full of tall grass), one to the right (paved with rocks), and one straight ahead (seems to be leading towards an orchard).
+On the side is a giant stone with a cryptic message that says: "Fruit ensnareth man; Grass enfeebleth man; Rocks strengtheneth man."
 </scene>
+<subgoals>
+- They realize there are three potential paths to take
+- Someone notices a giant stone by the side
+- They find a message on the stone
+- Someone decodes the message
+- They agree that from the message that the one to the right, paved with rocks, is the correct path
+- They go on the correct path together
+</subgoals>
 <goal>
-All explorers must reach the entrance of the city at the end of the alley.
+All explorers must walk towards the path paved with rocks.
 </goal>
 
 `,
@@ -122,6 +132,7 @@ All explorers must reach the entrance of the city at the end of the alley.
         const newSceneAndGoalRaw =
           (await generateResponseOllamaByMessages(newTopicMessages)) || "";
         await output("new-scene-and-goal-raw").emit(newSceneAndGoalRaw);
+        console.log("newSceneAndGoalRaw:", newSceneAndGoalRaw);
         const newGoal =
           extractAllTaggedContent({
             input: newSceneAndGoalRaw,
